@@ -1,2 +1,3 @@
-# miniark
- A toy deep learning framework implemented in Numpy, for learning purpose.
+# TinyArk
+
+A toy deep learning framework implemented in Numpy, just for learning purpose.
