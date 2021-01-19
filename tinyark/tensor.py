@@ -6,27 +6,47 @@ class Tensor:
     for forward computation and grad for backward propagation.
 
     args:
-        name (str): name for the Tensor
-        shape (Tuple): shape for the Tensor
+        data (ndarray): data for the Tensor
         requires_grad (bool): if the Tensor requires gradient
-        dtype: numpy data type for the Tensor
     '''
 
-    def __init__(self, name: str = None, shape: Tuple = (1, ), requires_grad: bool = False, dtype = np.float32):
-        self.dtype = dtype
-        self.data = np.zeros(shape = shape, dtype = dtype)
-        self.grad = np.zeros(shape, dtype = np.float32)
+    def __init__(
+        self,
+        data: np.ndarray,
+        requires_grad: bool = False
+    ):
+        self.data = data
         self.requires_grad = requires_grad
+        self.grad = Optional[np.ndarray] = None
 
-    def zero_grad(self):
+        if self.requires_grad:
+            self.zero_grad()
+
+    def zero_grad(self) -> None:
         '''
         Set the gradient to zero.
         '''
-        self.grad.zero_()
+        self.grad = np.zeros_like(self.data, dtype=np.float32)
     
+    @classmethod
+    def zeros(cls, *shape, **kwargs):
+        return cls(np.zeros(shape, dtype=np.float32), **kwargs)
+
+    @classmethod
+    def ones(cls, *shape, **kwargs):
+        return cls(np.ones(shape, dtype=np.float32), **kwargs)
+
+    @classmethod
+    def randn(cls, *shape, **kwargs):
+        return cls(np.random.randn(*shape).astype(np.float32), **kwargs)
+
     @property
     def shape(self):
         return self.data.shape
+    
+    @property
+    def dtype(self):
+        return self.data.dtype
     
     @property
     def ndim(self):
@@ -36,5 +56,8 @@ class Tensor:
     def size(self):
         return self.data.size
 
-    
-    
+    @data.setter
+    def assign(self, x: np.ndarray) -> None:
+        self.data = x
+        # setting the data manually means we invalidate the gradient
+        self.grad = None

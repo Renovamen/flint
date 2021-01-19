@@ -1,3 +1,3 @@
 from .tensor import Tensor
-from .parameter import Parameter
-from .loss import *
+from .nn import *
+from .optim import *

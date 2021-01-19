@@ -1,27 +1,21 @@
 import numpy as np
-from numpy import ndarray
-from .tensor import Tensor
+from tinyark import Tensor
 
-def softmax(x: Tensor, dim: int = -1, out: Optional[Tensor] = None) -> Tensor:
-    if out is None:
-        out = Tensor(shape = x.shape)
-    np.subtract(x.data, np.max(x.data, axis = dim, keepdims = True), out = out.data)
-    np.exp(out.data, out = out.data)
-    np.divide(out.data, np.sum(x.data, axis = dim, keepdims = True), out = out.data)
-    return out
+def softmax(x: Tensor, dim: int = -1) -> Tensor:
+    ret = np.subtract(x.data, np.max(x.data, axis=dim, keepdims=True))
+    ret = np.exp(ret)
+    ret = np.divide(ret, np.sum(x.data, axis=dim, keepdims=True))
+    return Tensor(ret)
 
-def log_softmax(x: Tensor, dim: int = -1, out: Optional[Tensor] = None) -> Tensor:
-    if out is None:
-        out = Tensor(shape = x.shape)
-    softmax(x, dim, out)
-    np.log(out.data, out = out.data)
-    return out
+def log_softmax(x: Tensor, dim: int = -1) -> Tensor:
+    ret = softmax(x, dim)
+    ret = np.log(ret)
+    return Tensor(ret)
 
 def nll_loss(
     input: Tensor,
     target: Tensor,
-    reduction: str = 'mean',
-    out: Optional[Tensor] = None
+    reduction: str = 'mean'
 ) -> Tensor:
     '''
     Negative Log Likelihood Loss
@@ -51,17 +45,12 @@ def nll_loss(
     if reduction == 'mean':
         ret = np.divide(ret, batch_size)
 
-    if out is None:
-        out = Tensor(shape = ret.shape)
-    out.data = ret
-
-    return out
+    return out = Tensor(ret)
 
 def cross_entropy(
     input: Tensor,
     target: Tensor,
-    reduction: str = 'mean',
-    out: Tensor = None
+    reduction: str = 'mean'
 ) -> Tensor:
     '''
     Cross Entropy Loss
@@ -73,7 +62,7 @@ def cross_entropy(
         reduction (str, optional): 'none' / 'mean' / 'sum'
     '''
 
-    ret = log_softmax(input, dim = 1)
-    nll_loss(ret, target, reduction, out)
+    ret = log_softmax(input, dim=1)
+    ret = nll_loss(ret, target, reduction)
 
-    return out
+    return Tensor(ret)

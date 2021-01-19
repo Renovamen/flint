@@ -1,3 +1,4 @@
 # TinyArk
 
-A toy deep learning framework implemented in Numpy, just for learning purpose.
+A toy deep learning framework built with Numpy from scratch.
+

@@ -1,5 +1,6 @@
 import numpy as np
-from tinyark import Tensor, Parameter
+from tinyark import Tensor
+from tinyark.nn import Parameter
 from .module import Module
 
 class Linear(Module):
@@ -17,9 +18,9 @@ class Linear(Module):
         self.in_features = in_features
         self.out_features = out_features
         
-        self.weight = Parameter(Tensor(shape = (out_features, in_features)))
+        self.weight = Parameter(Tensor.zeros(out_features, in_features))
         if bias:
-            self.bias = Parameter(Tensor(shape = (out_features, 1)))
+            self.bias = Parameter(Tensor.zeros(out_features, 1))
         else:
             self.register_parameter('bias', None)
     

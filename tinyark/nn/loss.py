@@ -1,5 +1,5 @@
+from tinyark import Tensor
 import .functional as F
-from .tensor import Tensor
 
 class Loss:
     def __init__(self, reduction: str = 'mean') -> None:
@@ -19,7 +19,7 @@ class NllLoss(Loss):
         super(NllLoss, self).__init__(reduction)
 
     def __call__(self, input: Tensor, target: Tensor) -> Tensor:
-        self.data = F.nll_loss(input, target, reduction = self.reduction, out = self.data)
+        self.data = F.nll_loss(input, target, reduction=self.reduction)
         return self.data
 
 
@@ -35,5 +35,5 @@ class CrossEntropyLoss(Loss):
         super(CrossEntropyLoss, self).__init__(reduction)
 
     def __call__(self, input: Tensor, target: Tensor) -> Tensor:
-        self.data = F.cross_entropy(input, target, reduction = self.reduction, out = self.data)
+        self.data = F.cross_entropy(input, target, reduction=self.reduction)
         return self.data
