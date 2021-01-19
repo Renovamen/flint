@@ -1,5 +1,5 @@
 from tinyark import Tensor
-import .functional as F
+import tinyark.functional as F
 
 class Loss:
     def __init__(self, reduction: str = 'mean') -> None:

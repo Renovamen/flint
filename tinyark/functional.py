@@ -1,4 +1,5 @@
 import numpy as np
+from typing import Union
 from tinyark import Tensor
 
 def softmax(x: Tensor, dim: int = -1) -> Tensor:
@@ -11,6 +12,8 @@ def log_softmax(x: Tensor, dim: int = -1) -> Tensor:
     ret = softmax(x, dim)
     ret = np.log(ret)
     return Tensor(ret)
+
+# ---------------- loss ----------------
 
 def nll_loss(
     input: Tensor,
@@ -45,7 +48,7 @@ def nll_loss(
     if reduction == 'mean':
         ret = np.divide(ret, batch_size)
 
-    return out = Tensor(ret)
+    return Tensor(ret)
 
 def cross_entropy(
     input: Tensor,

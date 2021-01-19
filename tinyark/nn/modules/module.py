@@ -1,5 +1,7 @@
 from collections import OrderedDict
-from tinyark import Tensor, Parameter
+from typing import Optional, Union, Iterator, Tuple, Set
+from tinyark import Tensor
+from tinyark.nn import Parameter
 
 class Module:
     '''
@@ -29,7 +31,7 @@ class Module:
         else:
             self._parameters[name] = param
 
-     def add_module(self, name: str, module: Optional['Module']) -> None:
+    def add_module(self, name: str, module: Optional['Module']) -> None:
         '''
         Add a child module to the current module.
         
