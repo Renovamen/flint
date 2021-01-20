@@ -2,19 +2,6 @@ import numpy as np
 from typing import Union
 from tinyark import Tensor
 
-def softmax(x: Tensor, dim: int = -1) -> Tensor:
-    ret = np.subtract(x.data, np.max(x.data, axis=dim, keepdims=True))
-    ret = np.exp(ret)
-    ret = np.divide(ret, np.sum(x.data, axis=dim, keepdims=True))
-    return Tensor(ret)
-
-def log_softmax(x: Tensor, dim: int = -1) -> Tensor:
-    ret = softmax(x, dim)
-    ret = np.log(ret)
-    return Tensor(ret)
-
-# ---------------- loss ----------------
-
 def nll_loss(
     input: Tensor,
     target: Tensor,
@@ -22,6 +9,9 @@ def nll_loss(
 ) -> Tensor:
     '''
     Negative Log Likelihood Loss
+
+    NOTE: Here I apply log() on the prediction data, which is DIFFERENT FROM
+          F.nll_loss() IN PYTORCH!
 
     args:
         input (Tensor): 2-dim (N, C), where N = batch size and C = number of classes
@@ -40,15 +30,32 @@ def nll_loss(
         )
 
     batch_size = input.shape[0]
-    n_classes = input.shape[1]
+    delta = 1e-7  # deal with the situation that input.data = 0
 
-    ret = np.multiply(-1, x.data[np.arange(batch_size), target.data.astype(np.int)])
+    ret = - np.log(input.data[np.arange(batch_size), target.data.astype(np.int)] + delta)
     if reduction in ['sum', 'mean']:
         ret = np.sum(ret)
     if reduction == 'mean':
-        ret = np.divide(ret, batch_size)
+        ret = ret / batch_size
+    
+    out = Tensor(
+        data = ret,
+        depends_on = [input],
+        requires_grad = input.requires_grad
+    )
 
-    return Tensor(ret)
+    def grad_nll():
+        if input.requires_grad:
+            y = to_categorical(target.data)
+            if reduction == 'mean':
+                input.grad += (input.data - y) / batch_size
+            else if reduction == 'sum':
+                input.grad += (input.data - y)
+
+    if out.requires_grad and reduction != 'none':
+        out.grad_fn = grad_nll
+
+    return out
 
 def cross_entropy(
     input: Tensor,
@@ -57,7 +64,9 @@ def cross_entropy(
 ) -> Tensor:
     '''
     Cross Entropy Loss
-    combines log_softmax() and nll_loss()
+    
+    NOTE: Combines softmax() and nll_loss(), which is DIFFERENT FROM
+          F.cross_entropy() IN PYTORCH!
 
     args:
         input (Tensor): 2-dim (N, C), where N = batch size and C = number of classes
@@ -65,7 +74,7 @@ def cross_entropy(
         reduction (str, optional): 'none' / 'mean' / 'sum'
     '''
 
-    ret = log_softmax(input, dim=1)
-    ret = nll_loss(ret, target, reduction)
+    after_softmax = input.softmax(axis=-1)
+    out = nll_loss(after_softmax, target, reduction)
 
-    return Tensor(ret)
+    return out

@@ -2,6 +2,7 @@
 
 import numpy as np
 from typing import Union
+from .utils import *
 
 Arrayable = Union[float, list, np.ndarray]
 
@@ -111,7 +112,7 @@ class Tensor(object):
     def size(self):
         return self.data.size
 
-    # -------------- overwrite operators --------------
+    # -------------- operator overloading --------------
 
     def __add__(self, other: 'Tensor') -> 'Tensor':
         other = other if isinstance(other, Tensor) else Tensor(other)
@@ -188,8 +189,6 @@ class Tensor(object):
         dc/da = 1 / b, dc/db = - (a / b^2)
         '''
 
-        print(other)
-
         other = other if isinstance(other, Tensor) else Tensor(other)
 
         out = Tensor(
@@ -263,9 +262,103 @@ class Tensor(object):
 
         def grad_neg():
             if self.requires_grad:
-                self.grad = -out.grad
+                self.grad += -out.grad
 
         if out.requires_grad:
             out.grad_fn = grad_neg
 
+        return out
+    
+    def __getitem__(self, item):
+        out = Tensor(
+            data = self.data[item],
+            depends_on = [self],
+            requires_grad=self.requires_grad
+        )
+        if self.grad is not None:
+            out.grad = self.grad[item]
+
+        def grad_slice():
+            if self.requires_grad:
+                self.zero_grad()
+                self.grad[item] = out.grad
+
+        if out.requires_grad:
+            out.grad_fn = grad_slice
+
+        return out
+
+    # -------------- other maths --------------
+
+    def exp(self) -> 'Tensor':
+        out = Tensor(
+            data = np.exp(self.data),
+            depends_on = [self],
+            requires_grad = self.requires_grad
+        )
+
+        def grad_exp():
+            if self.requires_grad:
+                self.grad += out.grad * self.data
+
+        if out.requires_grad:
+            out.grad_fn = grad_exp
+
+        return out
+
+    def log(self)  -> 'Tensor':
+        out = Tensor(
+            data = np.log(self.data),
+            depends_on = [self],
+            requires_grad = self.requires_grad
+        )
+
+        def grad_log():
+            if self.requires_grad:
+                self.grad += out.grad / self.data
+
+        if out.requires_grad:
+            out.grad_fn = grad_log
+
+        return out
+    
+    def sum(self, axis: int = None) -> 'Tensor':
+        out = Tensor(
+            data = np.sum(self.data, axis=axis),
+            depends_on = [self],
+            requires_grad = self.requires_grad
+        )
+
+        def grad_sum():
+            if self.requires_grad:
+                self.grad += expand_as(out.grad, self.data, axis)
+
+        if out.requires_grad:
+            out.grad_fn = grad_sum
+
+        return out
+    
+    def softmax(self, axis: int = -1) -> 'Tensor':
+        ret = self.data - np.max(self.data, axis=axis, keepdims=True)
+        ret = np.exp(ret)
+        ret = ret / np.sum(self.data, axis=axis, keepdims=True)
+        
+        out = Tensor(
+            data = ret,
+            depends_on = [self],
+            requires_grad = self.requires_grad
+        )
+
+        def grad_softmax():
+            if self.requires_grad:
+                self.grad += out.grad * out.data * (1 - out.data)
+
+        if out.requires_grad:
+            out.grad_fn = grad_softmax
+
+        return out
+    
+    def log_softmax(self, axis: int = -1) -> 'Tensor':
+        after_softmax = self.softmax(axis)
+        out = after_softmax.log()
         return out
