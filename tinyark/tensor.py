@@ -43,7 +43,7 @@ class Tensor(object):
         '''
         Set the gradient to zero.
         '''
-        self.grad = np.zeros_like(self.data, dtype=np.float32)
+        self.grad = np.zeros(self.shape, dtype=np.float32)
     
     def add_depends_on(self, depends_on: list = []) -> None:
         '''

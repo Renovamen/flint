@@ -9,7 +9,7 @@ class Optimizer:
     '''
 
     def __init__(self, params = None, lr: float = 0.01, weight_decay: float = 0.):
-        self.params = params
+        self.params = list(params)
         self.lr = lr
         self.weight_decay = weight_decay
         self.iterations = 0

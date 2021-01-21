@@ -3,7 +3,7 @@ from typing import Optional, Union, Iterator, Tuple, Set
 from tinyark import Tensor
 from tinyark.nn import Parameter
 
-class Module:
+class Module(object):
     '''
     Base class for all modules.
 
@@ -11,9 +11,7 @@ class Module:
         name (str): name of the module
     '''
 
-    def __init__(self, name: str = None):
-        super(Module, self).__init__()
-        self.name = name
+    def __init__(self):
         self._parameters = OrderedDict()
         self._modules = OrderedDict()
 
@@ -135,13 +133,14 @@ class Module:
         out = self.forward(x)
         return out
 
-    def __setattr__(self, name: str, value: Union[Tensor, 'Module']) -> None:
+    def __setattr__(self, name: str, value):
         # add a parameter to the module
         if isinstance(value, Parameter):
             self.register_parameter(name, value)
         # add a child module to the module
         elif isinstance(value, Module):
             self.add_module(name, value)
+        object.__setattr__(self, name, value)
 
     def __delattr__(self, name):
         # delete a parameter from the module

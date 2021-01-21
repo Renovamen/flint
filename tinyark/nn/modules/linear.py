@@ -12,22 +12,22 @@ class Linear(Module):
         out_features (int): size of each output sample
         bias (bool): enable bias or not
     '''
-    def __init__(self, in_features: int, out_features: int, use_bias: bool = True) -> None:
+    def __init__(self, in_features: int, out_features: int, bias: bool = True) -> None:
         super(Linear, self).__init__()
         
         self.in_features = in_features
         self.out_features = out_features
         
-        self.weight = Parameter(Tensor.zeros(out_features, in_features))
+        self.weight = Parameter(Tensor.zeros(in_features, out_features))
         if bias:
-            self.bias = Parameter(Tensor.zeros(out_features, 1))
+            self.bias = Parameter(Tensor.zeros(1, out_features))
         else:
             self.register_parameter('bias', None)
     
-    def forward(self, x: Tensor) -> Tensor:
-        np.dot(x, self.weight, out = self.output)
-        
-        if self.bias is not None:
-            np.add(self.output, self.bias, out = self.output)
+    def forward(self, input: Tensor) -> Tensor:
+        self.output = input @ self.weight
 
+        if self.bias is not None:
+            self.output += self.bias
+            
         return self.output

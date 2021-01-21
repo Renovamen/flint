@@ -1,6 +1,7 @@
 import numpy as np
 from typing import Union
-from tinyark import Tensor
+from .tensor import Tensor
+from .utils import *
 
 def nll_loss(
     input: Tensor,
@@ -48,9 +49,9 @@ def nll_loss(
         if input.requires_grad:
             y = to_categorical(target.data)
             if reduction == 'mean':
-                input.grad += (input.data - y) / batch_size
-            else if reduction == 'sum':
-                input.grad += (input.data - y)
+                input.grad += (input.data - y) / batch_size  # (batch_size, n_classes)
+            elif reduction == 'sum':
+                input.grad += (input.data - y)  # (batch_size, n_classes)
 
     if out.requires_grad and reduction != 'none':
         out.grad_fn = grad_nll
