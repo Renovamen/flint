@@ -21,14 +21,14 @@ class MLP(nn.Module):
         out = self.l1(x)
         return out
 
-n_epoch = 3
+n_epoch = 5
 lr = 0.5
 
 np.random.seed(0)
 
 in_features = 5
 out_features = 2
-batch_size = 1
+batch_size = 3
 
 inputs = np.random.rand(batch_size, in_features)
 labels = np.random.randint(0, out_features, (batch_size, ))
@@ -48,7 +48,7 @@ for i in range(n_epoch):
     optimer.zero_grad()
 
     pred = net(x)
-    print('Prediction: ', pred.data)
+    # print('Prediction: ', pred.data)
 
     loss = loss_function(pred, y)
     print('Loss: ', loss.data)

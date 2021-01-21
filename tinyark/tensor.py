@@ -125,9 +125,11 @@ class Tensor(object):
 
         def grad_add():
             if self.requires_grad:
-                self.grad += out.grad
+                # self.grad += out.grad
+                self.grad = broadcast_add(self.grad, out.grad)
             if other.requires_grad:
-                other.grad += out.grad
+                # other.grad += out.grad
+                other.grad = broadcast_add(other.grad, out.grad)
 
         if out.requires_grad:
             out.grad_fn = grad_add
@@ -148,9 +150,11 @@ class Tensor(object):
 
         def grad_sub():
             if self.requires_grad:
-                self.grad += out.grad
+                # self.grad += out.grad
+                self.grad = broadcast_add(self.grad, out.grad)
             if other.requires_grad:
-                other.grad -= out.grad
+                # other.grad -= out.grad
+                other.grad = broadcast_add(other.grad, -out.grad)
 
         if out.requires_grad:
             out.grad_fn = grad_sub
@@ -171,9 +175,11 @@ class Tensor(object):
 
         def grad_mul():
             if self.requires_grad:
-                self.grad += out.grad * other.data
+                # self.grad += out.grad * other.data
+                self.grad = broadcast_add(self.grad, out.grad * other.data)
             if other.requires_grad:
-                other.grad += out.grad * self.data
+                # other.grad += out.grad * self.data
+                other.grad = broadcast_add(other.grad, out.grad * self.data)
 
         if out.requires_grad:
             out.grad_fn = grad_mul
@@ -199,9 +205,11 @@ class Tensor(object):
 
         def grad_div():
             if self.requires_grad:
-                self.grad += out.grad / other.data
+                # self.grad += out.grad / other.data
+                self.grad = broadcast_add(self.grad, out.grad / other.data)
             if other.requires_grad:
-                other.grad += - (out.grad * self.data / (other.data ** 2))
+                # other.grad += - (out.grad * self.data / (other.data ** 2))
+                other.grad = broadcast_add(other.grad, - (out.grad * self.data / (other.data ** 2)))
 
         if out.requires_grad:
             out.grad_fn = grad_div

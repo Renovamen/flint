@@ -47,11 +47,12 @@ def nll_loss(
 
     def grad_nll():
         if input.requires_grad:
+            p = np.clip(input.data, 1e-15, 1 - 1e-15)
             y = to_categorical(target.data)
             if reduction == 'mean':
-                input.grad += (input.data - y) / batch_size  # (batch_size, n_classes)
+                input.grad += (p - y) / batch_size  # (batch_size, n_classes)
             elif reduction == 'sum':
-                input.grad += (input.data - y)  # (batch_size, n_classes)
+                input.grad += (p - y)  # (batch_size, n_classes)
 
     if out.requires_grad and reduction != 'none':
         out.grad_fn = grad_nll
