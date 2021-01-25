@@ -3,6 +3,79 @@ from typing import Union
 from .tensor import Tensor
 from .utils import *
 
+# ---------------------- activators ----------------------
+
+def relu(input: Tensor) -> Tensor:
+    '''
+    Compute ReLU (Rectified Linear Unit) element-wise.
+    '''
+
+    ret = np.maximum(0., input.data)
+
+    out = Tensor(
+        data = ret,
+        depends_on = [input],
+        requires_grad = input.requires_grad
+    )
+
+    def grad_relu():
+        if input.requires_grad:
+            input.grad += out.grad * ((input.data > 0) * np.ones_like(input.data))
+
+    if out.requires_grad:
+        out.grad_fn = grad_relu
+
+    return out
+
+def sigmoid(input: Tensor) -> Tensor:
+    '''
+    Compute Sigmoid element-wise:
+        sigmoid(x) = \frac{1}{1 + \exp(-x)}
+    '''
+
+    ret = 1 / (1 + np.exp(-input.data))
+    
+    out = Tensor(
+        data = ret,
+        depends_on = [input],
+        requires_grad = input.requires_grad
+    )
+
+    def grad_sigmoid():
+        if input.requires_grad:
+            input.grad += out.grad * out.data * (1 - out.data)
+
+    if out.requires_grad:
+        out.grad_fn = grad_sigmoid
+
+    return out
+
+def tanh(input: Tensor) -> Tensor:
+    '''
+    Compute Tanh (Hyperbolic Tangent) element-wise:
+        tanh(x) = \frac{sinhx}{coshx} = \frac{\exp(x) - \exp(-x)}{\exp(x) + \exp(-x)}
+    '''
+
+    ret = np.tanh(input.data)
+    
+    out = Tensor(
+        data = ret,
+        depends_on = [input],
+        requires_grad = input.requires_grad
+    )
+
+    def grad_tanh():
+        if input.requires_grad:
+            input.grad += out.grad * (1 - np.square(out.data))
+
+    if out.requires_grad:
+        out.grad_fn = grad_tanh
+
+    return out
+
+
+# ---------------------- loss functions ----------------------
+
 def nll_loss(
     input: Tensor,
     target: Tensor,

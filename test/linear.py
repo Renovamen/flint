@@ -5,22 +5,30 @@ import numpy as np
 from tinyark import nn, optim, Tensor
 
 class MLP(nn.Module):
-    def __init__(self, weight1, bias1):
+    def __init__(self, weight1, bias1, weight2, bias2):
         super(MLP, self).__init__()
+
+        self.l1 = nn.Linear(10, 5)
+        self.l2 = nn.Linear(5, 2)
+        self.relu = nn.ReLU()
 
         weight1 = nn.Parameter(Tensor(weight1))
         bias1 = nn.Parameter(Tensor(bias1))
-
-        self.l1 = nn.Linear(5, 2)
+        weight2 = nn.Parameter(Tensor(weight2))
+        bias2 = nn.Parameter(Tensor(bias2))
         
         self.l1.weight = weight1
         self.l1.bias = bias1
+        self.l2.weight = weight2
+        self.l2.bias = bias2
 
     def forward(self, x):
         out = self.l1(x)
+        out = self.relu(out)
+        out = self.l2(out)
         return out
 
-n_epoch = 5
+n_epoch = 20
 lr = 0.5
 
 np.random.seed(0)
@@ -35,11 +43,13 @@ targets = np.random.randint(0, out_features, (batch_size, ))
 x, y = Tensor(inputs), Tensor(targets)
 
 # generate weights and bias
-weight1 = np.random.rand(in_features, out_features)
-bias1 = np.random.rand(1, out_features)
+weight1 = np.random.rand(in_features, 5)
+bias1 = np.random.rand(1, 5)
+weight2 = np.random.rand(5, out_features)
+bias2 = np.random.rand(1, out_features)
 
 # define network
-net = MLP(weight1, bias1)
+net = MLP(weight1, bias1, weight2, bias2)
 optimer = optim.SGD(params=net.parameters(), lr=lr)
 loss_function = nn.CrossEntropyLoss()
 
