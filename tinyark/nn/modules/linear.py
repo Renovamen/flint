@@ -29,9 +29,10 @@ class Linear(Module):
         self.init_parameters()
     
     def init_parameters(self) -> None:
-        bound = 1 / math.sqrt(self.weight.shape[1])
-        init.uniform_(self.weight, -bound, bound)
+        init.kaiming_uniform_(self.weight, a=math.sqrt(5))
         if self.bias is not None:
+            fan_in, _ = init._calculate_fan_in_and_fan_out(self.weight)
+            bound = 1 / math.sqrt(fan_in)
             init.uniform_(self.bias, -bound, bound)
 
     def forward(self, input: Tensor) -> Tensor:

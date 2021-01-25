@@ -98,7 +98,7 @@ for i in range(n_epoch):
 
 ### Core
 
-Support autograd on the following operations:
+Support autograding on the following operations:
 
 - [x] Add
 - [x] Substract
@@ -149,8 +149,8 @@ Support autograd on the following operations:
 
 - [x] Fill with zeros / ones / other given constants
 - [x] Uniform / Normal
-- [ ] Xavier Uniform / Normal
-- [ ] Kaiming Uniform / Normal
+- [x] Xavier Uniform / Normal
+- [x] Kaiming Uniform / Normal
 
 ### Others
 
