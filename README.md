@@ -4,6 +4,22 @@ A toy deep learning framework built with Numpy from scratch with a PyTorch-like 
 
 &nbsp;
 
+## Installation
+
+```bash
+git clone https://github.com/Renovamen/tinyark.git
+cd tinyark
+python setup.py install
+```
+
+or
+
+```bash
+pip install git+https://github.com/Renovamen/tinyark.git --upgrade
+```
+
+&nbsp;
+
 ## Example
 
 Build your net first:
