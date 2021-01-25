@@ -7,18 +7,19 @@ from tinyark import Tensor
 def calculate_gain(nonlinearity: str, param = None):
     '''
     Return the recommended gain value for the given nonlinearity function.
+    
     The values are as follows:
-    ================= ====================================================
+    ----------------- ----------------------------------------------------
     nonlinearity      gain
-    ================= ====================================================
-    Linear / Identity :math:`1`
-    Conv{1,2,3}D      :math:`1`
-    Sigmoid           :math:`1`
-    Tanh              :math:`\frac{5}{3}`
-    ReLU              :math:`\sqrt{2}`
-    Leaky Relu        :math:`\sqrt{\frac{2}{1 + negative_slope^2}}`
-    SELU              :math:`\frac{3}{4}`
-    ================= ====================================================
+    ----------------- ----------------------------------------------------
+    Linear / Identity 1
+    Conv{1,2,3}D      1
+    Sigmoid           1
+    Tanh              5 / 3
+    ReLU              sqrt(2)
+    Leaky Relu        sqrt(2 / (1 + negative_slope^2))
+    SELU              3 / 4
+    ----------------- ----------------------------------------------------
     
     args:
         nonlinearity (str): name of the non-linear function
@@ -128,22 +129,22 @@ def _calculate_fan_in_and_fan_out(tensor: Tensor):
 
 def xavier_uniform_(tensor: Tensor, gain: float = 1.) -> None:
     '''
-    Fill the tensor with values according to the method described in:
-
-    Understanding the Difficulty of Training Deep Feedforward Neural Networks. 
-    Xavier Glorot and Yoshua Bengio. AISTATS 2010.
+    Xavier initialization, also known as Glorot initialization, using
+    a uniform distribution.
     
-    using a uniform distribution. The resulting tensor will have values
-    sampledfrom:
+    The resulting tensor will have values sampled from:
         U(-a, a)
     where
-        a = gain * sqrt(\frac{6}{fan_in + fan_out})
+        a = gain * sqrt(6 / (fan_in + fan_out))
 
-    Also known as Glorot initialization.
-    
     args:
         tensor: a Tensor
         gain: an optional scaling factor
+
+    refs:
+        Understanding the Difficulty of Training Deep Feedforward Neural
+        Networks. Xavier Glorot and Yoshua Bengio. AISTATS 2010.
+        Paper: http://proceedings.mlr.press/v9/glorot10a/glorot10a.pdf)
     '''
 
     fan_in, fan_out = _calculate_fan_in_and_fan_out(tensor)
@@ -154,22 +155,22 @@ def xavier_uniform_(tensor: Tensor, gain: float = 1.) -> None:
 
 def xavier_normal_(tensor: Tensor, gain: float = 1.) -> None:
     '''
-    Fill the tensor with values according to the method described in:
-
-    Understanding the Difficulty of Training Deep Feedforward Neural Networks. 
-    Xavier Glorot and Yoshua Bengio. AISTATS 2010.
+    Xavier initialization, also known as Glorot initialization, using
+    a normal distribution.
     
-    using a normal distribution. The resulting tensor will have values
-    sampled from:
+    The resulting tensor will have values sampled from:
         N(0, std^2)
     where
-        std = gain * sqrt(\frac{2}{fan_in + fan_out})
-
-    Also known as Glorot initialization.
+        std = gain * sqrt(2 / (fan_in + fan_out))
 
     args:
         tensor: a Tensor
         gain: an optional scaling factor
+    
+    refs:
+        Understanding the Difficulty of Training Deep Feedforward Neural
+        Networks. Xavier Glorot and Yoshua Bengio. AISTATS 2010.
+        Paper: http://proceedings.mlr.press/v9/glorot10a/glorot10a.pdf)
     '''
 
     fan_in, fan_out = _calculate_fan_in_and_fan_out(tensor)
@@ -189,18 +190,13 @@ def _calculate_correct_fan(tensor: Tensor, mode: str):
 
 def kaiming_uniform_(tensor: Tensor, a: float = 0., mode: str = 'fan_in', nonlinearity: str = 'leaky_relu') -> None:
     '''
-    Fill the tensor with values according to the method described in:
+    Kaiming initialization, also known as He initialization, using
+    a uniform distribution.
 
-    Delving deep into rectifiers: Surpassing human-level performance on
-    ImageNet classification. Kaiming He, et al. ICCV 2015.
-    
-    using a uniform distribution. The resulting tensor will have
-    values sampled from:
+    The resulting tensor will have values sampled from:
         U(-bound, bound)
     where
-        bound = gain * sqrt*(\frac{3}{fan_mode})
-    
-    Also known as He initialization.
+        bound = gain * sqrt*(3 / fan_mode)
     
     args:
         tensor: a Tensor
@@ -212,6 +208,11 @@ def kaiming_uniform_(tensor: Tensor, a: float = 0., mode: str = 'fan_in', nonlin
             'fan_out': preserve the magnitudes in the backwards pass
         nonlinearity (str): name of the non-linear function, recommended to
             use only with 'relu' or 'leaky_relu' (default)
+    
+    refs:
+        Delving Deep into Rectifiers: Surpassing Human-level Performance on
+        ImageNet Classification. Kaiming He, et al. ICCV 2015.
+        Paper: https://arxiv.org/pdf/1502.01852.pdf
     '''
 
     fan = _calculate_correct_fan(tensor, mode)
@@ -221,22 +222,16 @@ def kaiming_uniform_(tensor: Tensor, a: float = 0., mode: str = 'fan_in', nonlin
     
     tensor.uniform_(low=-bound, high=bound)
 
-
 def kaiming_normal_(tensor, a: float = 0., mode: str = 'fan_in', nonlinearity: str = 'leaky_relu'):
     '''
-    Fill the tensor with values according to the method described in:
+    Kaiming initialization, also known as He initialization, using
+    a normal distribution.
 
-    Delving deep into rectifiers: Surpassing human-level performance on
-    ImageNet classification. Kaiming He, et al. ICCV 2015.
-    
-    using a normal distribution. The resulting tensor will have
-    values sampled from:
+    The resulting tensor will have values sampled from:
         N(0, std^2)
     where
-        bound = \frac{gain}{sqrt(fan_mode)}
+        std = gain / sqrt(fan_mode)
 
-    Also known as He initialization.
-    
     args:
         tensor: a Tensor
         a: the negative slope of the rectifier used after this layer (only
@@ -247,10 +242,60 @@ def kaiming_normal_(tensor, a: float = 0., mode: str = 'fan_in', nonlinearity: s
             'fan_out': preserve the magnitudes in the backwards pass
         nonlinearity (str): name of the non-linear function, recommended to
             use only with 'relu' or 'leaky_relu' (default)
+    
+    refs:
+        Delving deep into rectifiers: Surpassing human-level performance on
+        ImageNet classification. Kaiming He, et al. ICCV 2015.
+        Paper: https://arxiv.org/pdf/1502.01852.pdf
     '''
 
     fan = _calculate_correct_fan(tensor, mode)
     gain = calculate_gain(nonlinearity, a)
     std = gain / math.sqrt(fan)
     
+    tensor.normal_(mean=0, std=std)
+
+
+def lecun_uniform_(tensor: Tensor) -> None:
+    '''
+    LeCun initialization, using a uniform distribution.
+
+    The resulting tensor will have values sampled from:
+        U(-bound, bound)
+    where
+        bound = sqrt(3 / fan_in)
+    
+    args:
+        tensor: a Tensor
+    
+    refs:
+        Efficient Backprop. Yann LeCun, et al. 1998.
+        Paper: http://yann.lecun.com/exdb/publis/pdf/lecun-98b.pdf
+    '''
+
+    fan_in, _ = _calculate_fan_in_and_fan_out(tensor)
+    bound = math.sqrt(3.0 / fan_in)  # calculate uniform bounds from standard deviation
+
+    tensor.uniform_(low=-bound, high=bound)
+
+def lecun_normal_(tensor: Tensor) -> None:
+    '''
+    LeCun initialization, using a normal distribution.
+
+    The resulting tensor will have values sampled from:
+        N(0, std^2)
+    where
+        std = sqrt(1 / fan_in)
+    
+    args:
+        tensor: a Tensor
+
+    refs:
+        Efficient Backprop. Yann LeCun, et al. 1998.
+        Paper: http://yann.lecun.com/exdb/publis/pdf/lecun-98b.pdf
+    '''
+
+    fan_in, _ = _calculate_fan_in_and_fan_out(tensor)
+    std = math.sqrt(1.0 / fan_in)
+
     tensor.normal_(mean=0, std=std)

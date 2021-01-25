@@ -21,13 +21,12 @@ class MLP(nn.Module):
 n_epoch = 20
 lr = 0.5
 
-np.random.seed(0)
-
+batch_size = 5
 in_features = 10
 n_classes = 2
-batch_size = 5
 
 # generate inputs and targets
+np.random.seed(0)
 inputs = np.random.rand(batch_size, in_features)
 targets = np.random.randint(0, n_classes, (batch_size, ))
 x, y = Tensor(inputs), Tensor(targets)

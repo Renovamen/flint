@@ -22,6 +22,13 @@ pip install git+https://github.com/Renovamen/tinyark.git --upgrade
 
 &nbsp;
 
+## Documentations
+
+Coming soon 咕咕咕...
+
+
+&nbsp;
+
 ## Example
 
 Build your net first:
@@ -50,23 +57,23 @@ Then you can train it:
 from tinyark import nn, optim, Tensor
 import numpy as np
 
+# training parameters
 n_epoch = 20
 lr = 0.5
-
-np.random.seed(0)
-
-# specify some parameters
-in_features = 10
-out_features = 2
 batch_size = 5
 
+# model parameters
+in_features = 10
+out_features = 2
+
 # randomly generate inputs and targets
+np.random.seed(0)
 inputs = np.random.rand(batch_size, in_features)
-targets = np.random.randint(0, out_features, (batch_size, ))
+targets = np.random.randint(0, n_classes, (batch_size, ))
 x, y = Tensor(inputs), Tensor(targets)
 
 # initialize your network
-net = Net(weight1, bias1, weight2, bias2)
+net = Net(in_features, n_classes)
 
 # choose an optimizer and a loss function
 optimer = optim.SGD(params=net.parameters(), lr=lr)
@@ -149,12 +156,14 @@ Support autograding on the following operations:
 
 - [x] Fill with zeros / ones / other given constants
 - [x] Uniform / Normal
-- [x] Xavier Uniform / Normal
-- [x] Kaiming Uniform / Normal
+- [x] Xavier (Glorot) uniform / normal ([**Understanding the Difficulty of Training Deep Feedforward Neural Networks.**](http://proceedings.mlr.press/v9/glorot10a/glorot10a.pdf) *Xavier Glorot and Yoshua Bengio.* AISTATS 2010.)
+- [x] Kaiming (He) uniform / normal ([**Delving Deep into Rectifiers: Surpassing Human-level Performance on ImageNet Classification.**](https://arxiv.org/pdf/1502.01852.pdf) *Kaiming He, et al.* ICCV 2015.)
+- [x] LeCun uniform / normal ([**Efficient Backprop.**](http://yann.lecun.com/exdb/publis/pdf/lecun-98b.pdf) *Yann LeCun, et al.* 1998.)
+
 
 ### Others
 
-- [ ] Maybe incorporate the [Keras](https://github.com/keras-team/keras)-like API to make the training process simpler? 咕咕咕...
+- [ ] Maybe incorporate the [Keras](https://github.com/keras-team/keras)-like API to make the training process simpler?
 
 
 &nbsp;
