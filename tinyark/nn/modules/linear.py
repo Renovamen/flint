@@ -1,6 +1,8 @@
 import numpy as np
+import math
+
 from tinyark import Tensor
-from tinyark.nn import Parameter
+from tinyark.nn import Parameter, init
 from .module import Module
 
 class Linear(Module):
@@ -23,7 +25,15 @@ class Linear(Module):
             self.bias = Parameter(Tensor.zeros(1, out_features))
         else:
             self.register_parameter('bias', None)
+        
+        self.init_parameters()
     
+    def init_parameters(self) -> None:
+        bound = 1 / math.sqrt(self.weight.shape[1])
+        init.uniform_(self.weight, -bound, bound)
+        if self.bias is not None:
+            init.uniform_(self.bias, -bound, bound)
+
     def forward(self, input: Tensor) -> Tensor:
         self.output = input @ self.weight
 

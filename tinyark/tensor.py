@@ -86,15 +86,26 @@ class Tensor(object):
 
     @classmethod
     def zeros(cls, *shape, **kwargs):
+        '''
+        Create a tensor filled with the scalar value `0`.
+        '''
         return cls(np.zeros(shape, dtype=np.float32), **kwargs)
 
     @classmethod
     def ones(cls, *shape, **kwargs):
+        '''
+        Create a tensor filled with the scalar value `1`.
+        '''
         return cls(np.ones(shape, dtype=np.float32), **kwargs)
 
     @classmethod
     def randn(cls, *shape, **kwargs):
+        '''
+        Create a tensor filled with random scalar values.
+        '''
         return cls(np.random.randn(*shape).astype(np.float32), **kwargs)
+
+    # -------------- properties --------------
 
     @property
     def shape(self):
@@ -370,3 +381,46 @@ class Tensor(object):
         after_softmax = self.softmax(axis)
         out = after_softmax.log()
         return out
+
+    # -------------- initializing --------------
+    
+    def fill_(self, val: float) -> None:
+        '''
+        Fill the tensor with the given scalar value `val`.
+        
+        args:
+            val (float): the value to fill the tensor with
+        '''
+        self.data.fill(val)
+    
+    def zero_(self) -> None:
+        '''
+        Fill the tensor with the scalar value `0`.
+        '''
+        self.fill_(0.)
+    
+    def one_(self) -> None:
+        '''
+        Fill the tensor with the scalar value `1`.
+        '''
+        self.fill_(1.)
+
+    def uniform_(self, low: float = 0., high: float = 1.) -> None:
+        '''
+        Fill the tensor with values drawn from the uniform distribution.
+        
+        args:
+            low (float): the lower bound of the uniform distribution
+            high (float): the upper bound of the uniform distribution
+        '''
+        self.data = np.random.uniform(low=low, high=high, size=self.shape)
+
+    def normal_(self, mean: float = 0., std: float = 1.) -> None:
+        '''
+        Fill the tensor with values drawn from the normal distribution.
+
+        args:
+            mean (float): the mean of the normal distribution
+            std (float): the standard deviation of the normal distribution
+        '''
+        self.data = np.random.normal(loc=mean, scale=std, size=self.shape)

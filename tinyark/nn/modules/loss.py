@@ -24,7 +24,7 @@ class NllLoss(Loss):
 
 class CrossEntropyLoss(Loss):
     '''
-    Cross Entropy Loss, combines log_softmax() and nll_loss().
+    Cross Entropy Loss, combines softmax() and nll_loss().
     See tinyark.functional.cross_entropy() for more details.
 
     args:

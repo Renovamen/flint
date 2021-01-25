@@ -1,6 +1,8 @@
 # TinyArk
 
-A toy deep learning framework built with Numpy from scratch with a PyTorch-like API.
+A toy deep learning framework built with Numpy from scratch with a [PyTorch](https://github.com/pytorch/pytorch)-like API.
+
+I'm trying to make it as clean as possible.
 
 &nbsp;
 
@@ -64,18 +66,21 @@ targets = np.random.randint(0, out_features, (batch_size, ))
 x, y = Tensor(inputs), Tensor(targets)
 
 # initialize your network
-net = MLP(weight1, bias1, weight2, bias2)
+net = Net(weight1, bias1, weight2, bias2)
+
 # choose an optimizer and a loss function
 optimer = optim.SGD(params=net.parameters(), lr=lr)
 loss_function = nn.CrossEntropyLoss()
 
 # then we can train it
 for i in range(n_epoch):
-
+    # clear gradients
     optimer.zero_grad()
-
+    
+    # forward prop.
     pred = net(x)
 
+    # compute loss and do backward prop.
     loss = loss_function(pred, y)
     loss.backward()
     
@@ -89,7 +94,7 @@ for i in range(n_epoch):
 
 &nbsp;
 
-## Features
+## Features / To-Do List
 
 ### Core
 
@@ -117,6 +122,7 @@ Support autograd on the following operations:
 - [ ] Dropout
 - [ ] BatchNormalization
 - [ ] RNN
+- [ ] Sequential
 
 ### Optimizers
 
@@ -141,9 +147,15 @@ Support autograd on the following operations:
 
 ### Initializers
 
-- [ ] Uniform / Normal
+- [x] Fill with zeros / ones / other given constants
+- [x] Uniform / Normal
 - [ ] Xavier Uniform / Normal
 - [ ] Kaiming Uniform / Normal
+
+### Others
+
+- [ ] Maybe incorporate the [Keras](https://github.com/keras-team/keras)-like API to make the training process simpler? 咕咕咕...
+
 
 &nbsp;
 
