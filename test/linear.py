@@ -2,8 +2,7 @@ import sys
 sys.path.append('/Users/zou/Renovamen/Developing/tinyark/')
 
 import numpy as np
-from tinyark import nn, optim
-from tinyark import Tensor
+from tinyark import nn, optim, Tensor
 
 class MLP(nn.Module):
     def __init__(self, weight1, bias1):
@@ -30,21 +29,23 @@ in_features = 5
 out_features = 2
 batch_size = 3
 
+# generate inputs and targets
 inputs = np.random.rand(batch_size, in_features)
-labels = np.random.randint(0, out_features, (batch_size, ))
+targets = np.random.randint(0, out_features, (batch_size, ))
+x, y = Tensor(inputs), Tensor(targets)
 
+# generate weights and bias
 weight1 = np.random.rand(in_features, out_features)
 bias1 = np.random.rand(1, out_features)
 
+# define network
 net = MLP(weight1, bias1)
-
 optimer = optim.SGD(params=net.parameters(), lr=lr)
 loss_function = nn.CrossEntropyLoss()
 
 for i in range(n_epoch):
     print('\n------------------ Epoch %d ------------------' % (i + 1))
-
-    x, y = Tensor(inputs), Tensor(labels)
+    
     optimer.zero_grad()
 
     pred = net(x)

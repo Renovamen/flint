@@ -349,7 +349,7 @@ class Tensor(object):
     def softmax(self, axis: int = -1) -> 'Tensor':
         ret = self.data - np.max(self.data, axis=axis, keepdims=True)
         ret = np.exp(ret)
-        ret = ret / np.sum(self.data, axis=axis, keepdims=True)
+        ret = ret / np.sum(ret.data, axis=axis, keepdims=True)
         
         out = Tensor(
             data = ret,
