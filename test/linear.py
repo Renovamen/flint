@@ -33,9 +33,9 @@ lr = 0.5
 
 np.random.seed(0)
 
-in_features = 5
+in_features = 10
 out_features = 2
-batch_size = 3
+batch_size = 5
 
 # generate inputs and targets
 inputs = np.random.rand(batch_size, in_features)
@@ -54,15 +54,18 @@ optimer = optim.SGD(params=net.parameters(), lr=lr)
 loss_function = nn.CrossEntropyLoss()
 
 for i in range(n_epoch):
-    print('\n------------------ Epoch %d ------------------' % (i + 1))
-    
     optimer.zero_grad()
 
     pred = net(x)
     # print('Prediction: ', pred.data)
 
     loss = loss_function(pred, y)
-    print('Loss: ', loss.data)
+    # print('Loss: ', loss.data)
 
     loss.backward()
     optimer.step()
+
+    print(
+        'Epoch: [{0}][{1}]\t'
+        'Loss {loss:.4f}\t'.format(i + 1, n_epoch, loss = loss.data)
+    )
