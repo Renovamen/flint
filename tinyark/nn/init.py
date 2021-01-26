@@ -188,7 +188,12 @@ def _calculate_correct_fan(tensor: Tensor, mode: str):
     fan_in, fan_out = _calculate_fan_in_and_fan_out(tensor)
     return fan_in if mode == 'fan_in' else fan_out
 
-def kaiming_uniform_(tensor: Tensor, a: float = 0., mode: str = 'fan_in', nonlinearity: str = 'leaky_relu') -> None:
+def kaiming_uniform_(
+    tensor: Tensor,
+    a: float = 0.,
+    mode: str = 'fan_in',
+    nonlinearity: str = 'leaky_relu'
+) -> None:
     '''
     Kaiming initialization, also known as He initialization, using
     a uniform distribution.
@@ -222,7 +227,12 @@ def kaiming_uniform_(tensor: Tensor, a: float = 0., mode: str = 'fan_in', nonlin
     
     tensor.uniform_(low=-bound, high=bound)
 
-def kaiming_normal_(tensor, a: float = 0., mode: str = 'fan_in', nonlinearity: str = 'leaky_relu'):
+def kaiming_normal_(
+    tensor: Tensor,
+    a: float = 0.,
+    mode: str = 'fan_in',
+    nonlinearity: str = 'leaky_relu'
+) -> None:
     '''
     Kaiming initialization, also known as He initialization, using
     a normal distribution.

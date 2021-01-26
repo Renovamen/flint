@@ -41,9 +41,15 @@ class Tensor(object):
 
     def zero_grad(self) -> None:
         '''
-        Set the gradient to zero.
+        Fill the gradient with zeros.
         '''
         self.grad = np.zeros(self.shape, dtype=np.float32)
+    
+    def one_grad(self) -> None:
+        '''
+        Fill the gradient with ones.
+        '''
+        self.grad = np.ones(self.shape, dtype=np.float32)
     
     def add_depends_on(self, depends_on: list = []) -> None:
         '''
@@ -79,7 +85,7 @@ class Tensor(object):
         dfs(self)
         
         # go one variable at a time and apply the chain rule to get its gradient
-        self.grad = 1.
+        self.one_grad()
         for node in reversed(graph):
             if node.grad_fn is not None:
                 node.grad_fn()
@@ -318,7 +324,7 @@ class Tensor(object):
 
         def grad_exp():
             if self.requires_grad:
-                self.grad += out.grad * self.data
+                self.grad += out.grad * out.data
 
         if out.requires_grad:
             out.grad_fn = grad_exp
@@ -343,14 +349,17 @@ class Tensor(object):
     
     def sum(self, axis: int = None) -> 'Tensor':
         out = Tensor(
-            data = np.sum(self.data, axis=axis),
+            data = np.array([np.sum(self.data)]) if axis is None else np.sum(self.data, axis=axis),
             depends_on = [self],
             requires_grad = self.requires_grad
         )
 
         def grad_sum():
             if self.requires_grad:
-                self.grad += expand_as(out.grad, self.data, axis)
+                sum_axis = [axis] if type(axis) is int else axis
+                expanded_shape = [1 if sum_axis is None or i in sum_axis else self.shape[i] for i in range(len(self.shape))]
+                expanded_grad = out.grad.reshape(expanded_shape) + np.zeros_like(self.data)
+                self.grad += expanded_grad
 
         if out.requires_grad:
             out.grad_fn = grad_sum
