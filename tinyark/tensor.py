@@ -347,43 +347,57 @@ class Tensor(object):
 
         return out
     
-    def sum(self, axis: int = None) -> 'Tensor':
+    def sum(self, axis: int = None, keepdims: bool = False) -> 'Tensor':
         out = Tensor(
-            data = np.array([np.sum(self.data)]) if axis is None else np.sum(self.data, axis=axis),
+            data = np.sum(self.data, axis=axis, keepdims=keepdims),
             depends_on = [self],
             requires_grad = self.requires_grad
         )
 
         def grad_sum():
             if self.requires_grad:
-                sum_axis = [axis] if type(axis) is int else axis
-                expanded_shape = [1 if sum_axis is None or i in sum_axis else self.shape[i] for i in range(len(self.shape))]
-                expanded_grad = out.grad.reshape(expanded_shape) + np.zeros_like(self.data)
-                self.grad += expanded_grad
+                out_grad = out.grad
+                if out.ndim < self.ndim:
+                    sum_axis = [axis] if type(axis) is int else axis
+                    expanded_shape = [1 if sum_axis is None or i in sum_axis else self.shape[i] for i in range(len(self.shape))]
+                    out_grad = out_grad.reshape(expanded_shape)
+                self.grad += out_grad + np.zeros_like(self.data)
 
         if out.requires_grad:
             out.grad_fn = grad_sum
 
         return out
     
-    def softmax(self, axis: int = -1) -> 'Tensor':
-        ret = self.data - np.max(self.data, axis=axis, keepdims=True)
-        ret = np.exp(ret)
-        ret = ret / np.sum(ret.data, axis=axis, keepdims=True)
-        
+    def max(self, axis: int = None, keepdims: bool = False) -> 'Tensor':
         out = Tensor(
-            data = ret,
+            data = np.max(self.data, axis=axis, keepdims=keepdims),
             depends_on = [self],
             requires_grad = self.requires_grad
         )
 
-        def grad_softmax():
+        def grad_max():
             if self.requires_grad:
-                self.grad += out.grad * out.data * (1 - out.data)
+                out_grad = out.grad
+                out_data = out.data
+                if out.ndim < self.ndim:
+                    max_axis = [axis] if type(axis) is int else axis
+                    # here I don't use np.expand_dims(), because I have to deal
+                    # with the situation when axis = None
+                    expanded_shape = [1 if max_axis is None or i in max_axis else self.shape[i] for i in range(len(self.shape))]
+                    out_grad = out_grad.reshape(expanded_shape)
+                    out_data = out_data.reshape(expanded_shape)
+                mask = (self.data == out_data)
+                self.grad += mask * out_grad
 
         if out.requires_grad:
-            out.grad_fn = grad_softmax
+            out.grad_fn = grad_max
 
+        return out
+    
+    def softmax(self, axis: int = -1) -> 'Tensor':
+        out = self - self.max(axis=axis, keepdims=True)
+        out = out.exp()
+        out = out / out.sum(axis=axis, keepdims=True)
         return out
     
     def log_softmax(self, axis: int = -1) -> 'Tensor':

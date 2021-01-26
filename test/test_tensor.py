@@ -141,7 +141,6 @@ class TestTensor(unittest.TestCase):
             return b.detach().numpy(), a.grad.numpy()
         
         for x, y in zip(test_tinyark(), test_torch()):
-            print(x, y)
             np.testing.assert_allclose(x, y, atol=1e-5)
 
     def test_sum(self):
@@ -156,6 +155,24 @@ class TestTensor(unittest.TestCase):
             a = torch.tensor([1., 2., 3., 4.], requires_grad=True)
             b = a ** 2
             c = b.sum()
+            c.backward()
+            return c.detach().numpy(), a.grad.numpy()
+        
+        for x, y in zip(test_tinyark(), test_torch()):
+            np.testing.assert_allclose(x, y, atol=1e-5)
+    
+    def test_max(self):
+        def test_tinyark():
+            a = tinyark.Tensor([1., 2., 4., 4.], requires_grad=True)
+            b = a ** 2
+            c = b.max()
+            c.backward()
+            return c.data, a.grad
+
+        def test_torch():
+            a = torch.tensor([1., 2., 4., 4.], requires_grad=True)
+            b = a ** 2
+            c = b.max()
             c.backward()
             return c.detach().numpy(), a.grad.numpy()
         
@@ -184,7 +201,47 @@ class TestTensor(unittest.TestCase):
         
         for x, y in zip(test_tinyark(), test_torch()):
             np.testing.assert_allclose(x, y, atol=1e-5)
-      
+    
+    def test_softmax(self):
+        a_init = np.random.randn(5).astype(np.float32)
+
+        def test_tinyark():
+            a = tinyark.Tensor(a_init, requires_grad=True)
+            b = a.softmax()
+            c = b.sum()
+            c.backward()
+            return c.data, b.data, a.grad
+
+        def test_torch():
+            a = torch.tensor(a_init, requires_grad=True)
+            b = torch.nn.functional.softmax(a, dim=0)
+            c = b.sum()
+            c.backward()
+            return c.detach().numpy(), b.detach().numpy(), a.grad.numpy()
+        
+        for x, y in zip(test_tinyark(), test_torch()):
+            np.testing.assert_allclose(x, y, atol=1e-5)
+        
+    def test_log_softmax(self):
+        a_init = np.random.randn(5).astype(np.float32)
+
+        def test_tinyark():
+            a = tinyark.Tensor(a_init, requires_grad=True)
+            b = a.log_softmax()
+            c = b.sum()
+            c.backward()
+            return c.data, b.data, a.grad
+
+        def test_torch():
+            a = torch.tensor(a_init, requires_grad=True)
+            b = torch.nn.functional.log_softmax(a, dim=0)
+            c = b.sum()
+            c.backward()
+            return c.detach().numpy(), b.detach().numpy(), a.grad.numpy()
+        
+        for x, y in zip(test_tinyark(), test_torch()):
+            np.testing.assert_allclose(x, y, atol=1e-5)
+            
         
 if __name__ == '__main__':
     unittest.main()

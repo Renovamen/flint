@@ -116,6 +116,7 @@ Support autograding on the following operations:
 - [x] Natural Logarithm
 - [x] Exponential
 - [x] Sum
+- [x] Max
 - [x] Softmax
 - [x] Log Softmax
 
