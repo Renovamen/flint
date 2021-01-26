@@ -26,7 +26,7 @@ class TinyarkNet(tinyark.nn.Module):
     def forward(self) -> tinyark.Tensor:
         out = self.x @ self.w
         out = self.relu(out).log_softmax()
-        out = (out + self.b).sum(axis=1)
+        out = (out + self.b).sum()
         return out
 
 class TorchNet(torch.nn.Module):
@@ -51,7 +51,7 @@ def step_tinyark(optim: tinyark.optim.Optimizer, kwargs = {}) -> Tuple[np.ndarra
     out = net.forward()
     out.backward()
     optim.step()
-    return net.w.data, net.b.data
+    return net.w.data
 
 def step_pytorch(optim: torch.optim.Optimizer, kwargs = {}) -> Tuple[np.ndarray, np.ndarray]:
     net = TorchNet()
@@ -59,7 +59,7 @@ def step_pytorch(optim: torch.optim.Optimizer, kwargs = {}) -> Tuple[np.ndarray,
     out = net.forward()
     out.backward()
     optim.step()
-    return net.w.detach().numpy(), net.b.detach().numpy()
+    return net.w.detach().numpy()
 
 
 class TestOptim(unittest.TestCase):

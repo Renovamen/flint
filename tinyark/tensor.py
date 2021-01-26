@@ -227,7 +227,6 @@ class Tensor(object):
             if other.requires_grad:
                 # other.grad += - (out.grad * self.data / (other.data ** 2))
                 other.grad = broadcast_add(other.grad, - (out.grad * self.data / (other.data ** 2)))
-
         if out.requires_grad:
             out.grad_fn = grad_div
 

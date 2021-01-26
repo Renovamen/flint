@@ -10,10 +10,8 @@ def relu(input: Tensor) -> Tensor:
     Compute ReLU (Rectified Linear Unit) element-wise.
     '''
 
-    ret = np.maximum(0., input.data)
-
     out = Tensor(
-        data = ret,
+        data = np.maximum(0., input.data),
         depends_on = [input],
         requires_grad = input.requires_grad
     )

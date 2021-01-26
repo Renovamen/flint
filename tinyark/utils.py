@@ -21,6 +21,6 @@ def to_categorical(target: np.ndarray, n_col: int = None) -> np.ndarray:
 def broadcast_add(input: np.ndarray, other: np.ndarray) -> np.ndarray:
 	unmatched_axis = [i for i, s in enumerate(other.shape) if s != input.shape[i]]
 	if unmatched_axis != []:
-		return input + np.sum(other, axis=unmatched_axis[0])
+		return input + np.sum(other, axis=unmatched_axis[0], keepdims=True)
 	else:
 		return input + other
