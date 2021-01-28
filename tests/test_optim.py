@@ -64,11 +64,35 @@ def step_pytorch(optim: torch.optim.Optimizer, kwargs = {}) -> Tuple[np.ndarray,
 
 class TestOptim(unittest.TestCase):
     def test_sgd(self):
-        for x, y in zip(
-            step_tinyark(tinyark.optim.SGD, kwargs={'lr': 0.001, 'weight_decay': 0.1}),
-            step_pytorch(torch.optim.SGD, kwargs={'lr': 0.001, 'weight_decay': 0.1})
-        ):
-            np.testing.assert_allclose(x, y, atol=1e-5)
+        x = step_tinyark(tinyark.optim.SGD, kwargs={'lr': 0.001, 'weight_decay': 0.1})
+        y = step_pytorch(torch.optim.SGD, kwargs={'lr': 0.001, 'weight_decay': 0.1})
+        np.testing.assert_allclose(x, y, atol=1e-5)
+    
+    def test_momentum(self):
+        # heavy ball / polyak's momentum
+        x = step_tinyark(tinyark.optim.SGD, kwargs={'lr': 0.001, 'momentum': 0.01})
+        y = step_pytorch(torch.optim.SGD, kwargs={'lr': 0.001, 'momentum': 0.01})
+        np.testing.assert_allclose(x, y, atol=1e-5)
+        
+        # nesterov's momentum
+        x = step_tinyark(tinyark.optim.SGD, kwargs={'lr': 0.001, 'momentum': 0.01, 'nesterov': True})
+        y = step_pytorch(torch.optim.SGD, kwargs={'lr': 0.001, 'momentum': 0.01, 'nesterov': True})
+        np.testing.assert_allclose(x, y, atol=1e-5)
+
+    def test_adagrad(self):
+        x = step_tinyark(tinyark.optim.Adagrad, kwargs={'lr': 0.001})
+        y = step_pytorch(torch.optim.Adagrad, kwargs={'lr': 0.001})
+        np.testing.assert_allclose(x, y, atol=1e-5)
+    
+    def test_rmsprop(self):
+        x = step_tinyark(tinyark.optim.RMSprop, kwargs={'lr': 0.001, 'alpha': 0.95})
+        y = step_pytorch(torch.optim.RMSprop, kwargs={'lr': 0.001, 'alpha': 0.95})
+        np.testing.assert_allclose(x, y, atol=1e-5)
+    
+    def test_adadelta(self):
+        x = step_tinyark(tinyark.optim.Adadelta, kwargs={'lr': 0.01, 'rho': 0.97})
+        y = step_pytorch(torch.optim.Adadelta, kwargs={'lr': 0.01, 'rho': 0.97})
+        np.testing.assert_allclose(x, y, atol=1e-5)
 
 
 if __name__ == '__main__':

@@ -134,10 +134,10 @@ Support autograding on the following operations:
 ### Optimizers
 
 - [x] SGD
-- [ ] Momentum
-- [ ] AdaGrad
-- [ ] RMSprop
-- [ ] AdaDelta
+- [x] Momentum
+- [x] Adagrad
+- [x] RMSprop
+- [x] Adadelta
 - [ ] Adam
 
 ### Loss Functions
