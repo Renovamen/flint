@@ -163,7 +163,7 @@ Support autograding on the following operations:
 
 ### Others
 
-- [ ] Maybe incorporate the [Keras](https://github.com/keras-team/keras)-like API to make the training process simpler?
+- [ ] Maybe incorporate the [Keras](https://github.com/keras-team/keras)-like API to make the training code simpler?
 
 
 &nbsp;

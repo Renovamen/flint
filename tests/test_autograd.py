@@ -243,6 +243,32 @@ class TestAutograd(unittest.TestCase):
         
         for x, y in zip(test_tinyark(), test_torch()):
             np.testing.assert_allclose(x, y, atol=1e-5)
+    
+    def test_get_item(self):
+        a_init = np.random.randn(5).astype(np.float32)
+
+        def test_tinyark():
+            a = tinyark.Tensor([1., 2., 3., 4.], requires_grad=True)
+            b = a[1:3]
+            c = b.sum()
+            c.backward()
+            d = a[1:2]
+            e = d.sum()
+            e.backward()
+            return b.data, d.data, a.grad
+
+        def test_torch():
+            a = torch.tensor([1., 2., 3., 4.], requires_grad=True)
+            b = a[1:3]
+            c = b.sum()
+            c.backward()
+            d = a[1:2]
+            e = d.sum()
+            e.backward()
+            return b.detach().numpy(), d.detach().numpy(), a.grad.numpy()
+        
+        for x, y in zip(test_tinyark(), test_torch()):
+            np.testing.assert_allclose(x, y, atol=1e-5)
             
         
 if __name__ == '__main__':

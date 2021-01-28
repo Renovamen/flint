@@ -304,7 +304,6 @@ class Tensor(object):
 
         def grad_slice():
             if self.requires_grad:
-                self.zero_grad()
                 self.grad[item] = out.grad
 
         if out.requires_grad:
