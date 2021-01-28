@@ -13,15 +13,14 @@ n_classes = 2
 class MLP(nn.Module):
     def __init__(self, in_features, n_classes):
         super(MLP, self).__init__()
-        self.l1 = nn.Linear(in_features, n_classes)
-        # self.l1 = nn.Linear(in_features, 5)
+        self.l1 = nn.Linear(in_features, 5)
         self.l2 = nn.Linear(5, n_classes)
         self.relu = nn.ReLU()
 
     def forward(self, x):
         out = self.l1(x)
-        # out = self.relu(out)
-        # out = self.l2(out)
+        out = self.relu(out)
+        out = self.l2(out)
         return out
 
 def get_data():

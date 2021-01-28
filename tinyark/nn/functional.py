@@ -1,7 +1,7 @@
 import numpy as np
 from typing import Union
-from .tensor import Tensor
-from .utils import *
+from ..tensor import Tensor
+from ..utils import *
 
 # ---------------------- activators ----------------------
 

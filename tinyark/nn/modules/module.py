@@ -1,7 +1,7 @@
 from collections import OrderedDict
 from typing import Optional, Union, Iterator, Tuple, Set
 from tinyark import Tensor
-from tinyark.nn import Parameter
+from .. import Parameter
 
 class Module(object):
     '''

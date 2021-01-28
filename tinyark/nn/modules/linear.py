@@ -2,7 +2,7 @@ import numpy as np
 import math
 
 from tinyark import Tensor
-from tinyark.nn import Parameter, init
+from .. import Parameter, init
 from .module import Module
 
 class Linear(Module):

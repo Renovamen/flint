@@ -1,10 +1,10 @@
 from tinyark import Tensor
-import tinyark.functional as F
+from .. import functional as F
 
 class ReLU:
     '''
     ReLU (Rectified Linear Unit) activation function
-    See tinyark.functional.relu() for more details.
+    See tinyark.nn.functional.relu() for more details.
     '''
 
     def __init__(self) -> None:
@@ -17,7 +17,7 @@ class ReLU:
 class Sigmoid:
     '''
     Sigmoid activation function
-    See tinyark.functional.sigmoid() for more details.
+    See tinyark.nn.functional.sigmoid() for more details.
     '''
 
     def __init__(self) -> None:
@@ -30,7 +30,7 @@ class Sigmoid:
 class Tanh:
     '''
     Tanh (Hyperbolic Tangent) activation function
-    See tinyark.functional.tanh() for more details.
+    See tinyark.nn.functional.tanh() for more details.
     '''
 
     def __init__(self) -> None:

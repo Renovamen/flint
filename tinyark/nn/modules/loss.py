@@ -1,5 +1,5 @@
 from tinyark import Tensor
-import tinyark.functional as F
+from .. import functional as F
 
 class Loss:
     def __init__(self, reduction: str = 'mean') -> None:
@@ -9,7 +9,7 @@ class Loss:
 class NllLoss(Loss):
     '''
     Negative Log Likelihood Loss
-    See tinyark.functional.nll_loss() for more details.
+    See tinyark.nn.functional.nll_loss() for more details.
 
     args:
         reduction (str, optional): 'none' / 'mean' / 'sum'
@@ -25,7 +25,7 @@ class NllLoss(Loss):
 class CrossEntropyLoss(Loss):
     '''
     Cross Entropy Loss, combines softmax() and nll_loss().
-    See tinyark.functional.cross_entropy() for more details.
+    See tinyark.nn.functional.cross_entropy() for more details.
 
     args:
         reduction (str, optional): 'none' / 'mean' / 'sum'

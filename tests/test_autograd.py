@@ -6,7 +6,7 @@ import numpy as np
 import tinyark
 import torch
 
-class TestTensor(unittest.TestCase):
+class TestAutograd(unittest.TestCase):
     def test_add(self):
         def test_tinyark():
             a = tinyark.Tensor(2.0, requires_grad=True)
@@ -144,15 +144,17 @@ class TestTensor(unittest.TestCase):
             np.testing.assert_allclose(x, y, atol=1e-5)
 
     def test_sum(self):
+        a_init = np.random.randn(5).astype(np.float32)
+
         def test_tinyark():
-            a = tinyark.Tensor([1., 2., 3., 4.], requires_grad=True)
+            a = tinyark.Tensor(a_init.copy(), requires_grad=True)
             b = a ** 2
             c = b.sum()
             c.backward()
             return c.data, a.grad
 
         def test_torch():
-            a = torch.tensor([1., 2., 3., 4.], requires_grad=True)
+            a = torch.tensor(a_init.copy(), requires_grad=True)
             b = a ** 2
             c = b.sum()
             c.backward()
@@ -184,16 +186,16 @@ class TestTensor(unittest.TestCase):
         b_init = np.random.randn(3, 3).astype(np.float32)
 
         def test_tinyark():
-            a = tinyark.Tensor(a_init, requires_grad=True)
-            b = tinyark.Tensor(b_init, requires_grad=True)
+            a = tinyark.Tensor(a_init.copy(), requires_grad=True)
+            b = tinyark.Tensor(b_init.copy(), requires_grad=True)
             c = a @ b
             d = c.sum()
             d.backward()
             return c.data, d.data, a.grad, b.grad
 
         def test_torch():
-            a = torch.tensor(a_init, requires_grad=True)
-            b = torch.tensor(b_init, requires_grad=True)
+            a = torch.tensor(a_init.copy(), requires_grad=True)
+            b = torch.tensor(b_init.copy(), requires_grad=True)
             c = a @ b
             d = c.sum()
             d.backward()
@@ -206,14 +208,14 @@ class TestTensor(unittest.TestCase):
         a_init = np.random.randn(5).astype(np.float32)
 
         def test_tinyark():
-            a = tinyark.Tensor(a_init, requires_grad=True)
+            a = tinyark.Tensor(a_init.copy(), requires_grad=True)
             b = a.softmax()
             c = b.sum()
             c.backward()
             return c.data, b.data, a.grad
 
         def test_torch():
-            a = torch.tensor(a_init, requires_grad=True)
+            a = torch.tensor(a_init.copy(), requires_grad=True)
             b = torch.nn.functional.softmax(a, dim=0)
             c = b.sum()
             c.backward()
@@ -226,14 +228,14 @@ class TestTensor(unittest.TestCase):
         a_init = np.random.randn(5).astype(np.float32)
 
         def test_tinyark():
-            a = tinyark.Tensor(a_init, requires_grad=True)
+            a = tinyark.Tensor(a_init.copy(), requires_grad=True)
             b = a.log_softmax()
             c = b.sum()
             c.backward()
             return c.data, b.data, a.grad
 
         def test_torch():
-            a = torch.tensor(a_init, requires_grad=True)
+            a = torch.tensor(a_init.copy(), requires_grad=True)
             b = torch.nn.functional.log_softmax(a, dim=0)
             c = b.sum()
             c.backward()
