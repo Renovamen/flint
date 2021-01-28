@@ -16,5 +16,6 @@ class SGD(Optimizer):
     def step(self):
         for p in self.params:
             if p.requires_grad:
-                p.data = p.data * (1.0 - self.weight_decay) - self.lr * p.grad
+                p.data = p.data * (1.0 - self.lr * self.weight_decay) - self.lr * p.grad
+
         super(SGD, self).step()

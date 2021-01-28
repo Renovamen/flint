@@ -65,8 +65,8 @@ def step_pytorch(optim: torch.optim.Optimizer, kwargs = {}) -> Tuple[np.ndarray,
 class TestOptim(unittest.TestCase):
     def test_sgd(self):
         for x, y in zip(
-            step_tinyark(tinyark.optim.SGD, kwargs={'lr': 0.001}),
-            step_pytorch(torch.optim.SGD, kwargs={'lr': 0.001})
+            step_tinyark(tinyark.optim.SGD, kwargs={'lr': 0.001, 'weight_decay': 0.1}),
+            step_pytorch(torch.optim.SGD, kwargs={'lr': 0.001, 'weight_decay': 0.1})
         ):
             np.testing.assert_allclose(x, y, atol=1e-5)
 
