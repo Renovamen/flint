@@ -86,8 +86,9 @@ def nll_loss(
           F.nll_loss() IN PYTORCH!
 
     args:
-        input (Tensor): 2-dim (N, C), where N = batch size and C = number of classes
-        target (Tensor): 1-dim (N) where each value: 0 <= target[i] <= C-1
+        input (Tensor): a 2-dim (batch_size, n_classes) tensor
+        target (Tensor): a 1-dim (batch_size) tensor where each value:
+            0 <= target[i] <= n_classes-1
         reduction (str, optional): 'none' / 'mean' / 'sum'
     '''
 
@@ -142,12 +143,74 @@ def cross_entropy(
           F.cross_entropy() IN PYTORCH!
 
     args:
-        input (Tensor): 2-dim (N, C), where N = batch size and C = number of classes
-        target (Tensor): 1-dim (N) where each value: 0 <= target[i] <= C-1
+        input (Tensor): a 2-dim (batch_size, n_classes) tensor
+        target (Tensor): a 1-dim (batch_size) tensor where each value:
+            0 <= target[i] <= n_classes-1
         reduction (str, optional): 'none' / 'mean' / 'sum'
     '''
 
     after_softmax = input.softmax(axis=-1)
     out = nll_loss(after_softmax, target, reduction)
+
+    return out
+
+def mse_loss(
+    input: Tensor,
+    target: Tensor,
+    reduction: str = 'mean'
+) -> Tensor:
+    '''
+    Mean Squared Error Loss: (x - y)^2
+
+    args:
+        input (Tensor): Tensor of shape (batch_size, *)
+        target (Tensor): Tensor of the same shape as input
+        reduction (str, optional): 'none' / 'mean' / 'sum'
+    '''
+
+    if target.shape != input.shape:
+        raise ValueError(
+            "The target size ({}) is different to the input size ({}). "
+            "Please ensure they have the same size.".format(target.shape, input.shape)
+        )
+
+    n = input.size
+    
+    out = (input - target) ** 2
+    if reduction in ['sum', 'mean']:
+        out = out.sum()
+    if reduction == 'mean':
+        out = out / n
+
+    return out
+
+def binary_cross_entropy(
+    input: Tensor,
+    target: Tensor,
+    reduction: str = 'mean'
+) -> Tensor:
+    '''
+    Binary Cross Entropy Loss:
+        loss = - (y * log(x) + (1 - y) * log(1 - x))
+
+    args:
+        input (Tensor): Tensor of shape (batch_size, *)
+        target (Tensor): Tensor of the same shape as input
+        reduction (str, optional): 'none' / 'mean' / 'sum'
+    '''
+
+    if target.shape != input.shape:
+        raise ValueError(
+            "The target size ({}) is different to the input size ({}). "
+            "Please ensure they have the same size.".format(target.shape, input.shape)
+        )
+
+    n = input.size
+    
+    out = - (target * input.log() + (-target + 1.) * (-input + 1.).log())
+    if reduction in ['sum', 'mean']:
+        out = out.sum()
+    if reduction == 'mean':
+        out = out / n
 
     return out

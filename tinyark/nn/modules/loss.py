@@ -37,3 +37,36 @@ class CrossEntropyLoss(Loss):
     def __call__(self, input: Tensor, target: Tensor) -> Tensor:
         self.data = F.cross_entropy(input, target, reduction=self.reduction)
         return self.data
+
+class MSELoss(Loss):
+    '''
+    Mean Squared Error Loss: (x - y)^2
+    See tinyark.nn.functional.mse_loss() for more details.
+
+    args:
+        reduction (str, optional): 'none' / 'mean' / 'sum'
+    '''
+
+    def __init__(self, reduction: str = 'mean') -> None:
+        super(MSELoss, self).__init__(reduction)
+
+    def __call__(self, input: Tensor, target: Tensor) -> Tensor:
+        self.data = F.mse_loss(input, target, reduction=self.reduction)
+        return self.data
+
+class BCELoss(Loss):
+    '''
+    Binary Cross Entropy Loss:
+        loss = y * log(x) + (1 - y) * log(1 - x)
+    See tinyark.nn.functional.bce_loss() for more details.
+
+    args:
+        reduction (str, optional): 'none' / 'mean' / 'sum'
+    '''
+
+    def __init__(self, reduction: str = 'mean') -> None:
+        super(BCELoss, self).__init__(reduction)
+
+    def __call__(self, input: Tensor, target: Tensor) -> Tensor:
+        self.data = F.binary_cross_entropy(input, target, reduction=self.reduction)
+        return self.data

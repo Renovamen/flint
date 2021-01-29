@@ -144,7 +144,8 @@ Support autograding on the following operations:
 
 - [x] Cross Entropy
 - [x] Negative Log Likelihood
-- [ ] Mean Squared Error
+- [x] Mean Squared Error
+- [x] Binary Cross Entropy
 
 ### Activation Functions
 
