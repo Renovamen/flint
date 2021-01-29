@@ -13,6 +13,11 @@ class Adagrad(Optimizer):
         eps (float, optional): term added to the denominator to improve
             numerical stability (default: 1e-10)
         weight_decay (float, optional): weight decay (L2 penalty) (default: 0)
+    
+    refs:
+        Adaptive Subgradient Methods for Online Learning and Stochastic
+        Optimization. John Duchi, et al. JMRL 2011.
+        Paper: https://jmlr.org/papers/volume12/duchi11a/duchi11a.pdf
     '''
 
     def __init__(
@@ -31,7 +36,7 @@ class Adagrad(Optimizer):
             if p.requires_grad:
                 # l2 penalty
                 p_grad = p.grad + self.weight_decay * p.data
-                # accumulate gradients
+                # accumulate squared gradients
                 h += p.grad ** 2
                 self.h[i] = h
                 # update parameters

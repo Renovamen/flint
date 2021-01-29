@@ -138,7 +138,7 @@ Support autograding on the following operations:
 - [x] Adagrad
 - [x] RMSprop
 - [x] Adadelta
-- [ ] Adam
+- [x] Adam
 
 ### Loss Functions
 
@@ -163,6 +163,8 @@ Support autograding on the following operations:
 
 ### Others
 
+- [ ] Dataloaders
+- [ ] Support GPU
 - [ ] Maybe incorporate the [Keras](https://github.com/keras-team/keras)-like API to make the training code simpler?
 
 

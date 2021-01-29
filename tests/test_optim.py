@@ -93,6 +93,11 @@ class TestOptim(unittest.TestCase):
         x = step_tinyark(tinyark.optim.Adadelta, kwargs={'lr': 0.01, 'rho': 0.97})
         y = step_pytorch(torch.optim.Adadelta, kwargs={'lr': 0.01, 'rho': 0.97})
         np.testing.assert_allclose(x, y, atol=1e-5)
+    
+    def test_adam(self):
+        x = step_tinyark(tinyark.optim.Adam)
+        y = step_pytorch(torch.optim.Adam)
+        np.testing.assert_allclose(x, y, atol=1e-5)
 
 
 if __name__ == '__main__':

@@ -18,6 +18,10 @@ class Adadelta(Optimizer):
         lr (float, optional): coefficient that scale delta before it is applied
             to the parameters (default: 1.0)
         weight_decay (float, optional): weight decay (L2 penalty) (default: 0)
+    
+    refs:
+        ADADELTA: An Adaptive Learning Rate Method. Matthew D. Zeiler. arxiv 2012.
+        Paper: https://arxiv.org/abs/1212.5701
     '''
 
     def __init__(
@@ -43,7 +47,7 @@ class Adadelta(Optimizer):
                 h = self.rho * h + (1 - self.rho) * (p.grad ** 2)
                 self.h[i] = h
                 # compute g'_t and delta_t
-                g_ = np.sqrt((delta + self.eps) / (h + self.eps)) * p.grad
+                g_ = np.sqrt(delta + self.eps) / np.sqrt(h + self.eps) * p.grad
                 delta = self.rho * delta + (1 - self.rho) * (g_ ** 2)
                 self.delta[i] = delta
                 # update parameters
