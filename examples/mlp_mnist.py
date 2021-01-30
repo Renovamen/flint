@@ -16,17 +16,17 @@ class MLP(nn.Module):
     def __init__(self, in_features: int, n_classes: int):
         super(MLP, self).__init__()
         self.in_features = in_features
-        self.l1 = nn.Linear(in_features, in_features // 2)
-        self.l2 = nn.Linear(in_features // 2, in_features // 4)
-        self.l3 = nn.Linear(in_features // 4, n_classes)
-        self.relu = nn.ReLU()
+        self.model = nn.Sequential(
+            nn.Linear(in_features, in_features // 2),
+            nn.ReLU(),
+            nn.Linear(in_features // 2, in_features // 4),
+            nn.ReLU(),
+            nn.Linear(in_features // 4, n_classes)
+        )
 
     def forward(self, x: Tensor):
-        batch_size = x.shape[0]
         x = x.view(-1, self.in_features)
-        out = self.relu(self.l1(x))
-        out = self.relu(self.l2(out))
-        out = self.l3(out)
+        out = self.model(x)
         return out
 
 def collate_fn(batch):

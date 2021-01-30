@@ -51,6 +51,25 @@ class Net(nn.Module):
         return out
 ```
 
+Or you may prefer to use a `Sequential` container:
+
+```python
+from tinyark import nn
+
+class Net(nn.Module):
+    def __init__(self, in_features, n_classes):
+        super(MLP, self).__init__()
+        self.model = nn.Sequential(
+            nn.Linear(in_features, 5)
+            nn.ReLU(),
+            nn.Linear(5, n_classes)
+        )
+
+    def forward(self, x):
+        out = self.model(x)
+        return out
+```
+
 Then you can train it:
 
 ```python
@@ -79,7 +98,7 @@ net = Net(in_features, n_classes)
 optimer = optim.Adam(params=net.parameters(), lr=lr)
 loss_function = nn.CrossEntropyLoss()
 
-# then we can train it
+# start training!
 for i in range(n_epoch):
     # clear gradients
     optimer.zero_grad()
@@ -96,7 +115,7 @@ for i in range(n_epoch):
 
     # compute accuracy
     preds = scores.argmax(axis = 1)
-    correct_preds = tinyark.eq(preds, y).sum().data
+    correct_preds = (preds == y).sum().data
     accuracy = correct_preds / y.shape[0]
 
     # print training status
@@ -151,7 +170,7 @@ Support autograding on the following operations:
 - [ ] Dropout
 - [ ] BatchNormalization
 - [ ] RNN
-- [ ] Sequential
+- [x] Sequential
 
 ### Optimizers
 
