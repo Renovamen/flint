@@ -367,6 +367,10 @@ class Tensor(object):
         return out
     
     def max(self, axis: int = None, keepdims: bool = False) -> 'Tensor':
+        '''
+        Return the maximum value of all elements in the tensor.
+        '''
+
         out = Tensor(
             data = np.max(self.data, axis=axis, keepdims=keepdims),
             depends_on = [self],
@@ -391,6 +395,13 @@ class Tensor(object):
             out.grad_fn = grad_max
 
         return out
+
+    def argmax(self, axis: int = None) -> 'Tensor':
+        '''
+        Return the indice of the maximum value of all elements in the tensor.
+        '''
+        out = Tensor(np.argmax(self.data, axis=axis))
+        return out
     
     def softmax(self, axis: int = -1) -> 'Tensor':
         out = self - self.max(axis=axis, keepdims=True)
@@ -404,6 +415,14 @@ class Tensor(object):
         return out
     
     def view(self, *shape) -> 'Tensor':
+        '''
+        Returns a new tensor with the same data as the self tensor but of
+        a different shape.
+
+        args:
+            shape: the desired size
+        '''
+        
         out = Tensor(
             data = np.reshape(self.data, shape),
             depends_on = [self],

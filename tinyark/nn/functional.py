@@ -103,6 +103,7 @@ def nll_loss(
         )
 
     batch_size = input.shape[0]
+    n_classes = input.shape[1]
     delta = 1e-7  # deal with the situation that input.data = 0
 
     ret = - np.log(input.data[np.arange(batch_size), target.data.astype(np.int)] + delta)
@@ -120,7 +121,7 @@ def nll_loss(
     def grad_nll():
         if input.requires_grad:
             p = np.clip(input.data, 1e-15, 1 - 1e-15)
-            y = to_categorical(target.data)
+            y = to_categorical(target.data, n_classes=n_classes)
             if reduction == 'mean':
                 input.grad += (p - y) / batch_size  # (batch_size, n_classes)
             elif reduction == 'sum':

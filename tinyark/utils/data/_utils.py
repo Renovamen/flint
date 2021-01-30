@@ -1,5 +1,5 @@
 import numpy as np
-from tinyark import Tensor
+import tinyark
 
 def default_collate(batch):
     '''
@@ -10,8 +10,8 @@ def default_collate(batch):
     elem_type = type(elem)
 
     if isinstance(elem, np.ndarray):
-        return Tensor(np.stack(batch))
+        return tinyark.Tensor(np.stack(batch))
     if isinstance(elem, (int, float)):
-        return Tensor(np.array(batch))
+        return tinyark.Tensor(np.array(batch))
     if isinstance(elem, tuple):
-        return elem_type(*(default_collate(samples) for samples in zip(*batch)))
+        return elem_type(default_collate(samples) for samples in zip(*batch))

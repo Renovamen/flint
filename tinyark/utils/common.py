@@ -1,20 +1,22 @@
 import numpy as np
 
-def to_categorical(target: np.ndarray, n_col: int = None) -> np.ndarray:
+def to_categorical(target: np.ndarray, n_classes: int = None) -> np.ndarray:
 	'''
 	Convert a class vector (integers) to binary class matrix.
 
 	args:
-        target (np.ndarray): 1-dim (N) where each value: 0 <= target[i] <= n_classes-1
-        n_col (int, optional): number of colums in transformed data
+        target (np.ndarray): A 1-dim (batch_size) class vector to be converted
+			into a matrix (integers from 0 to n_classes - 1).
+        n_classes (int, optional): Total number of classes. If `None`, this
+			would be inferred as the (largest number in target) + 1.
 	
 	returns:
 		one_hot (ndarray): a binary class matrix (batch_size, n_classes)
 	'''
 	
-	n_col = n_col if n_col is not None else np.max(target) + 1
+	n_classes = n_classes if n_classes is not None else np.max(target) + 1
 	batch_size = target.shape[0]
-	one_hot = np.zeros((batch_size, n_col))
+	one_hot = np.zeros((batch_size, n_classes))
 	one_hot[np.arange(batch_size), target] = 1
 	return one_hot
 

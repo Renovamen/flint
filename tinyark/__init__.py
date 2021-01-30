@@ -1,3 +1,4 @@
 from .tensor import Tensor
-from .nn import *
-from .optim import *
+from . import nn
+from . import optim
+from .functional import *

@@ -1,7 +1,9 @@
 # adopted from: https://github.com/teddykoker/tinyloader/blob/main/dataloader.py
 
+import math
 from typing import Optional, Any, Callable, List
-from . import Dataset, _utils
+from .dataset import Dataset
+from . import _utils
 
 class DataLoader:
     '''
@@ -20,7 +22,7 @@ class DataLoader:
         self,
         dataset: Dataset,
         batch_size: Optional[int] = 1,
-        collate_fn: Callable[[List[T]], Any] = None
+        collate_fn: Callable = None
     ):
         self.index = 0
         self.dataset = dataset
@@ -38,8 +40,11 @@ class DataLoader:
     def __next__(self) -> Any:
         if self.index >= len(self.dataset):
             raise StopIteration
-        batch_size = min(len(self.dataset) - self.batch_size, self.batch_size)
+        batch_size = min(len(self.dataset) - self.index, self.batch_size)
         return self.collate_fn([self.get() for _ in range(batch_size)])
+
+    def __len__(self) -> int:
+        return math.ceil(len(self.dataset) / self.batch_size)
 
     def get(self):
         item = self.dataset[self.index]

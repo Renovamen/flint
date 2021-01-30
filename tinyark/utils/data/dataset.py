@@ -1,6 +1,7 @@
 # adopted from: https://github.com/pytorch/pytorch/blob/master/torch/utils/data/dataset.py
 
 import bisect
+from typing import List, Iterable
 
 class Dataset:
     def __getitem__(self, index):

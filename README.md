@@ -54,19 +54,20 @@ class Net(nn.Module):
 Then you can train it:
 
 ```python
+import tinyark
 from tinyark import nn, optim, Tensor
 import numpy as np
 
 # training parameters
 n_epoch = 20
-lr = 0.5
+lr = 0.001
 batch_size = 5
 
 # model parameters
 in_features = 10
 out_features = 2
 
-# randomly generate inputs and targets
+# generate some fake data
 inputs = np.random.rand(batch_size, in_features)
 targets = np.random.randint(0, n_classes, (batch_size, ))
 x, y = Tensor(inputs), Tensor(targets)
@@ -75,7 +76,7 @@ x, y = Tensor(inputs), Tensor(targets)
 net = Net(in_features, n_classes)
 
 # choose an optimizer and a loss function
-optimer = optim.SGD(params=net.parameters(), lr=lr)
+optimer = optim.Adam(params=net.parameters(), lr=lr)
 loss_function = nn.CrossEntropyLoss()
 
 # then we can train it
@@ -84,20 +85,34 @@ for i in range(n_epoch):
     optimer.zero_grad()
     
     # forward prop.
-    pred = net(x)
+    scores = net(x)
 
     # compute loss and do backward prop.
-    loss = loss_function(pred, y)
+    loss = loss_function(scores, y)
     loss.backward()
     
     # update weights
     optimer.step()
 
+    # compute accuracy
+    preds = scores.argmax(axis = 1)
+    correct_preds = tinyark.eq(preds, labels).sum().data
+    accuracy = correct_preds / labels.shape[0]
+
+    # print training status
     print(
-        'Epoch: [{0}][{1}]\t'
-        'Loss {loss:.4f}\t'.format(i + 1, n_epoch, loss = loss.data)
+        'Epoch: [{0}][{1}/{2}]\t'
+        'Loss {loss:.4f}\t'
+        'Accuracy {acc:.3f}'.format(
+            epoch + 1, i + 1, len(train_loader),
+            loss = loss.data,
+            acc = accuracy
+        )
     )
 ```
+
+Check the [`examples`](examples) folder for more detailed examples.
+
 
 &nbsp;
 
@@ -118,6 +133,7 @@ Support autograding on the following operations:
 - [x] Exponential
 - [x] Sum
 - [x] Max
+- [x] View
 - [x] Softmax
 - [x] Log Softmax
 
@@ -165,7 +181,7 @@ Support autograding on the following operations:
 
 ### Others
 
-- [ ] Dataloaders
+- [x] Dataloaders
 - [ ] Support GPU
 - [ ] Maybe incorporate the [Keras](https://github.com/keras-team/keras)-like API to make the training code simpler?
 
