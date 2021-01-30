@@ -96,8 +96,8 @@ for i in range(n_epoch):
 
     # compute accuracy
     preds = scores.argmax(axis = 1)
-    correct_preds = tinyark.eq(preds, labels).sum().data
-    accuracy = correct_preds / labels.shape[0]
+    correct_preds = tinyark.eq(preds, y).sum().data
+    accuracy = correct_preds / y.shape[0]
 
     # print training status
     print(
@@ -122,20 +122,25 @@ Check the [`examples`](examples) folder for more detailed examples.
 
 Support autograding on the following operations:
 
-- [x] Add
-- [x] Substract
-- [x] Negative
-- [x] Muliply
-- [x] Divide
-- [x] Matmul
-- [x] Power
-- [x] Natural Logarithm
-- [x] Exponential
-- [x] Sum
-- [x] Max
-- [x] View
-- [x] Softmax
-- [x] Log Softmax
+- Math
+    - [x] Add
+    - [x] Substract
+    - [x] Negative
+    - [x] Muliply
+    - [x] Divide
+    - [x] Matmul
+    - [x] Power
+    - [x] Natural Logarithm
+    - [x] Exponential
+    - [x] Sum
+    - [x] Max
+    - [x] Softmax
+    - [x] Log Softmax
+
+- Movement
+    - [x] View
+    - [x] Transpose
+    - [x] Permute
 
 ### Layers
 

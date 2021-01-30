@@ -8,6 +8,9 @@ import tinyark
 import torch
 
 class TestTensor(unittest.TestCase):
+    
+    # -------------- maths --------------
+    
     def test_add(self):
         def test_tinyark():
             a = tinyark.Tensor(2.0, requires_grad=True)
@@ -245,6 +248,8 @@ class TestTensor(unittest.TestCase):
         for x, y in zip(test_tinyark(), test_torch()):
             np.testing.assert_allclose(x, y, atol=1e-5)
     
+    # -------------- movement operations --------------
+
     def test_get_item(self):
         a_init = np.random.randn(5).astype(np.float32)
 
@@ -284,6 +289,46 @@ class TestTensor(unittest.TestCase):
         def test_torch():
             a = torch.tensor(a_init.copy(), requires_grad=True)
             b = a.view(1, -1)
+            c = b.sum()
+            c.backward()
+            return c.detach().numpy(), b.detach().numpy(), a.grad.numpy()
+        
+        for x, y in zip(test_tinyark(), test_torch()):
+            np.testing.assert_allclose(x, y, atol=1e-5)
+        
+    def test_permute(self):
+        a_init = np.random.randn(3, 4, 5).astype(np.float32)
+
+        def test_tinyark():
+            a = tinyark.Tensor(a_init.copy(), requires_grad=True)
+            b = a.permute(2, 0, 1) ** 2
+            c = b.sum()
+            c.backward()
+            return c.data, b.data, a.grad
+
+        def test_torch():
+            a = torch.tensor(a_init.copy(), requires_grad=True)
+            b = a.permute(2, 0, 1) ** 2
+            c = b.sum()
+            c.backward()
+            return c.detach().numpy(), b.detach().numpy(), a.grad.numpy()
+        
+        for x, y in zip(test_tinyark(), test_torch()):
+            np.testing.assert_allclose(x, y, atol=1e-5)
+    
+    def test_transpose(self):
+        a_init = np.random.randn(3, 4, 5).astype(np.float32)
+
+        def test_tinyark():
+            a = tinyark.Tensor(a_init.copy(), requires_grad=True)
+            b = a.transpose(1, 2) ** 2
+            c = b.sum()
+            c.backward()
+            return c.data, b.data, a.grad
+
+        def test_torch():
+            a = torch.tensor(a_init.copy(), requires_grad=True)
+            b = a.transpose(1, 2) ** 2
             c = b.sum()
             c.backward()
             return c.detach().numpy(), b.detach().numpy(), a.grad.numpy()

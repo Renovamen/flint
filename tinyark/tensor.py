@@ -414,13 +414,33 @@ class Tensor(object):
         out = after_softmax.log()
         return out
     
+    # -------------- movement operations --------------
+
+    def __getitem__(self, item):
+        out = Tensor(
+            data = self.data[item],
+            depends_on = [self],
+            requires_grad=self.requires_grad
+        )
+        if self.grad is not None:
+            out.grad = self.grad[item]
+
+        def grad_slice():
+            if self.requires_grad:
+                self.grad[item] = out.grad
+
+        if out.requires_grad:
+            out.grad_fn = grad_slice
+
+        return out
+
     def view(self, *shape) -> 'Tensor':
         '''
         Returns a new tensor with the same data as the self tensor but of
         a different shape.
 
         args:
-            shape: the desired size
+            *shape: the desired size
         '''
         
         out = Tensor(
@@ -436,6 +456,62 @@ class Tensor(object):
             out.grad_fn = grad_view
 
         return out
+    
+    def permute(self, *dims) -> 'Tensor':
+        '''
+        Returns a view of the original tensor with its dimensions permuted.
+
+        args:
+            *dims: the desired ordering of dimensions
+        '''
+
+        out = Tensor(
+            data = self.data.transpose(dims),
+            depends_on = [self],
+            requires_grad = self.requires_grad
+        )
+
+        def grad_permute():
+            self.grad += out.grad.transpose(np.argsort(dims))
+
+        if out.requires_grad:
+            out.grad_fn = grad_permute
+
+        return out
+    
+    def transpose(self, dim0, dim1) -> 'Tensor':
+        '''
+        Swap the dimension dim0 and dim1 of the tensor.
+
+        args:
+            dim0: the first dimension to be transposed
+            dim1: the second dimension to be transposed
+        '''
+
+        def get_dim(dim):
+            if dim == dim0:
+                return dim1
+            elif dim == dim1:
+                return dim0
+            else:
+                return dim
+
+        dims = tuple([get_dim(i) for i in range(self.ndim)])
+        
+        out = Tensor(
+            data = self.data.transpose(dims),
+            depends_on = [self],
+            requires_grad = self.requires_grad
+        )
+
+        def grad_transpose():
+            self.grad += out.grad.transpose(np.argsort(dims))
+
+        if out.requires_grad:
+            out.grad_fn = grad_transpose
+
+        return out
+
 
     # -------------- initializing --------------
     
