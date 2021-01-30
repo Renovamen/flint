@@ -1,5 +1,6 @@
+import os
 import sys
-sys.path.append('/Users/zou/Renovamen/Developing/tinyark/')
+sys.path.append(os.getcwd())
 
 import unittest
 import numpy as np

@@ -2,9 +2,11 @@
 This is an example for showing how to a MLP on the MNIST dataset.
 '''
 
+import os
 import sys
-sys.path.append('/Users/zou/Renovamen/Developing/tinyark/')
+sys.path.append(os.getcwd())
 
+from tqdm import tqdm
 import numpy as np
 import torchvision
 import tinyark
@@ -85,7 +87,7 @@ def train(n_epochs, train_loader, net, optimer, loss_function, print_freq):
             # update weights
             optimer.step()
 
-            # find accuracy
+            # compute accuracy
             preds = scores.argmax(axis = 1)
             correct_preds = tinyark.eq(preds, labels).sum().data
             accuracy = correct_preds / labels.shape[0]
@@ -101,6 +103,18 @@ def train(n_epochs, train_loader, net, optimer, loss_function, print_freq):
                         acc = accuracy
                     )
                 )
+
+def test(test_loader, net):
+    for i, batch in enumerate(tqdm(test_loader, desc = 'Testing')):
+        images, labels = batch
+        scores = net(images)
+        
+        # compute accuracy
+        preds = scores.argmax(axis = 1)
+        correct_preds = tinyark.eq(preds, labels).sum().data
+        accuracy = correct_preds / labels.shape[0]
+
+    print('\n * TEST ACCURACY - %.1f percent\n' % (accuracy * 100))
 
 if __name__ == '__main__':
     # define parameters here
@@ -122,3 +136,5 @@ if __name__ == '__main__':
 
     # start training!
     train(n_epochs, train_loader, net, optimer, loss_function, print_freq)
+    # test the model
+    test(test_loader, net)
