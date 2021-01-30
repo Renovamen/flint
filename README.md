@@ -90,6 +90,7 @@ for i in range(n_epoch):
     loss = loss_function(pred, y)
     loss.backward()
     
+    # update weights
     optimer.step()
 
     print(
@@ -179,4 +180,8 @@ Support autograding on the following operations:
 
 ## Acknowledgements
 
-This project is inspired by [karpathy/micrograd](https://github.com/karpathy/micrograd).
+TinyArk is inspired by the following projects:
+
+- [PyTorch](https://github.com/pytorch/pytorch)
+- [karpathy/micrograd](https://github.com/karpathy/micrograd)
+- [teddykoker/tinyloader](https://github.com/teddykoker/tinyloader)

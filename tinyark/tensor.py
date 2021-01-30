@@ -402,6 +402,21 @@ class Tensor(object):
         after_softmax = self.softmax(axis)
         out = after_softmax.log()
         return out
+    
+    def view(self, *shape) -> 'Tensor':
+        out = Tensor(
+            data = np.reshape(self.data, shape),
+            depends_on = [self],
+            requires_grad = self.requires_grad
+        )
+
+        def grad_view():
+            self.grad += np.reshape(out.grad, self.shape)
+        
+        if out.requires_grad:
+            out.grad_fn = grad_view
+
+        return out
 
     # -------------- initializing --------------
     
