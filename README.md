@@ -31,11 +31,16 @@ Coming soon 咕咕咕...
 
 ## Example
 
+Add these imports:
+
+```python
+import tinyark
+from tinyark import nn, optim, Tensor
+```
+
 Build your net first:
 
 ```python
-from tinyark import nn
-
 class Net(nn.Module):
     def __init__(self, in_features, n_classes):
         super(MLP, self).__init__()
@@ -54,8 +59,6 @@ class Net(nn.Module):
 Or you may prefer to use a `Sequential` container:
 
 ```python
-from tinyark import nn
-
 class Net(nn.Module):
     def __init__(self, in_features, n_classes):
         super(MLP, self).__init__()
@@ -70,13 +73,9 @@ class Net(nn.Module):
         return out
 ```
 
-Then you can train it:
+Define these hyper parameters:
 
 ```python
-import tinyark
-from tinyark import nn, optim, Tensor
-import numpy as np
-
 # training parameters
 n_epoch = 20
 lr = 0.001
@@ -85,20 +84,28 @@ batch_size = 5
 # model parameters
 in_features = 10
 out_features = 2
+```
 
-# generate some fake data
+Here we generate a fake dataset:
+
+```python
+import numpy as np
 inputs = np.random.rand(batch_size, in_features)
 targets = np.random.randint(0, n_classes, (batch_size, ))
 x, y = Tensor(inputs), Tensor(targets)
+```
 
-# initialize your network
+Initialize your model, optimizer and loss function:
+
+```python
 net = Net(in_features, n_classes)
-
-# choose an optimizer and a loss function
 optimer = optim.Adam(params=net.parameters(), lr=lr)
 loss_function = nn.CrossEntropyLoss()
+```
 
-# start training!
+Then we can train it:
+
+```python
 for i in range(n_epoch):
     # clear gradients
     optimer.zero_grad()
@@ -115,7 +122,7 @@ for i in range(n_epoch):
 
     # compute accuracy
     preds = scores.argmax(axis = 1)
-    correct_preds = (preds == y).sum().data
+    correct_preds = tinyark.eq(preds, y).sum().data
     accuracy = correct_preds / y.shape[0]
 
     # print training status
