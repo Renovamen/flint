@@ -8,9 +8,9 @@ import tinyark
 import torch
 
 class TestTensor(unittest.TestCase):
-    
+
     # -------------- maths --------------
-    
+
     def test_add(self):
         def test_tinyark():
             a = tinyark.Tensor(2.0, requires_grad=True)
@@ -25,10 +25,10 @@ class TestTensor(unittest.TestCase):
             c = a + b
             c.backward()
             return c.detach().numpy(), a.grad.numpy(), b.grad.numpy()
-        
+
         for x, y in zip(test_tinyark(), test_torch()):
             np.testing.assert_allclose(x, y, atol=1e-5)
-        
+
     def test_sub(self):
         def test_tinyark():
             a = tinyark.Tensor(2.0, requires_grad=True)
@@ -43,7 +43,7 @@ class TestTensor(unittest.TestCase):
             c = a - b
             c.backward()
             return c.detach().numpy(), a.grad.numpy(), b.grad.numpy()
-        
+
         for x, y in zip(test_tinyark(), test_torch()):
             np.testing.assert_allclose(x, y, atol=1e-5)
 
@@ -59,10 +59,10 @@ class TestTensor(unittest.TestCase):
             b = -a
             b.backward()
             return b.detach().numpy(), a.grad.numpy()
-        
+
         for x, y in zip(test_tinyark(), test_torch()):
             np.testing.assert_allclose(x, y, atol=1e-5)
-        
+
     def test_mul(self):
         def test_tinyark():
             a = tinyark.Tensor(2.0, requires_grad=True)
@@ -77,10 +77,10 @@ class TestTensor(unittest.TestCase):
             c = a * b
             c.backward()
             return c.detach().numpy(), a.grad.numpy(), b.grad.numpy()
-        
+
         for x, y in zip(test_tinyark(), test_torch()):
             np.testing.assert_allclose(x, y, atol=1e-5)
-    
+
     def test_div(self):
         def test_tinyark():
             a = tinyark.Tensor(2.0, requires_grad=True)
@@ -95,10 +95,10 @@ class TestTensor(unittest.TestCase):
             c = a / b
             c.backward()
             return c.detach().numpy(), a.grad.numpy(), b.grad.numpy()
-        
+
         for x, y in zip(test_tinyark(), test_torch()):
             np.testing.assert_allclose(x, y, atol=1e-5)
-    
+
     def test_pow(self):
         def test_tinyark():
             a = tinyark.Tensor(2.0, requires_grad=True)
@@ -111,10 +111,10 @@ class TestTensor(unittest.TestCase):
             b = a ** 2
             b.backward()
             return b.detach().numpy(), a.grad.numpy()
-        
+
         for x, y in zip(test_tinyark(), test_torch()):
             np.testing.assert_allclose(x, y, atol=1e-5)
-    
+
     def test_log(self):
         def test_tinyark():
             a = tinyark.Tensor(2.0, requires_grad=True)
@@ -127,10 +127,10 @@ class TestTensor(unittest.TestCase):
             b = a.log()
             b.backward()
             return b.detach().numpy(), a.grad.numpy()
-        
+
         for x, y in zip(test_tinyark(), test_torch()):
             np.testing.assert_allclose(x, y, atol=1e-5)
-    
+
     def test_exp(self):
         def test_tinyark():
             a = tinyark.Tensor(2.0, requires_grad=True)
@@ -143,7 +143,7 @@ class TestTensor(unittest.TestCase):
             b = a.exp()
             b.backward()
             return b.detach().numpy(), a.grad.numpy()
-        
+
         for x, y in zip(test_tinyark(), test_torch()):
             np.testing.assert_allclose(x, y, atol=1e-5)
 
@@ -163,10 +163,10 @@ class TestTensor(unittest.TestCase):
             c = b.sum()
             c.backward()
             return c.detach().numpy(), a.grad.numpy()
-        
+
         for x, y in zip(test_tinyark(), test_torch()):
             np.testing.assert_allclose(x, y, atol=1e-5)
-    
+
     def test_max(self):
         def test_tinyark():
             a = tinyark.Tensor([1., 2., 4., 4.], requires_grad=True)
@@ -181,10 +181,10 @@ class TestTensor(unittest.TestCase):
             c = b.max()
             c.backward()
             return c.detach().numpy(), a.grad.numpy()
-        
+
         for x, y in zip(test_tinyark(), test_torch()):
             np.testing.assert_allclose(x, y, atol=1e-5)
-    
+
     def test_dot(self):
         a_init = np.random.randn(1, 3).astype(np.float32)
         b_init = np.random.randn(3, 3).astype(np.float32)
@@ -204,10 +204,10 @@ class TestTensor(unittest.TestCase):
             d = c.sum()
             d.backward()
             return c.detach().numpy(), d.detach().numpy(), a.grad.numpy(), b.grad.numpy()
-        
+
         for x, y in zip(test_tinyark(), test_torch()):
             np.testing.assert_allclose(x, y, atol=1e-5)
-    
+
     def test_softmax(self):
         a_init = np.random.randn(5).astype(np.float32)
 
@@ -224,10 +224,10 @@ class TestTensor(unittest.TestCase):
             c = b.sum()
             c.backward()
             return c.detach().numpy(), b.detach().numpy(), a.grad.numpy()
-        
+
         for x, y in zip(test_tinyark(), test_torch()):
             np.testing.assert_allclose(x, y, atol=1e-5)
-        
+
     def test_log_softmax(self):
         a_init = np.random.randn(5).astype(np.float32)
 
@@ -244,10 +244,10 @@ class TestTensor(unittest.TestCase):
             c = b.sum()
             c.backward()
             return c.detach().numpy(), b.detach().numpy(), a.grad.numpy()
-        
+
         for x, y in zip(test_tinyark(), test_torch()):
             np.testing.assert_allclose(x, y, atol=1e-5)
-    
+
     # -------------- movement operations --------------
 
     def test_get_item(self):
@@ -272,10 +272,10 @@ class TestTensor(unittest.TestCase):
             e = d.sum()
             e.backward()
             return b.detach().numpy(), d.detach().numpy(), a.grad.numpy()
-        
+
         for x, y in zip(test_tinyark(), test_torch()):
             np.testing.assert_allclose(x, y, atol=1e-5)
-    
+
     def test_view(self):
         a_init = np.random.randn(3, 5).astype(np.float32)
 
@@ -292,10 +292,10 @@ class TestTensor(unittest.TestCase):
             c = b.sum()
             c.backward()
             return c.detach().numpy(), b.detach().numpy(), a.grad.numpy()
-        
+
         for x, y in zip(test_tinyark(), test_torch()):
             np.testing.assert_allclose(x, y, atol=1e-5)
-        
+
     def test_permute(self):
         a_init = np.random.randn(3, 4, 5).astype(np.float32)
 
@@ -312,10 +312,10 @@ class TestTensor(unittest.TestCase):
             c = b.sum()
             c.backward()
             return c.detach().numpy(), b.detach().numpy(), a.grad.numpy()
-        
+
         for x, y in zip(test_tinyark(), test_torch()):
             np.testing.assert_allclose(x, y, atol=1e-5)
-    
+
     def test_transpose(self):
         a_init = np.random.randn(3, 4, 5).astype(np.float32)
 
@@ -332,10 +332,31 @@ class TestTensor(unittest.TestCase):
             c = b.sum()
             c.backward()
             return c.detach().numpy(), b.detach().numpy(), a.grad.numpy()
-        
+
         for x, y in zip(test_tinyark(), test_torch()):
             np.testing.assert_allclose(x, y, atol=1e-5)
-            
-        
+
+    # -------------- padding --------------
+
+    def test_pad(self):
+        a_init = np.random.randn(1, 2, 3).astype(np.float32)
+
+        def test_tinyark():
+            a = tinyark.Tensor(a_init.copy(), requires_grad=True)
+            b = tinyark.nn.functional.pad(a, (1, 2, 3, 4))
+            c = (b ** 2).sum()
+            c.backward()
+            return c.data, b.data, a.grad
+
+        def test_torch():
+            a = torch.tensor(a_init.copy(), requires_grad=True)
+            b = torch.nn.functional.pad(a, (3, 4, 1, 2))
+            c = (b ** 2).sum()
+            c.backward()
+            return c.detach().numpy(), b.detach().numpy(), a.grad.numpy()
+
+        for x, y in zip(test_tinyark(), test_torch()):
+            np.testing.assert_allclose(x, y, atol=1e-5)
+
 if __name__ == '__main__':
     unittest.main()

@@ -1,5 +1,5 @@
 import numpy as np
-from typing import Union
+from typing import Union, Tuple
 from ..tensor import Tensor
 from ..utils import *
 
@@ -32,7 +32,7 @@ def sigmoid(input: Tensor) -> Tensor:
     '''
 
     ret = 1 / (1 + np.exp(-input.data))
-    
+
     out = Tensor(
         data = ret,
         depends_on = [input],
@@ -55,7 +55,7 @@ def tanh(input: Tensor) -> Tensor:
     '''
 
     ret = np.tanh(input.data)
-    
+
     out = Tensor(
         data = ret,
         depends_on = [input],
@@ -111,7 +111,7 @@ def nll_loss(
         ret = np.sum(ret)
     if reduction == 'mean':
         ret = ret / batch_size
-    
+
     out = Tensor(
         data = ret,
         depends_on = [input],
@@ -139,7 +139,7 @@ def cross_entropy(
 ) -> Tensor:
     '''
     Cross Entropy Loss
-    
+
     NOTE: Combines softmax() and nll_loss(), which is DIFFERENT FROM
           F.cross_entropy() IN PYTORCH!
 
@@ -176,7 +176,7 @@ def mse_loss(
         )
 
     n = input.size
-    
+
     out = (input - target) ** 2
     if reduction in ['sum', 'mean']:
         out = out.sum()
@@ -207,11 +207,47 @@ def binary_cross_entropy(
         )
 
     n = input.size
-    
+
     out = - (target * input.log() + (-target + 1.) * (-input + 1.).log())
     if reduction in ['sum', 'mean']:
         out = out.sum()
     if reduction == 'mean':
         out = out / n
+
+    return out
+
+# ---------------------- pad ----------------------
+
+def pad(input: Tensor, pad: Tuple) -> Tensor:
+
+    n_pad_dims = int(len(pad) / 2)
+    ndims = input.ndim
+
+    no_pad_width = [(0, 0) for i in range(0, ndims - n_pad_dims)]
+    pad_width = no_pad_width + [(pad[i * 2], pad[i * 2 + 1]) for i in range(0, n_pad_dims)]
+
+    ret = np.pad(
+        input.data,
+        pad_width=pad_width,
+        mode='constant',
+        constant_values=0,
+    )
+
+    out = Tensor(
+        data = ret,
+        depends_on = [input],
+        requires_grad = input.requires_grad
+    )
+
+    def unpad(x: Tensor):
+        slices = [slice(p[0], None if p[1] == 0 else -p[1]) for p in pad_width]
+        return x[tuple(slices)]
+
+    def grad_pad():
+        if input.requires_grad:
+            input.grad += unpad(out.grad)
+
+    if out.requires_grad:
+        out.grad_fn = grad_pad
 
     return out

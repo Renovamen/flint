@@ -168,6 +168,9 @@ Support autograding on the following operations:
     - [x] Transpose
     - [x] Permute
 
+- Others
+    - [x] Padding
+
 ### Layers
 
 - [x] Linear
