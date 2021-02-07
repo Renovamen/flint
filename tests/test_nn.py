@@ -8,6 +8,41 @@ import tinyark
 import torch
 
 class TestNN(unittest.TestCase):
+    def test_linear(self):
+        batch_size = 2
+        in_features = 10
+        out_features = 3
+
+        np.random.seed(0)
+        x_init = np.random.randn(batch_size, in_features).astype(np.float32)
+        w_init = np.random.randn(in_features, out_features).astype(np.float32)
+        b_init = np.random.randn(1, out_features).astype(np.float32)
+
+        def test_tinyark():
+            x = tinyark.Tensor(x_init.copy(), requires_grad=True)
+            w = tinyark.Tensor(w_init.copy(), requires_grad=True)
+            b = tinyark.Tensor(b_init.copy(), requires_grad=True)
+
+            out = tinyark.nn.functional.linear(x, w, b)
+            c = out.sum()
+            c.backward()
+
+            return out.data, w.grad
+
+        def test_torch():
+            x = torch.tensor(x_init.copy(), requires_grad=True)
+            w = torch.tensor(w_init.transpose(1, 0).copy(), requires_grad=True)
+            b = torch.tensor(b_init.squeeze().copy(), requires_grad=True)
+
+            out = torch.nn.functional.linear(x, w, b)
+            c = out.sum()
+            c.backward()
+
+            return out.detach().numpy(), w.grad.permute(1, 0).numpy()
+
+        for x, y in zip(test_tinyark(), test_torch()):
+            np.testing.assert_allclose(x, y, atol=1e-5)
+
     def test_conv2d(self):
         batch_size = 2
         h_in = 8

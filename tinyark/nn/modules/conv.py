@@ -113,7 +113,7 @@ class Conv1d(_ConvNd):
         )
 
     def forward(self, input: Tensor) -> Tensor:
-        return F.conv1d(
+        self.output = F.conv1d(
             input,
             self.weight,
             self.bias,
@@ -121,6 +121,7 @@ class Conv1d(_ConvNd):
             self.padding,
             self.dilation
         )
+        return self.output
 
 
 class Conv2d(_ConvNd):
@@ -176,7 +177,7 @@ class Conv2d(_ConvNd):
         )
 
     def forward(self, input: Tensor) -> Tensor:
-        return F.conv2d(
+        self.output = F.conv2d(
             input,
             self.weight,
             self.bias,
@@ -184,3 +185,4 @@ class Conv2d(_ConvNd):
             self.padding,
             self.dilation
         )
+        return self.output

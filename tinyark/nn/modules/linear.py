@@ -13,6 +13,10 @@ class Linear(Module):
         in_features (int): size of each input sample
         out_features (int): size of each output sample
         bias (bool, optional): enable bias or not (default: True)
+
+    shape:
+        input: (batch_size, in_features)
+        output: (batch_size, out_features)
     '''
     def __init__(self, in_features: int, out_features: int, bias: bool = True) -> None:
         super(Linear, self).__init__()
@@ -36,9 +40,5 @@ class Linear(Module):
             init.uniform_(self.bias, -bound, bound)
 
     def forward(self, input: Tensor) -> Tensor:
-        self.output = input @ self.weight
-
-        if self.bias is not None:
-            self.output += self.bias
-
+        self.output = F.linear(input, self.weight, self.bias)
         return self.output

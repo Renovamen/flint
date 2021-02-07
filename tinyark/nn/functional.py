@@ -267,6 +267,15 @@ def pad(input: Tensor, pad: Tuple, value: int = 0) -> Tensor:
 
     return out
 
+# ---------------------- linear ----------------------
+
+def linear(input: Tensor, weight: Tensor, bias: Tensor = None):
+    out = input @ weight
+
+    if bias is not None:
+        out += bias
+
+    return out
 
 # ---------------------- conv ----------------------
 
