@@ -7,8 +7,8 @@ from .module import Module
 from .utils import _single, _pair, _triple
 from .. import functional as F
 
-_Single = Union[int, Tuple[int]]
-_Pair = Union[int, Tuple[int, int]]
+_TSingle = Union[int, Tuple[int]]
+_TPair = Union[int, Tuple[int, int]]
 
 
 class _ConvNd(Module):
@@ -60,6 +60,69 @@ class _ConvNd(Module):
             bound = 1 / math.sqrt(fan_in)
             init.uniform_(self.bias, -bound, bound)
 
+
+class Conv1d(_ConvNd):
+    '''
+    Apply a 1D convolution over an input signal composed of several input
+    planes:
+
+    args:
+        in_channels (int): number of channels in the input image
+        out_channels (int): number of channels produced by the convolution
+        kernel_size (int or tuple): size of the convolving kernel
+        stride (int or tuple, optional):
+            stride of the convolution (default: 1)
+        padding (int or tuple, optional):
+            zero-padding added to both sides of the input (default: 0)
+        dilation (int or tuple, optional):
+            spacing between kernel elements (default: 1)
+        bias (bool, optional): enable bias or not (default: True)
+
+    shape:
+        input: (batch_size, in_channels, L_in)
+        output: (batch_size, out_channels, L_out)
+
+        where:
+            L_out = (L_in + 2 * padding - dilation * (kernel_size - 1) - 1) / stride + 1
+    '''
+
+    def __init__(
+        self,
+        in_channels: int,
+        out_channels: int,
+        kernel_size: _TSingle,
+        stride: _TSingle = 1,
+        padding: _TSingle = 0,
+        dilation: _TSingle = 1,
+        bias: bool = True
+    ):
+        # Union[int, Tuple[int]] -> Tuple[int]
+        kernel_size_ = _single(kernel_size)
+        stride_ = _single(stride)
+        padding_ = _single(padding)
+        dilation_ = _single(dilation)
+
+        super(Conv1d, self).__init__(
+            in_channels = in_channels,
+            out_channels = out_channels,
+            kernel_size = kernel_size_,
+            stride = stride_,
+            padding = padding_,
+            dilation = dilation_,
+            bias = bias
+        )
+
+    def forward(self, input: Tensor) -> Tensor:
+        return F.conv1d(
+            input,
+            self.weight,
+            self.bias,
+            self.stride,
+            self.padding,
+            self.dilation
+        )
+
+
 class Conv2d(_ConvNd):
     '''
     Apply a 2D convolution over an input signal composed of several input
@@ -90,10 +153,10 @@ class Conv2d(_ConvNd):
         self,
         in_channels: int,
         out_channels: int,
-        kernel_size: _Pair,
-        stride: _Pair = 1,
-        padding: _Pair = 0,
-        dilation: _Pair = 1,
+        kernel_size: _TPair,
+        stride: _TPair = 1,
+        padding: _TPair = 0,
+        dilation: _TPair = 1,
         bias: bool = True
     ):
         # Union[int, Tuple[int, int]] -> Tuple[int]

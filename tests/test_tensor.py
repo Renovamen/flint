@@ -336,6 +336,46 @@ class TestTensor(unittest.TestCase):
         for x, y in zip(test_tinyark(), test_torch()):
             np.testing.assert_allclose(x, y, atol=1e-5)
 
+    def test_squeeze(self):
+        a_init = np.random.randn(1, 2, 3).astype(np.float32)
+
+        def test_tinyark():
+            a = tinyark.Tensor(a_init.copy(), requires_grad=True)
+            b = a.squeeze() ** 2
+            c = b.sum()
+            c.backward()
+            return c.data, b.data, a.grad
+
+        def test_torch():
+            a = torch.tensor(a_init.copy(), requires_grad=True)
+            b = a.squeeze() ** 2
+            c = b.sum()
+            c.backward()
+            return c.detach().numpy(), b.detach().numpy(), a.grad.numpy()
+
+        for x, y in zip(test_tinyark(), test_torch()):
+            np.testing.assert_allclose(x, y, atol=1e-5)
+
+    def test_unsqueeze(self):
+        a_init = np.random.randn(2, 3).astype(np.float32)
+
+        def test_tinyark():
+            a = tinyark.Tensor(a_init.copy(), requires_grad=True)
+            b = a.unsqueeze(dim=0) ** 2
+            c = b.sum()
+            c.backward()
+            return c.data, b.data, a.grad
+
+        def test_torch():
+            a = torch.tensor(a_init.copy(), requires_grad=True)
+            b = a.unsqueeze(dim=0) ** 2
+            c = b.sum()
+            c.backward()
+            return c.detach().numpy(), b.detach().numpy(), a.grad.numpy()
+
+        for x, y in zip(test_tinyark(), test_torch()):
+            np.testing.assert_allclose(x, y, atol=1e-5)
+
     # -------------- padding --------------
 
     def test_pad(self):

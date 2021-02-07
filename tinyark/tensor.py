@@ -459,7 +459,7 @@ class Tensor(object):
 
         return out
 
-    def transpose(self, dim0, dim1) -> 'Tensor':
+    def transpose(self, dim0: int, dim1: int) -> 'Tensor':
         '''
         Swap the dimension dim0 and dim1 of the tensor.
 
@@ -492,6 +492,51 @@ class Tensor(object):
 
         return out
 
+    def unsqueeze(self, dim: int) -> 'Tensor':
+        '''
+        Insert a dimension of size one at the specified position.
+
+        args:
+            dim (int): the index at which to insert the singleton dimension
+        '''
+
+        out = Tensor(
+            data = np.expand_dims(self.data, axis=dim),
+            depends_on = [self],
+            requires_grad = self.requires_grad
+        )
+
+        def grad_unsqueeze():
+            self.grad = broadcast_add(self.grad, np.squeeze(out.grad, axis=dim))
+
+        if out.requires_grad:
+            out.grad_fn = grad_unsqueeze
+
+        return out
+
+    def squeeze(self, dim: int = None) -> 'Tensor':
+        '''
+        Remove the dimensions of input of size 1.
+
+        args:
+            dim (int, optional):
+                If given, the input will be squeezed only in this dimension. Or
+                all the dimensions of size 1 will be removed.
+        '''
+
+        out = Tensor(
+            data = np.squeeze(self.data, axis=dim),
+            depends_on = [self],
+            requires_grad = self.requires_grad
+        )
+
+        def grad_squeeze():
+            self.grad += np.reshape(out.grad, self.shape)
+
+        if out.requires_grad:
+            out.grad_fn = grad_squeeze
+
+        return out
 
     # -------------- initializing --------------
 

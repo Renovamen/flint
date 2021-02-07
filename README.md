@@ -167,6 +167,8 @@ Support autograding on the following operations:
     - [x] View
     - [x] Transpose
     - [x] Permute
+    - [x] Squeeze
+    - [x] Unsqueeze
 
 - Others
     - [x] Padding
@@ -174,7 +176,7 @@ Support autograding on the following operations:
 ### Layers
 
 - [x] Linear
-- [x] 2D Convolution
+- [x] 1D / 2D Convolution
 - [ ] Flatten
 - [ ] MaxPooling
 - [ ] Dropout

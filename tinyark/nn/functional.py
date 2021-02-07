@@ -329,3 +329,52 @@ def conv2d(
         out += bias
 
     return out
+
+
+def conv1d(
+    input: Tensor,
+    weight: Tensor,
+    bias: Tensor = None,
+    stride: tuple = (1, ),
+    padding: tuple = (0, ),
+    dilation: tuple = (1, )
+):
+    '''
+    Apply a 1D convolution over an input signal composed of several input
+    planes:
+
+    args:
+        input (Tensor): input tensor
+        weight (Tensor): weight of the conv1d layer
+        bias (Tensor, optional): bias of the conv1d layer
+        stride (tuple[int], optional):
+            stride of the convolution (default: (1))
+        padding (tuple[int], optional):
+            zero-padding added to both sides of the input (default: (0))
+        dilation (tuple[int], optional):
+            spacing between kernel elements (default: (1))
+
+    shape:
+        input: (batch_size, in_channels, L_in)
+        weight: (out_channels, in_channels, kernel_size)
+        bias: (1, out_channels, 1)
+        output: (batch_size, out_channels, L_out)
+
+        where:
+            L_out = (L_in + 2 * padding - dilation * (kernel_size - 1) - 1) / stride + 1
+    '''
+
+    # add a dimension to tensors so we can use conv2d
+    input_2d = input.unsqueeze(dim=2)
+    weight_2d = weight.unsqueeze(dim=2)
+    bias_2d = bias.unsqueeze(dim=2)
+
+    stride_2d = (1, stride[0])
+    pad_2d = (0, padding[0])
+    dilation_2d = (1, dilation[0])
+
+    out_2d = conv2d(input_2d, weight_2d, bias_2d, stride_2d, pad_2d, dilation_2d)  # (batch_size, out_channels, 1, L_out)
+
+    # drop the added dimension
+    out = out_2d.squeeze(dim=2)
+    return out
