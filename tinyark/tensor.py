@@ -44,13 +44,13 @@ class Tensor(object):
         Fill the gradient with zeros.
         '''
         self.grad = np.zeros(self.shape, dtype=np.float32)
-    
+
     def one_grad(self) -> None:
         '''
         Fill the gradient with ones.
         '''
         self.grad = np.ones(self.shape, dtype=np.float32)
-    
+
     def add_depends_on(self, depends_on: list = []) -> None:
         '''
         Add the dependent tensors for building autograd graph.
@@ -63,7 +63,7 @@ class Tensor(object):
                 self.depends_on.append(i)
             else:
                 raise TypeError('Expected Tensor but got %s' % type(i))
-    
+
     def backward(self):
         '''
         Autograd on computation graph.
@@ -81,9 +81,9 @@ class Tensor(object):
                 for prev in v.depends_on:
                     dfs(prev)
                 graph.append(v)
-        
+
         dfs(self)
-        
+
         # go one variable at a time and apply the chain rule to get its gradient
         self.one_grad()
         for node in reversed(graph):
@@ -116,11 +116,11 @@ class Tensor(object):
     @property
     def shape(self):
         return self.data.shape
-    
+
     @property
     def dtype(self):
         return self.data.dtype
-    
+
     @property
     def ndim(self):
         return self.data.ndim
@@ -205,7 +205,7 @@ class Tensor(object):
 
     def __rmul__(self, other: 'Tensor') -> 'Tensor':
         return self.__mul__(other)
-    
+
     def __truediv__(self, other: 'Tensor') -> 'Tensor':
         '''
         c = a / b
@@ -231,7 +231,7 @@ class Tensor(object):
             out.grad_fn = grad_div
 
         return out
-    
+
     def __rtruediv__(self, other: 'Tensor') -> 'Tensor':
         return self.__truediv__(other)
 
@@ -257,7 +257,7 @@ class Tensor(object):
 
     def __rmatmul__(self, other: 'Tensor') -> 'Tensor':
         return self.__matmul__(other)
-    
+
     def __pow__(self, exp: Union[int, float]) -> 'Tensor':
         out = Tensor(
             data = self.data ** exp,
@@ -290,24 +290,6 @@ class Tensor(object):
 
         if out.requires_grad:
             out.grad_fn = grad_neg
-
-        return out
-    
-    def __getitem__(self, item):
-        out = Tensor(
-            data = self.data[item],
-            depends_on = [self],
-            requires_grad=self.requires_grad
-        )
-        if self.grad is not None:
-            out.grad = self.grad[item]
-
-        def grad_slice():
-            if self.requires_grad:
-                self.grad[item] = out.grad
-
-        if out.requires_grad:
-            out.grad_fn = grad_slice
 
         return out
 
@@ -344,7 +326,7 @@ class Tensor(object):
             out.grad_fn = grad_log
 
         return out
-    
+
     def sum(self, axis: int = None, keepdims: bool = False) -> 'Tensor':
         out = Tensor(
             data = np.sum(self.data, axis=axis, keepdims=keepdims),
@@ -365,7 +347,7 @@ class Tensor(object):
             out.grad_fn = grad_sum
 
         return out
-    
+
     def max(self, axis: int = None, keepdims: bool = False) -> 'Tensor':
         '''
         Return the maximum value of all elements in the tensor.
@@ -402,18 +384,18 @@ class Tensor(object):
         '''
         out = Tensor(np.argmax(self.data, axis=axis))
         return out
-    
+
     def softmax(self, axis: int = -1) -> 'Tensor':
         out = self - self.max(axis=axis, keepdims=True)
         out = out.exp()
         out = out / out.sum(axis=axis, keepdims=True)
         return out
-    
+
     def log_softmax(self, axis: int = -1) -> 'Tensor':
         after_softmax = self.softmax(axis)
         out = after_softmax.log()
         return out
-    
+
     # -------------- movement operations --------------
 
     def __getitem__(self, item):
@@ -422,12 +404,10 @@ class Tensor(object):
             depends_on = [self],
             requires_grad=self.requires_grad
         )
-        if self.grad is not None:
-            out.grad = self.grad[item]
 
         def grad_slice():
             if self.requires_grad:
-                self.grad[item] = out.grad
+                self.grad[item] += out.grad
 
         if out.requires_grad:
             out.grad_fn = grad_slice
@@ -442,7 +422,7 @@ class Tensor(object):
         args:
             *shape: the desired size
         '''
-        
+
         out = Tensor(
             data = np.reshape(self.data, shape),
             depends_on = [self],
@@ -451,12 +431,12 @@ class Tensor(object):
 
         def grad_view():
             self.grad += np.reshape(out.grad, self.shape)
-        
+
         if out.requires_grad:
             out.grad_fn = grad_view
 
         return out
-    
+
     def permute(self, *dims) -> 'Tensor':
         '''
         Returns a view of the original tensor with its dimensions permuted.
@@ -478,7 +458,7 @@ class Tensor(object):
             out.grad_fn = grad_permute
 
         return out
-    
+
     def transpose(self, dim0, dim1) -> 'Tensor':
         '''
         Swap the dimension dim0 and dim1 of the tensor.
@@ -497,7 +477,7 @@ class Tensor(object):
                 return dim
 
         dims = tuple([get_dim(i) for i in range(self.ndim)])
-        
+
         out = Tensor(
             data = self.data.transpose(dims),
             depends_on = [self],
@@ -514,22 +494,22 @@ class Tensor(object):
 
 
     # -------------- initializing --------------
-    
+
     def fill_(self, val: float) -> None:
         '''
         Fill the tensor with the given scalar value `val`.
-        
+
         args:
             val (float): the value to fill the tensor with
         '''
         self.data.fill(val)
-    
+
     def zero_(self) -> None:
         '''
         Fill the tensor with the scalar value `0`.
         '''
         self.fill_(0.)
-    
+
     def one_(self) -> None:
         '''
         Fill the tensor with the scalar value `1`.
@@ -539,7 +519,7 @@ class Tensor(object):
     def uniform_(self, low: float = 0., high: float = 1.) -> None:
         '''
         Fill the tensor with values drawn from the uniform distribution.
-        
+
         args:
             low (float): the lower bound of the uniform distribution
             high (float): the upper bound of the uniform distribution

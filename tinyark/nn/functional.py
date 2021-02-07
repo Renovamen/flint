@@ -1,5 +1,7 @@
 import numpy as np
 from typing import Union, Tuple
+
+import tinyark
 from ..tensor import Tensor
 from ..utils import *
 
@@ -218,7 +220,20 @@ def binary_cross_entropy(
 
 # ---------------------- pad ----------------------
 
-def pad(input: Tensor, pad: Tuple) -> Tensor:
+def pad(input: Tensor, pad: Tuple, value: int = 0) -> Tensor:
+    '''
+    Pad tensor.
+
+    args:
+        input (Tensor): N-dimensional tensor
+        pad (tuple):
+            Padding sizes, a m-elements tuple, where m/2 <= input dimensions and
+            m is even. The padding sizes are described starting from the m/2 to
+            last dimension to the last dimension. That is, m/2 dimensions of
+            input will be padded.
+        value (int):
+            Fill value for 'constant' padding (default: 0)
+    '''
 
     n_pad_dims = int(len(pad) / 2)
     ndims = input.ndim
@@ -228,9 +243,9 @@ def pad(input: Tensor, pad: Tuple) -> Tensor:
 
     ret = np.pad(
         input.data,
-        pad_width=pad_width,
-        mode='constant',
-        constant_values=0,
+        pad_width = pad_width,
+        mode = 'constant',
+        constant_values = value,
     )
 
     out = Tensor(
@@ -249,5 +264,68 @@ def pad(input: Tensor, pad: Tuple) -> Tensor:
 
     if out.requires_grad:
         out.grad_fn = grad_pad
+
+    return out
+
+
+# ---------------------- conv ----------------------
+
+def conv2d(
+    input: Tensor,
+    weight: Tensor,
+    bias: Tensor = None,
+    stride: tuple = (1, 1),
+    padding: tuple = (0, 0),
+    dilation: tuple = (1, 1)
+):
+    '''
+    Apply a 2D convolution over an input signal composed of several input
+    planes:
+
+    NOTE: Use `im2col` function to perform the convolution as a single
+    matrix multiplication. For more details, see ref[1].
+
+    args:
+        input (Tensor): input tensor
+        weight (Tensor): weight of the conv1d layer
+        bias (Tensor, optional): bias of the conv2d layer (default: None)
+        stride (tuple, optional):
+            stride of the convolution (default: (1, 1))
+        padding (tuple, optional):
+            zero-padding added to both sides of the input (default: (0, 0))
+        dilation (tuple, ptional):
+            spacing between kernel elements (default: (1, 1))
+
+    shape:
+        input: (batch_size, in_channels, h_in, w_in)
+        output: (batch_size, out_channels, h_out, w_out)
+
+        where:
+            h_out = (h_in + 2 * padding[0] - dilation[0] * (kernel_size[0] - 1) - 1) / stride[0] + 1
+            w_out = (w_in + 2 * padding[1] - dilation[1] * (kernel_size[1] - 1) - 1) / stride[1] + 1
+
+    refs:
+        [1] Why GEMM is at the heart of deep learning? Pete Warden. 2015.
+            Blog: https://petewarden.com/2015/04/20/why-gemm-is-at-the-heart-of-deep-learning/
+    '''
+
+    batch_size, in_channels, h_in, w_in = input.shape
+    out_channels, in_channels, kernel_h, kernel_w = weight.shape
+
+    # compute the dimensions of the convolution output
+    h_out = int((h_in + 2 * padding[0] - dilation[0] * (kernel_h - 1) - 1) / stride[0] + 1)
+    w_out = int((w_in + 2 * padding[1] - dilation[1] * (kernel_w - 1) - 1) / stride[1] + 1)
+
+    # padding input tensor
+    padded_data = pad(input, (0, 0, 0, 0, padding[0], padding[0], padding[1], padding[1]))
+
+    # convert input tensor and weights/kernels into a 2D matrices
+    input_col = tinyark.im2col(padded_data, weight.shape, (h_out, w_out), stride, dilation)
+    weight_col = weight.view(out_channels, -1)
+
+    out = (weight_col @ input_col).view(out_channels, h_out, w_out, batch_size).permute(3, 0, 1, 2)
+
+    if bias is not None:
+        out += bias
 
     return out

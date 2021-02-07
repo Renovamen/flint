@@ -2,12 +2,13 @@
 Some of the code is borrowed from: https://github.com/pytorch/pytorch/blob/master/torch/nn/init.py
 '''
 import math
+import numpy as np
 from tinyark import Tensor
 
 def calculate_gain(nonlinearity: str, param = None):
     '''
     Return the recommended gain value for the given nonlinearity function.
-    
+
     The values are as follows:
     ----------------- ----------------------------------------------------
     nonlinearity      gain
@@ -20,7 +21,7 @@ def calculate_gain(nonlinearity: str, param = None):
     Leaky Relu        sqrt(2 / (1 + negative_slope^2))
     SELU              3 / 4
     ----------------- ----------------------------------------------------
-    
+
     args:
         nonlinearity (str): name of the non-linear function
         param: optional parameter for the non-linear function
@@ -131,7 +132,7 @@ def xavier_uniform_(tensor: Tensor, gain: float = 1.) -> None:
     '''
     Xavier initialization, also known as Glorot initialization, using
     a uniform distribution.
-    
+
     The resulting tensor will have values sampled from:
         U(-a, a)
     where
@@ -157,7 +158,7 @@ def xavier_normal_(tensor: Tensor, gain: float = 1.) -> None:
     '''
     Xavier initialization, also known as Glorot initialization, using
     a normal distribution.
-    
+
     The resulting tensor will have values sampled from:
         N(0, std^2)
     where
@@ -166,7 +167,7 @@ def xavier_normal_(tensor: Tensor, gain: float = 1.) -> None:
     args:
         tensor: a Tensor
         gain: an optional scaling factor
-    
+
     refs:
         Understanding the Difficulty of Training Deep Feedforward Neural
         Networks. Xavier Glorot and Yoshua Bengio. AISTATS 2010.
@@ -202,7 +203,7 @@ def kaiming_uniform_(
         U(-bound, bound)
     where
         bound = gain * sqrt*(3 / fan_mode)
-    
+
     args:
         tensor: a Tensor
         a: the negative slope of the rectifier used after this layer (only
@@ -213,7 +214,7 @@ def kaiming_uniform_(
             'fan_out': preserve the magnitudes in the backwards pass
         nonlinearity (str): name of the non-linear function, recommended to
             use only with 'relu' or 'leaky_relu' (default)
-    
+
     refs:
         Delving Deep into Rectifiers: Surpassing Human-level Performance on
         ImageNet Classification. Kaiming He, et al. ICCV 2015.
@@ -224,7 +225,7 @@ def kaiming_uniform_(
     gain = calculate_gain(nonlinearity, a)
     std = gain / math.sqrt(fan)
     bound = math.sqrt(3.0) * std  # calculate uniform bounds from standard deviation
-    
+
     tensor.uniform_(low=-bound, high=bound)
 
 def kaiming_normal_(
@@ -252,7 +253,7 @@ def kaiming_normal_(
             'fan_out': preserve the magnitudes in the backwards pass
         nonlinearity (str): name of the non-linear function, recommended to
             use only with 'relu' or 'leaky_relu' (default)
-    
+
     refs:
         Delving deep into rectifiers: Surpassing human-level performance on
         ImageNet classification. Kaiming He, et al. ICCV 2015.
@@ -262,7 +263,7 @@ def kaiming_normal_(
     fan = _calculate_correct_fan(tensor, mode)
     gain = calculate_gain(nonlinearity, a)
     std = gain / math.sqrt(fan)
-    
+
     tensor.normal_(mean=0, std=std)
 
 
@@ -274,10 +275,10 @@ def lecun_uniform_(tensor: Tensor) -> None:
         U(-bound, bound)
     where
         bound = sqrt(3 / fan_in)
-    
+
     args:
         tensor: a Tensor
-    
+
     refs:
         Efficient Backprop. Yann LeCun, et al. 1998.
         Paper: http://yann.lecun.com/exdb/publis/pdf/lecun-98b.pdf
@@ -296,7 +297,7 @@ def lecun_normal_(tensor: Tensor) -> None:
         N(0, std^2)
     where
         std = sqrt(1 / fan_in)
-    
+
     args:
         tensor: a Tensor
 

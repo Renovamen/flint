@@ -174,7 +174,7 @@ Support autograding on the following operations:
 ### Layers
 
 - [x] Linear
-- [ ] Conv
+- [x] 2D Convolution
 - [ ] Flatten
 - [ ] MaxPooling
 - [ ] Dropout
