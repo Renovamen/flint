@@ -1,6 +1,6 @@
 from collections import OrderedDict
 from typing import Optional, Union, Iterator, Tuple, Set
-from tinyark import Tensor
+from flint import Tensor
 from .. import Parameter
 
 class Module(object):
@@ -18,7 +18,7 @@ class Module(object):
     def register_parameter(self, name: str, param: Optional[Parameter]) -> None:
         '''
         Add a parameter to the module.
-        
+
         args:
             name (str): name of the parameter
             param (Parameter): parameter to be added to the module
@@ -32,12 +32,12 @@ class Module(object):
     def add_module(self, name: str, module: Optional['Module']) -> None:
         '''
         Add a child module to the current module.
-        
+
         args:
             name (str): name of the child module
             module (Module): child module to be added to the module
         '''
-        
+
         if module is None:
             self._modules[name] = None
         else:
@@ -51,11 +51,11 @@ class Module(object):
             recurse (bool):
                 True: yield parameters of this module and all submodules
                 False: yield only parameters that are direct members of this module
-        
+
         yields:
             Parameter: module parameter
         '''
-        
+
         for name, param in self.named_parameters(recurse = recurse):
             yield param
 
@@ -70,7 +70,7 @@ class Module(object):
             recurse (bool):
                 True: yield parameters of this module and all submodules
                 False: yield only parameters that are direct members of this module
-        
+
         yields:
             (string, Parameter): Tuple containing the name and parameter
         '''
@@ -92,7 +92,7 @@ class Module(object):
 
         yields:
             Module: a module in the network
-        
+
         NOTE:
             Duplicate modules are returned only once.
         '''
@@ -105,14 +105,14 @@ class Module(object):
         Returns an iterator over all modules in the network, yielding
         both the name of the module as well as the module itself.
         Borrowed from: https://github.com/pytorch/pytorch/blob/master/torch/nn/modules/module.py
-        
+
         args:
             memo (Set): a set for recording visited modules
             prefix (str): prefix to prepend to all parameter names
 
         yields:
             (string, Module): Tuple of name and module
-        
+
         NOTE:
             Duplicate modules are returned only once.
         '''

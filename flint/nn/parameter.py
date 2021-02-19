@@ -1,4 +1,4 @@
-from tinyark import Tensor
+from flint import Tensor
 
 class Parameter(Tensor):
     def __init__(self, t: Tensor):

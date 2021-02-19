@@ -13,7 +13,7 @@ class Adagrad(Optimizer):
         eps (float, optional): term added to the denominator to improve
             numerical stability (default: 1e-10)
         weight_decay (float, optional): weight decay (L2 penalty) (default: 0)
-    
+
     refs:
         Adaptive Subgradient Methods for Online Learning and Stochastic
         Optimization. John Duchi, et al. JMRL 2011.
@@ -41,5 +41,5 @@ class Adagrad(Optimizer):
                 self.h[i] = h
                 # update parameters
                 p.data -= self.lr * p.grad / np.sqrt(h + self.eps)
-                
+
         super(Adagrad, self).step()

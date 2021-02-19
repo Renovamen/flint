@@ -4,7 +4,7 @@ sys.path.append(os.getcwd())
 
 import unittest
 import numpy as np
-import tinyark
+import flint
 import torch
 
 class TestNN(unittest.TestCase):
@@ -18,12 +18,12 @@ class TestNN(unittest.TestCase):
         w_init = np.random.randn(in_features, out_features).astype(np.float32)
         b_init = np.random.randn(1, out_features).astype(np.float32)
 
-        def test_tinyark():
-            x = tinyark.Tensor(x_init.copy(), requires_grad=True)
-            w = tinyark.Tensor(w_init.copy(), requires_grad=True)
-            b = tinyark.Tensor(b_init.copy(), requires_grad=True)
+        def test_flint():
+            x = flint.Tensor(x_init.copy(), requires_grad=True)
+            w = flint.Tensor(w_init.copy(), requires_grad=True)
+            b = flint.Tensor(b_init.copy(), requires_grad=True)
 
-            out = tinyark.nn.functional.linear(x, w, b)
+            out = flint.nn.functional.linear(x, w, b)
             c = out.sum()
             c.backward()
 
@@ -40,7 +40,7 @@ class TestNN(unittest.TestCase):
 
             return out.detach().numpy(), w.grad.permute(1, 0).numpy()
 
-        for x, y in zip(test_tinyark(), test_torch()):
+        for x, y in zip(test_flint(), test_torch()):
             np.testing.assert_allclose(x, y, atol=1e-5)
 
     def test_conv2d(self):
@@ -59,12 +59,12 @@ class TestNN(unittest.TestCase):
         w_init = np.random.randn(out_channels, in_channels, kernel_size[0], kernel_size[1]).astype(np.float32)
         b_init = np.random.randn(1, out_channels, 1, 1).astype(np.float32)
 
-        def test_tinyark():
-            x = tinyark.Tensor(x_init.copy(), requires_grad=True)
-            w = tinyark.Tensor(w_init.copy(), requires_grad=True)
-            b = tinyark.Tensor(b_init.copy(), requires_grad=True)
+        def test_flint():
+            x = flint.Tensor(x_init.copy(), requires_grad=True)
+            w = flint.Tensor(w_init.copy(), requires_grad=True)
+            b = flint.Tensor(b_init.copy(), requires_grad=True)
 
-            out = tinyark.nn.functional.conv2d(x, w, b, stride, pad, dilation)
+            out = flint.nn.functional.conv2d(x, w, b, stride, pad, dilation)
             c = out.sum()
             c.backward()
 
@@ -81,7 +81,7 @@ class TestNN(unittest.TestCase):
 
             return out.detach().numpy(), w.grad.numpy()
 
-        for x, y in zip(test_tinyark(), test_torch()):
+        for x, y in zip(test_flint(), test_torch()):
             np.testing.assert_allclose(x, y, atol=1e-5)
 
     def test_conv1d(self):
@@ -99,12 +99,12 @@ class TestNN(unittest.TestCase):
         w_init = np.random.randn(out_channels, in_channels, kernel_size).astype(np.float32)
         b_init = np.random.randn(1, out_channels, 1).astype(np.float32)
 
-        def test_tinyark():
-            x = tinyark.Tensor(x_init.copy(), requires_grad=True)
-            w = tinyark.Tensor(w_init.copy(), requires_grad=True)
-            b = tinyark.Tensor(b_init.copy(), requires_grad=True)
+        def test_flint():
+            x = flint.Tensor(x_init.copy(), requires_grad=True)
+            w = flint.Tensor(w_init.copy(), requires_grad=True)
+            b = flint.Tensor(b_init.copy(), requires_grad=True)
 
-            out = tinyark.nn.functional.conv1d(x, w, b, stride, pad, dilation)
+            out = flint.nn.functional.conv1d(x, w, b, stride, pad, dilation)
             c = out.sum()
             c.backward()
 
@@ -121,7 +121,7 @@ class TestNN(unittest.TestCase):
 
             return out.detach().numpy(), w.grad.numpy()
 
-        for x, y in zip(test_tinyark(), test_torch()):
+        for x, y in zip(test_flint(), test_torch()):
             np.testing.assert_allclose(x, y, atol=1e-5)
 
 

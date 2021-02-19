@@ -14,7 +14,7 @@ class ConcatDataset(Dataset):
     '''
     Dataset as a concatenation of multiple datasets.
     This class is useful to assemble different existing datasets.
-    
+
     args:
         datasets (sequence): List of datasets to be concatenated
     '''

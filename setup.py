@@ -10,7 +10,7 @@ def readme():
         return fp.read()
 
 setup(
-    name = 'tinyark',
+    name = 'flint',
     version = '0.1.0',
     packages = find_packages(),
     description = 'A toy deep learning framework built with Numpy from scratch with a PyTorch-like API.',
@@ -19,5 +19,5 @@ setup(
     license = 'MIT',
     author = 'Xiaohan Zou',
     author_email = 'renovamenzxh@gmail.com',
-    url = 'https://github.com/Renovamen/tinyark'
+    url = 'https://github.com/Renovamen/flint'
 )

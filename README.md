@@ -1,6 +1,8 @@
-# TinyArk
+# Flint
 
 A toy deep learning framework built with Numpy from scratch with a [PyTorch](https://github.com/pytorch/pytorch)-like API.
+
+Flint is not as powerful as torch, but it is still able to start a fire.
 
 I'm trying to make it as clean as possible.
 
@@ -9,15 +11,15 @@ I'm trying to make it as clean as possible.
 ## Installation
 
 ```bash
-git clone https://github.com/Renovamen/tinyark.git
-cd tinyark
+git clone https://github.com/Renovamen/flint.git
+cd flint
 python setup.py install
 ```
 
 or
 
 ```bash
-pip install git+https://github.com/Renovamen/tinyark.git --upgrade
+pip install git+https://github.com/Renovamen/flint.git --upgrade
 ```
 
 &nbsp;
@@ -34,8 +36,8 @@ Coming soon 咕咕咕...
 Add these imports:
 
 ```python
-import tinyark
-from tinyark import nn, optim, Tensor
+import flint
+from flint import nn, optim, Tensor
 ```
 
 Build your net first:
@@ -122,7 +124,7 @@ for i in range(n_epoch):
 
     # compute accuracy
     preds = scores.argmax(axis = 1)
-    correct_preds = tinyark.eq(preds, y).sum().data
+    correct_preds = flint.eq(preds, y).sum().data
     accuracy = correct_preds / y.shape[0]
 
     # print training status
@@ -232,7 +234,7 @@ Support autograding on the following operations:
 
 ## Acknowledgements
 
-TinyArk is inspired by the following projects:
+Flint is inspired by the following projects:
 
 - [PyTorch](https://github.com/pytorch/pytorch)
 - [karpathy/micrograd](https://github.com/karpathy/micrograd)

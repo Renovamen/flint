@@ -1,7 +1,7 @@
 import math
 from typing import Union, Tuple
 
-from tinyark import Tensor
+from flint import Tensor
 from .. import Parameter, init
 from .module import Module
 from .utils import _single, _pair, _triple

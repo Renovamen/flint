@@ -15,7 +15,7 @@ class RMSprop(Optimizer):
         eps (float, optional): term added to the denominator to improve
             numerical stability (default: 1e-8)
         weight_decay (float, optional): weight decay (L2 penalty) (default: 0)
-    
+
     refs:
         Neural Networks for Machine	Learning, Lecture 6e - rmsprop: Divide the
         gradient by a running average of its recent magnitude. Geoffrey	Hinton.
@@ -45,5 +45,5 @@ class RMSprop(Optimizer):
                 self.h[i] = h
                 # update parameters
                 p.data -= self.lr * p.grad / np.sqrt(h + self.eps)
-                
+
         super(RMSprop, self).step()

@@ -27,10 +27,10 @@ class DataLoader:
         self.index = 0
         self.dataset = dataset
         self.batch_size = batch_size
-        
+
         if collate_fn is None:
             collate_fn = _utils.default_collate
-        
+
         self.collate_fn = collate_fn
 
     def __iter__(self):

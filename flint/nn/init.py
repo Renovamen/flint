@@ -3,7 +3,7 @@ Some of the code is borrowed from: https://github.com/pytorch/pytorch/blob/maste
 '''
 import math
 import numpy as np
-from tinyark import Tensor
+from flint import Tensor
 
 def calculate_gain(nonlinearity: str, param = None):
     '''

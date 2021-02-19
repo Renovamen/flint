@@ -1,11 +1,11 @@
-from tinyark import Tensor
+from flint import Tensor
 from .. import functional as F
 from .module import Module
 
 class ReLU(Module):
     '''
     ReLU (Rectified Linear Unit) activation function
-    See tinyark.nn.functional.relu() for more details.
+    See flint.nn.functional.relu() for more details.
     '''
 
     def __init__(self) -> None:
@@ -18,7 +18,7 @@ class ReLU(Module):
 class Sigmoid(Module):
     '''
     Sigmoid activation function
-    See tinyark.nn.functional.sigmoid() for more details.
+    See flint.nn.functional.sigmoid() for more details.
     '''
 
     def __init__(self) -> None:
@@ -27,11 +27,11 @@ class Sigmoid(Module):
     def forward(self, input: Tensor) -> Tensor:
         self.data = F.sigmoid(input)
         return self.data
-    
+
 class Tanh(Module):
     '''
     Tanh (Hyperbolic Tangent) activation function
-    See tinyark.nn.functional.tanh() for more details.
+    See flint.nn.functional.tanh() for more details.
     '''
 
     def __init__(self) -> None:

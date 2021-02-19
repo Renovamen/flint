@@ -3,7 +3,7 @@
 from collections import OrderedDict
 from typing import overload, Iterator
 
-from tinyark import Tensor
+from flint import Tensor
 from .module import Module
 
 class Sequential(Module):
@@ -35,7 +35,7 @@ class Sequential(Module):
 
     def __iter__(self) -> Iterator[Module]:
         return iter(self._modules.values())
-        
+
     def forward(self, input: Tensor) -> Tensor:
         for module in self:
             input = module(input)

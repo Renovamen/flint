@@ -1,7 +1,7 @@
 import numpy as np
 from typing import Union, Tuple
 
-import tinyark
+import flint
 from ..tensor import Tensor
 from ..utils import *
 
@@ -329,7 +329,7 @@ def conv2d(
     padded_data = pad(input, (0, 0, 0, 0, padding[0], padding[0], padding[1], padding[1]))
 
     # convert input tensor and weights/kernels into a 2D matrices
-    input_col = tinyark.im2col(padded_data, weight.shape, (h_out, w_out), stride, dilation)
+    input_col = flint.im2col(padded_data, weight.shape, (h_out, w_out), stride, dilation)
     weight_col = weight.view(out_channels, -1)
 
     out = (weight_col @ input_col).view(out_channels, h_out, w_out, batch_size).permute(3, 0, 1, 2)

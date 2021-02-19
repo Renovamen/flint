@@ -1,7 +1,7 @@
 class Optimizer:
     '''
     Base class for all optimizers.
-    
+
     args:
         params (iterable): an iterable of Tensor
         lr (float): learning rate

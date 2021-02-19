@@ -1,4 +1,4 @@
-from tinyark import Tensor
+from flint import Tensor
 from .. import functional as F
 
 class Loss:
@@ -9,7 +9,7 @@ class Loss:
 class NllLoss(Loss):
     '''
     Negative Log Likelihood Loss
-    See tinyark.nn.functional.nll_loss() for more details.
+    See flint.nn.functional.nll_loss() for more details.
 
     args:
         reduction (str, optional): 'none' / 'mean' / 'sum'
@@ -25,7 +25,7 @@ class NllLoss(Loss):
 class CrossEntropyLoss(Loss):
     '''
     Cross Entropy Loss, combines softmax() and nll_loss().
-    See tinyark.nn.functional.cross_entropy() for more details.
+    See flint.nn.functional.cross_entropy() for more details.
 
     args:
         reduction (str, optional): 'none' / 'mean' / 'sum'
@@ -41,7 +41,7 @@ class CrossEntropyLoss(Loss):
 class MSELoss(Loss):
     '''
     Mean Squared Error Loss: (x - y)^2
-    See tinyark.nn.functional.mse_loss() for more details.
+    See flint.nn.functional.mse_loss() for more details.
 
     args:
         reduction (str, optional): 'none' / 'mean' / 'sum'
@@ -58,7 +58,7 @@ class BCELoss(Loss):
     '''
     Binary Cross Entropy Loss:
         loss = y * log(x) + (1 - y) * log(1 - x)
-    See tinyark.nn.functional.bce_loss() for more details.
+    See flint.nn.functional.bce_loss() for more details.
 
     args:
         reduction (str, optional): 'none' / 'mean' / 'sum'

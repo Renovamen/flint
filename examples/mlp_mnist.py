@@ -9,8 +9,8 @@ sys.path.append(os.getcwd())
 from tqdm import tqdm
 import numpy as np
 import torchvision
-import tinyark
-from tinyark import nn, optim, Tensor
+import flint
+from flint import nn, optim, Tensor
 
 class MLP(nn.Module):
     def __init__(self, in_features: int, n_classes: int):
@@ -56,12 +56,12 @@ def get_data(batch_size: int):
         train = False
     )
 
-    train_loader = tinyark.utils.data.DataLoader(
+    train_loader = flint.utils.data.DataLoader(
         dataset = train_data,
         batch_size = batch_size,
         collate_fn = collate_fn
     )
-    test_loader = tinyark.utils.data.DataLoader(
+    test_loader = flint.utils.data.DataLoader(
         dataset = test_data,
         batch_size = batch_size,
         collate_fn = collate_fn
@@ -89,7 +89,7 @@ def train(n_epochs, train_loader, net, optimer, loss_function, print_freq):
 
             # compute accuracy
             preds = scores.argmax(axis = 1)
-            correct_preds = tinyark.eq(preds, labels).sum().data
+            correct_preds = flint.eq(preds, labels).sum().data
             accuracy = correct_preds / labels.shape[0]
 
             # print training status
@@ -108,10 +108,10 @@ def test(test_loader, net):
     for i, batch in enumerate(tqdm(test_loader, desc = 'Testing')):
         images, labels = batch
         scores = net(images)
-        
+
         # compute accuracy
         preds = scores.argmax(axis = 1)
-        correct_preds = tinyark.eq(preds, labels).sum().data
+        correct_preds = flint.eq(preds, labels).sum().data
         accuracy = correct_preds / labels.shape[0]
 
     print('\n * TEST ACCURACY - %.1f percent\n' % (accuracy * 100))

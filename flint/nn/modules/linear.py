@@ -1,9 +1,10 @@
 import numpy as np
 import math
 
-from tinyark import Tensor
-from .. import Parameter, init
+from flint import Tensor
 from .module import Module
+from .. import Parameter, init
+from .. import functional as F
 
 class Linear(Module):
     '''

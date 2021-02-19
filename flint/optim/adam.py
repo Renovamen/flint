@@ -21,9 +21,9 @@ class Adam(Optimizer):
         eps (float, optional): term added to the denominator to improve
             numerical stability (default: 1e-8)
         weight_decay (float, optional): weight decay (L2 penalty) (default: 0)
-    
+
     refs:
-        Adam: A Method for Stochastic Optimization. Diederik P. Kingma and 
+        Adam: A Method for Stochastic Optimization. Diederik P. Kingma and
         Jimmy Ba. ICLR 2015.
         Paper: https://arxiv.org/abs/1412.6980
     '''
