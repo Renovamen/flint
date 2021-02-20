@@ -1,11 +1,13 @@
 import os
 import sys
-sys.path.append(os.getcwd())
-
 import unittest
 import numpy as np
-import flint
 import torch
+
+sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), "..")))
+
+import flint
+
 
 class TestNN(unittest.TestCase):
     def test_linear(self):

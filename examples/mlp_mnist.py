@@ -4,13 +4,17 @@ This is an example for showing how to a MLP on the MNIST dataset.
 
 import os
 import sys
-sys.path.append(os.getcwd())
-
 from tqdm import tqdm
 import numpy as np
 import torchvision
+
+# A temporary solution for relative imports in case flint is not installed.
+# If flint is installed, the following line is not needed.
+sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), "..")))
+
 import flint
 from flint import nn, optim, Tensor
+
 
 class MLP(nn.Module):
     def __init__(self, in_features: int, n_classes: int):

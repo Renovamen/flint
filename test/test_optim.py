@@ -1,12 +1,14 @@
 import os
 import sys
-sys.path.append(os.getcwd())
-
 import unittest
 from typing import Tuple
 import numpy as np
 import torch
+
+sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), "..")))
+
 import flint
+
 
 in_features = 3
 out_features = 3

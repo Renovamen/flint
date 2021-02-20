@@ -1,11 +1,15 @@
 import os
 import sys
-sys.path.append(os.getcwd())
-
 import unittest
 import numpy as np
-import flint
 import torch
+
+# A temporary solution for relative imports in case flint is not installed.
+# If flint is installed, the following line is not needed.
+sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), "..")))
+
+import flint
+
 
 a_init = np.random.randn(5).astype(np.float32)
 
