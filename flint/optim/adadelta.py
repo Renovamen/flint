@@ -2,27 +2,35 @@ import numpy as np
 from .optimizer import Optimizer
 
 class Adadelta(Optimizer):
-    '''
-    Adadelta:
-        h_t = \gamma * h_{t-1} + (1 - \gamma) * (g_t)^2
-        g'_t = sqrt((delta_{t-1} + eps) / (h_t + eps)) * g_t
-        delta_t = rho * delta_{t-1} + (1 - rho) * (g'_t)^2
-        p_{t+1} = p_t - g'_t
+    """
+    Implementation of Adadelta algorithm proposed in [1].
 
-    args:
-        params (iterable): an iterable of Tensor
-        rho (float, optional): coefficient used for computing a running average
-            of squared gradients (default: 0.9)
-        eps (float, optional): term added to the denominator to improve
-            numerical stability (default: 1e-6)
-        lr (float, optional): coefficient that scale delta before it is applied
-            to the parameters (default: 1.0)
-        weight_decay (float, optional): weight decay (L2 penalty) (default: 0)
+    .. math::
+       h_t = \\rho h_{t-1} + (1 - \\rho) g_t^2
+    .. math::
+       g'_t = \sqrt{\\frac{\Delta \\theta_{t-1} + \epsilon}{h_t + \epsilon}} \cdot g_t
+    .. math::
+       \Delta \\theta_t = \\rho \Delta \\theta_{t-1} + (1 - \\rho) (g'_t)^2
+    .. math::
+       \\theta_t = \\theta_{t-1} - g'_t
 
-    refs:
-        ADADELTA: An Adaptive Learning Rate Method. Matthew D. Zeiler. arxiv 2012.
-        Paper: https://arxiv.org/abs/1212.5701
-    '''
+    where :math:`h` is the moving average of the squared gradients,
+    :math:`\epsilon` is for improving numerical stability.
+
+    Args:
+        params (iterable): An iterable of Tensor
+        rho (float, optional, default=0.9): Coefficient used for computing a
+            running average of squared gradients
+        eps (float, optional, default=1e-6): Term added to the denominator to
+            improve numerical stability
+        lr (float, optional, default=1.0): Coefficient that scale delta before
+            it is applied to the parameters
+        weight_decay (float, optional, default=0): Weight decay (L2 penalty)
+
+    References
+    ----------
+    1. "`ADADELTA: An Adaptive Learning Rate Method. Matthew D. Zeiler. <https://arxiv.org/abs/1212.5701>`_" arxiv 2012.
+    """
 
     def __init__(
         self,

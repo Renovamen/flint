@@ -7,11 +7,11 @@ from flint import Tensor
 from .module import Module
 
 class Sequential(Module):
-    '''
+    """
     A sequential container. Modules will be added to it in the order they
     are passed in the constructor. Alternatively, an ordered dict of modules
     can also be passed in.
-    '''
+    """
 
     @overload
     def __init__(self, *args: Module) -> None:

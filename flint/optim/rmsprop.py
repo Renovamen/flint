@@ -2,25 +2,27 @@ import numpy as np
 from .optimizer import Optimizer
 
 class RMSprop(Optimizer):
-    '''
-    RMSprop:
-        h_t = gamma * h_{t-1} + (1 - gamma) * (g_t)^2
-        p_{t+1} = p_t - lr / sqrt(h_t + eps) * g_t
+    """
+    Implementation of RMSprop algorithm proposed in [1].
 
-    args:
-        params (iterable): an iterable of Tensor
-        lr (float, optional): learning rate (default: 0.01)
-        alpha (float, optional): coefficient used for computing a running average
-            of squared gradients  (default: 0.99)
-        eps (float, optional): term added to the denominator to improve
-            numerical stability (default: 1e-8)
-        weight_decay (float, optional): weight decay (L2 penalty) (default: 0)
+    .. math::
+        h_t = \\alpha h_{t-1} + (1 - \\alpha) g_t^2
+    .. math::
+        \\theta_{t+1} = \\theta_t - \\frac{\\text{lr}}{\sqrt{h_t + \epsilon}} \cdot g_t
 
-    refs:
-        Neural Networks for Machine	Learning, Lecture 6e - rmsprop: Divide the
-        gradient by a running average of its recent magnitude. Geoffrey	Hinton.
-        Course Slide: https://www.cs.toronto.edu/~tijmen/csc321/slides/lecture_slides_lec6.pdf
-    '''
+    Args:
+        params (iterable): An iterable of Tensor
+        lr (float, optional, default=0.01): Learning rate
+        alpha (float, optional, default=0.99): Coefficient used for
+            computing a running average of squared gradients
+        eps (float, optional, default=1e-8): Term added to the denominator
+            to improve numerical stability
+        weight_decay (float, optional, default=0): Weight decay (L2 penalty)
+
+    References
+    ----------
+    1. "`Neural Networks for Machine Learning, Lecture 6e - rmsprop: Divide the gradient by a running average of its recent magnitude. <https://www.cs.toronto.edu/~tijmen/csc321/slides/lecture_slides_lec6.pdf>`_" Geoffrey Hinton.
+    """
 
     def __init__(
         self,

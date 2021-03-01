@@ -2,18 +2,26 @@ import numpy as np
 from .optimizer import Optimizer
 
 class SGD(Optimizer):
-    '''
-    Stochastic Gradient Descent (optionally with momentum):
-        v_{t+1} = momentum * v_t + g_{t+1}
-        p_{t+1} = p_t - lr * v_{t+1}
+    """
+    Implementation of Stochastic Gradient Descent (optionally with
+    momentum).
 
-    args:
+    .. math::
+       v_{t+1} = \mu \cdot v_t + g_{t+1}
+
+    .. math::
+       \\theta_{t+1} = \\theta_t - \\text{lr} \cdot v_{t+1}
+
+    where :math:`\\theta`, :math:`g`, :math:`v` and :math:`\mu` denote the
+    parameters, gradient, velocity, and momentum respectively.
+
+    Args:
         params (iterable): an iterable of Tensor
         lr (float, optional): learning rate (default: 0.01)
         momentum (float, optional): momentum factor (default: 0)
         nesterov (bool, optional): enable Nesterov momentum or not (default: False)
         weight_decay (float, optional): weight decay (L2 penalty) (default: 0)
-    '''
+    """
 
     def __init__(
         self,
@@ -41,5 +49,5 @@ class SGD(Optimizer):
                     v = self.momentum * v + p_grad
                 # update parameters
                 p.data -= self.lr * v
-                
+
         super(SGD, self).step()

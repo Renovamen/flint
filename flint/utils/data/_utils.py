@@ -2,10 +2,9 @@ import numpy as np
 import flint
 
 def default_collate(batch):
-    '''
+    """
     Puts each data field into a tensor with outer dimension batch size.
-    '''
-
+    """
     elem = batch[0]
     elem_type = type(elem)
 

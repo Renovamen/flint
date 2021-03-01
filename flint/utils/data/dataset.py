@@ -11,13 +11,13 @@ class Dataset:
         return ConcatDataset([self, other])
 
 class ConcatDataset(Dataset):
-    '''
-    Dataset as a concatenation of multiple datasets.
-    This class is useful to assemble different existing datasets.
+    """
+    Dataset as a concatenation of multiple datasets. This class is useful
+    to assemble different existing datasets.
 
-    args:
-        datasets (sequence): List of datasets to be concatenated
-    '''
+    Args:
+        datasets (list): List of datasets to be concatenated
+    """
 
     datasets: List[Dataset]
     cumulative_sizes: List[int]

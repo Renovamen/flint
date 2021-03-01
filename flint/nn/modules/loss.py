@@ -7,14 +7,13 @@ class Loss:
         self.reduction = reduction
 
 class NllLoss(Loss):
-    '''
-    Negative Log Likelihood Loss
-    See flint.nn.functional.nll_loss() for more details.
+    """
+    Negative Log Likelihood Loss. See :func:`flint.nn.functional.nll_loss`
+    for more details.
 
-    args:
+    Args:
         reduction (str, optional): 'none' / 'mean' / 'sum'
-    '''
-
+    """
     def __init__(self, reduction: str = 'mean') -> None:
         super(NllLoss, self).__init__(reduction)
 
@@ -22,15 +21,16 @@ class NllLoss(Loss):
         self.data = F.nll_loss(input, target, reduction=self.reduction)
         return self.data
 
+
 class CrossEntropyLoss(Loss):
-    '''
-    Cross Entropy Loss, combines softmax() and nll_loss().
-    See flint.nn.functional.cross_entropy() for more details.
+    """
+    Cross Entropy Loss, combines :func:`~flint.Tensor.softmax`
+    and :func:`~flint.nn.functional.nll_loss`. See
+    :func:`flint.nn.functional.cross_entropy` for more details.
 
-    args:
+    Args:
         reduction (str, optional): 'none' / 'mean' / 'sum'
-    '''
-
+    """
     def __init__(self, reduction: str = 'mean') -> None:
         super(CrossEntropyLoss, self).__init__(reduction)
 
@@ -38,15 +38,15 @@ class CrossEntropyLoss(Loss):
         self.data = F.cross_entropy(input, target, reduction=self.reduction)
         return self.data
 
+
 class MSELoss(Loss):
-    '''
-    Mean Squared Error Loss: (x - y)^2
-    See flint.nn.functional.mse_loss() for more details.
+    """
+    Mean Squared Error Loss: :math`(x - y)^2`. See :func:`flint.nn.functional.mse_loss`
+    for more details.
 
-    args:
+    Args:
         reduction (str, optional): 'none' / 'mean' / 'sum'
-    '''
-
+    """
     def __init__(self, reduction: str = 'mean') -> None:
         super(MSELoss, self).__init__(reduction)
 
@@ -54,16 +54,19 @@ class MSELoss(Loss):
         self.data = F.mse_loss(input, target, reduction=self.reduction)
         return self.data
 
+
 class BCELoss(Loss):
-    '''
+    """
     Binary Cross Entropy Loss:
-        loss = y * log(x) + (1 - y) * log(1 - x)
-    See flint.nn.functional.bce_loss() for more details.
 
-    args:
+    .. math::
+        \\text{loss} = y \log(x) + (1 - y) \log(1 - x)
+
+    See :func:`flint.nn.functional.binary_cross_entropy` for more details.
+
+    Args:
         reduction (str, optional): 'none' / 'mean' / 'sum'
-    '''
-
+    """
     def __init__(self, reduction: str = 'mean') -> None:
         super(BCELoss, self).__init__(reduction)
 

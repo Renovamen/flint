@@ -3,30 +3,40 @@ from typing import Tuple
 from .optimizer import Optimizer
 
 class Adam(Optimizer):
-    '''
-    Adam:
-        v_t = beta_1 * v_{t-1} + (1 - beta_1) * g_t
-        h_t = beta_2 * h_{t-1} + (1 - beta_2) * (g_t)^2
+    """
+    Implementation of Adam algorithm proposed in [1].
 
-        v'_t = v_t / (1 - (beta_1)^t)
-        h'_t = h_t / (1 - (beta_2)^t)
+    .. math::
+        v_t = \\beta_1 v_{t-1} + (1 - \\beta_1) g_t
+    .. math::
+        h_t = \\beta_2 h_{t-1} + (1 - \\beta_2) g_t^2
 
-        p_t = p_{t-1} - r * v'_t / (sqrt(h'_t) + eps)
+    Bias correction:
 
-    args:
-        params (iterable): an iterable of Tensor
-        lr (float, optional): learning rate (default: 1e-3)
-        betas (Tuple[float, float], optional): coefficients used for computing
-            running averages of gradient and its square (default: (0.9, 0.999))
-        eps (float, optional): term added to the denominator to improve
-            numerical stability (default: 1e-8)
-        weight_decay (float, optional): weight decay (L2 penalty) (default: 0)
+    .. math::
+        \hat{v}_t = \\frac{v_t}{1 - \\beta_1^t}
+    .. math::
+        \hat{h}_t = \\frac{h_t}{1 - \\beta_2^t}
 
-    refs:
-        Adam: A Method for Stochastic Optimization. Diederik P. Kingma and
-        Jimmy Ba. ICLR 2015.
-        Paper: https://arxiv.org/abs/1412.6980
-    '''
+    Update parameters:
+
+    .. math::
+        \\theta_t = \\theta_{t-1} - \\text{lr} \cdot \\frac{\hat{v}_t}{\sqrt{\hat{h}_t + \epsilon}}
+
+    Args:
+        params (iterable): An iterable of Tensor
+        lr (float, optional, default=1e-3): Learning rate
+        betas (Tuple[float, float], optional, default=(0.9, 0.999)):
+            Coefficients used for computing running averages of gradient
+            and its square
+        eps (float, optional, default=1e-8): Term added to the denominator
+            to improve numerical stability
+        weight_decay (float, optional, default=0): Weight decay (L2 penalty)
+
+    References
+    ----------
+    1. "`Adam: A Method for Stochastic Optimization. <https://arxiv.org/abs/1412.6980>`_" Diederik P. Kingma and Jimmy Ba. ICLR 2015.
+    """
 
     def __init__(
         self,

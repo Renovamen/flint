@@ -7,18 +7,21 @@ from .. import Parameter, init
 from .. import functional as F
 
 class Linear(Module):
-    '''
-    Full connected layer: y = xA^T + b
+    """
+    Full connected layer
 
-    args:
-        in_features (int): size of each input sample
-        out_features (int): size of each output sample
-        bias (bool, optional): enable bias or not (default: True)
+    .. math::
+        y = x A^T + b
 
-    shape:
-        input: (batch_size, in_features)
-        output: (batch_size, out_features)
-    '''
+    Args:
+        in_features (int): Size of each input sample
+        out_features (int): Size of each output sample
+        bias (bool, optional, default=True): Enable bias or not
+
+    Shapes:
+        - input: (batch_size, in_features)
+        - output: (batch_size, out_features)
+    """
     def __init__(self, in_features: int, out_features: int, bias: bool = True) -> None:
         super(Linear, self).__init__()
 

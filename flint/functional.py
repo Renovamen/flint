@@ -16,23 +16,21 @@ def im2col(
     stride: tuple = (1, 1),
     dilation: tuple = (1, 1)
 ) -> Tensor:
-    '''
-    Rearrange the input tensor into column vectors.
-    This implementation is adopted from Stanford's CS231n assignments 2 [1].
+    """
+    Rearrange the input tensor into column vectors. This implementation is
+    adopted from Stanford's CS231n assignments 2 [1].
 
-    args:
-        input (Tensor): a padded input tensor
-        kernel_shape (tuple): shape of the kernel/weights
-        out_shape (tuple): shape of the output tensor
-        stride (tuple, optional):
-            stride of the convolution (default: (1, 1))
-        dilation (tuple, ptional):
-            spacing between kernel elements (default: (1, 1))
+    Args:
+        input (Tensor): A padded input tensor
+        kernel_shape (tuple): Shape of the kernel/weights
+        out_shape (tuple): Shape of the output tensor
+        stride (tuple, optional, default=(1, 1)): Stride of the convolution
+        dilation (tuple, optional, default=(1, 1)): Spacing between kernel elements
 
-    refs:
-        [1] https://github.com/cs231n/cs231n.github.io/tree/master/assignments/2020
-    '''
-
+    Reference
+    ---------
+    1. `CS231n Assignments 2 <https://github.com/cs231n/cs231n.github.io/tree/master/assignments/2020>`_
+    """
     batch_size, in_channels, h_in, w_in = input.shape
     out_channels, in_channels, kernel_h, kernel_w = kernel_shape
     h_out, w_out = out_shape

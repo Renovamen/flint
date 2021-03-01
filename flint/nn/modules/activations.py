@@ -3,11 +3,10 @@ from .. import functional as F
 from .module import Module
 
 class ReLU(Module):
-    '''
-    ReLU (Rectified Linear Unit) activation function
-    See flint.nn.functional.relu() for more details.
-    '''
-
+    """
+    ReLU (Rectified Linear Unit) activation function. See
+    :func:`flint.nn.functional.relu` for more details.
+    """
     def __init__(self) -> None:
         super(ReLU, self).__init__()
 
@@ -16,11 +15,10 @@ class ReLU(Module):
         return self.data
 
 class Sigmoid(Module):
-    '''
-    Sigmoid activation function
-    See flint.nn.functional.sigmoid() for more details.
-    '''
-
+    """
+    Sigmoid activation function. See :func:`flint.nn.functional.sigmoid`
+    for more details.
+    """
     def __init__(self) -> None:
         super(Sigmoid, self).__init__()
 
@@ -29,11 +27,10 @@ class Sigmoid(Module):
         return self.data
 
 class Tanh(Module):
-    '''
-    Tanh (Hyperbolic Tangent) activation function
-    See flint.nn.functional.tanh() for more details.
-    '''
-
+    """
+    Tanh (Hyperbolic Tangent) activation function. See
+    :func:`flint.nn.functional.tanh` for more details.
+    """
     def __init__(self) -> None:
         super(Tanh, self).__init__()
 

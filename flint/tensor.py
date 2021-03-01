@@ -13,15 +13,17 @@ def ensure_ndarray(data: Arrayable) -> np.ndarray:
         return np.asarray(data)
 
 class Tensor(object):
-    '''
+    """
     Tensor is the basic structure in the computation graph. It holds value
     for forward computation and grad for backward propagation.
 
-    args:
-        data (float / list / ndarray): data for the Tensor
-        depends_on (list): list of dependent tensors (used when building autograd graph)
-        requires_grad (bool): if the Tensor requires gradient
-    '''
+    Args:
+        data (Union[float, list, np.ndarray]): Data for the Tensor
+        depends_on (list, optional, default=[]): List of dependent tensors
+            (used when building autograd graph)
+        requires_grad (bool, optional, default=False): Whether the Tensor
+            requires gradient
+    """
 
     def __init__(
         self,
@@ -40,24 +42,24 @@ class Tensor(object):
             self.zero_grad()
 
     def zero_grad(self) -> None:
-        '''
+        """
         Fill the gradient with zeros.
-        '''
+        """
         self.grad = np.zeros(self.shape, dtype=np.float32)
 
     def one_grad(self) -> None:
-        '''
+        """
         Fill the gradient with ones.
-        '''
+        """
         self.grad = np.ones(self.shape, dtype=np.float32)
 
     def add_depends_on(self, depends_on: list = []) -> None:
-        '''
+        """
         Add the dependent tensors for building autograd graph.
 
-        args:
+        Args:
             depends_on (list): list of dependent tensors
-        '''
+        """
         for i in depends_on:
             if isinstance(i, Tensor):
                 self.depends_on.append(i)
@@ -65,9 +67,9 @@ class Tensor(object):
                 raise TypeError('Expected Tensor but got %s' % type(i))
 
     def backward(self):
-        '''
+        """
         Autograd on computation graph.
-        '''
+        """
         if self.grad_fn is None:
             raise ValueError('Can not solve grad on %s' % self)
 
@@ -92,23 +94,23 @@ class Tensor(object):
 
     @classmethod
     def zeros(cls, *shape, **kwargs):
-        '''
-        Create a tensor filled with the scalar value `0`.
-        '''
+        """
+        Create a tensor filled with the scalar value ``0``.
+        """
         return cls(np.zeros(shape, dtype=np.float32), **kwargs)
 
     @classmethod
     def ones(cls, *shape, **kwargs):
-        '''
-        Create a tensor filled with the scalar value `1`.
-        '''
+        """
+        Create a tensor filled with the scalar value ``1``.
+        """
         return cls(np.ones(shape, dtype=np.float32), **kwargs)
 
     @classmethod
     def randn(cls, *shape, **kwargs):
-        '''
+        """
         Create a tensor filled with random scalar values.
-        '''
+        """
         return cls(np.random.randn(*shape).astype(np.float32), **kwargs)
 
     # -------------- properties --------------
@@ -207,11 +209,10 @@ class Tensor(object):
         return self.__mul__(other)
 
     def __truediv__(self, other: 'Tensor') -> 'Tensor':
-        '''
+        """
         c = a / b
         dc/da = 1 / b, dc/db = - (a / b^2)
-        '''
-
+        """
         other = other if isinstance(other, Tensor) else Tensor(other)
 
         out = Tensor(
@@ -349,10 +350,9 @@ class Tensor(object):
         return out
 
     def max(self, axis: int = None, keepdims: bool = False) -> 'Tensor':
-        '''
+        """
         Return the maximum value of all elements in the tensor.
-        '''
-
+        """
         out = Tensor(
             data = np.max(self.data, axis=axis, keepdims=keepdims),
             depends_on = [self],
@@ -379,9 +379,9 @@ class Tensor(object):
         return out
 
     def argmax(self, axis: int = None) -> 'Tensor':
-        '''
+        """
         Return the indice of the maximum value of all elements in the tensor.
-        '''
+        """
         out = Tensor(np.argmax(self.data, axis=axis))
         return out
 
@@ -415,14 +415,13 @@ class Tensor(object):
         return out
 
     def view(self, *shape) -> 'Tensor':
-        '''
-        Returns a new tensor with the same data as the self tensor but of
+        """
+        Return a new tensor with the same data as the self tensor but of
         a different shape.
 
-        args:
-            *shape: the desired size
-        '''
-
+        Args:
+            *shape: The desired size
+        """
         out = Tensor(
             data = np.reshape(self.data, shape),
             depends_on = [self],
@@ -438,13 +437,12 @@ class Tensor(object):
         return out
 
     def permute(self, *dims) -> 'Tensor':
-        '''
-        Returns a view of the original tensor with its dimensions permuted.
+        """
+        Return a view of the original tensor with its dimensions permuted.
 
-        args:
-            *dims: the desired ordering of dimensions
-        '''
-
+        Args:
+            *dims: The desired ordering of dimensions
+        """
         out = Tensor(
             data = self.data.transpose(dims),
             depends_on = [self],
@@ -460,14 +458,13 @@ class Tensor(object):
         return out
 
     def transpose(self, dim0: int, dim1: int) -> 'Tensor':
-        '''
+        """
         Swap the dimension dim0 and dim1 of the tensor.
 
-        args:
-            dim0: the first dimension to be transposed
-            dim1: the second dimension to be transposed
-        '''
-
+        Args:
+            dim0 (int): The first dimension to be transposed
+            dim1 (int): The second dimension to be transposed
+        """
         def get_dim(dim):
             if dim == dim0:
                 return dim1
@@ -493,13 +490,12 @@ class Tensor(object):
         return out
 
     def unsqueeze(self, dim: int) -> 'Tensor':
-        '''
+        """
         Insert a dimension of size one at the specified position.
 
-        args:
-            dim (int): the index at which to insert the singleton dimension
-        '''
-
+        Args:
+            dim (int): The index at which to insert the singleton dimension
+        """
         out = Tensor(
             data = np.expand_dims(self.data, axis=dim),
             depends_on = [self],
@@ -515,15 +511,13 @@ class Tensor(object):
         return out
 
     def squeeze(self, dim: int = None) -> 'Tensor':
-        '''
+        """
         Remove the dimensions of input of size 1.
 
-        args:
-            dim (int, optional):
-                If given, the input will be squeezed only in this dimension. Or
-                all the dimensions of size 1 will be removed.
-        '''
-
+        Args:
+            dim (int, optional): If given, the input will be squeezed only in
+                this dimension. Or all the dimensions of size 1 will be removed.
+        """
         out = Tensor(
             data = np.squeeze(self.data, axis=dim),
             depends_on = [self],
@@ -541,42 +535,43 @@ class Tensor(object):
     # -------------- initializing --------------
 
     def fill_(self, val: float) -> None:
-        '''
-        Fill the tensor with the given scalar value `val`.
+        """
+        Fill the tensor with the given scalar value ``val``.
 
-        args:
-            val (float): the value to fill the tensor with
-        '''
+        Args:
+            val (float): The value to fill the tensor with
+        """
         self.data.fill(val)
 
     def zero_(self) -> None:
-        '''
-        Fill the tensor with the scalar value `0`.
-        '''
+        """
+        Fill the tensor with the scalar value ``0``.
+        """
         self.fill_(0.)
 
     def one_(self) -> None:
-        '''
-        Fill the tensor with the scalar value `1`.
-        '''
+        """
+        Fill the tensor with the scalar value ``1``.
+        """
         self.fill_(1.)
 
     def uniform_(self, low: float = 0., high: float = 1.) -> None:
-        '''
+        """
         Fill the tensor with values drawn from the uniform distribution.
 
-        args:
-            low (float): the lower bound of the uniform distribution
-            high (float): the upper bound of the uniform distribution
-        '''
+        Args:
+            low (float, optional, default=0.): The lower bound of the uniform distribution
+            high (float, optional, default=1.): The upper bound of the uniform distribution
+        """
         self.data = np.random.uniform(low=low, high=high, size=self.shape)
 
     def normal_(self, mean: float = 0., std: float = 1.) -> None:
-        '''
+        """
         Fill the tensor with values drawn from the normal distribution.
 
-        args:
-            mean (float): the mean of the normal distribution
-            std (float): the standard deviation of the normal distribution
-        '''
+        Args:
+            mean (float, optional, default=0.): The mean of the normal distribution
+            std (float, optional, default=1.): The standard deviation of the
+                normal distribution
+        """
         self.data = np.random.normal(loc=mean, scale=std, size=self.shape)

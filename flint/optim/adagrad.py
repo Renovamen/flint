@@ -2,23 +2,25 @@ import numpy as np
 from .optimizer import Optimizer
 
 class Adagrad(Optimizer):
-    '''
-    Adagrad:
-        h_t = h_{t-1} + (g_t)^2
-        p_{t+1} = p_t - lr / sqrt(h_t + eps) * g_t
+    """
+    Implementation of Adagrad algorithm proposed in [1].
 
-    args:
-        params (iterable): an iterable of Tensor
-        lr (float, optional): learning rate (default: 0.01)
-        eps (float, optional): term added to the denominator to improve
-            numerical stability (default: 1e-10)
-        weight_decay (float, optional): weight decay (L2 penalty) (default: 0)
+    .. math::
+      h_t = h_{t-1} + g_t^2
+    .. math::
+      \\theta_{t+1} = \\theta_t - \\frac{\\text{lr}}{\sqrt{h_t + \epsilon}} \cdot g_t
 
-    refs:
-        Adaptive Subgradient Methods for Online Learning and Stochastic
-        Optimization. John Duchi, et al. JMRL 2011.
-        Paper: https://jmlr.org/papers/volume12/duchi11a/duchi11a.pdf
-    '''
+    Args:
+        params (iterable): An iterable of Tensor
+        lr (float, optional, default=0.01): Learning rate
+        eps (float, optional, default=1e-10): Term added to the
+            denominator to improve numerical stability
+        weight_decay (float, optional, default=0): weight decay (L2 penalty)
+
+    References
+    ----------
+    1. "`Adaptive Subgradient Methods for Online Learning and Stochastic Optimization. <https://jmlr.org/papers/volume12/duchi11a/duchi11a.pdf>`_" John Duchi, et al. JMRL 2011.
+    """
 
     def __init__(
         self,

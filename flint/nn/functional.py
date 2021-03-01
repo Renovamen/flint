@@ -8,10 +8,9 @@ from ..utils import *
 # ---------------------- activators ----------------------
 
 def relu(input: Tensor) -> Tensor:
-    '''
+    """
     Compute ReLU (Rectified Linear Unit) element-wise.
-    '''
-
+    """
     out = Tensor(
         data = np.maximum(0., input.data),
         depends_on = [input],
@@ -28,11 +27,12 @@ def relu(input: Tensor) -> Tensor:
     return out
 
 def sigmoid(input: Tensor) -> Tensor:
-    '''
-    Compute Sigmoid element-wise:
-        sigmoid(x) = \frac{1}{1 + \exp(-x)}
-    '''
+    """
+    Compute Sigmoid element-wise.
 
+    .. math::
+        \\text{sigmoid}(x) = \\frac{1}{1 + \exp(-x)}
+    """
     ret = 1 / (1 + np.exp(-input.data))
 
     out = Tensor(
@@ -51,11 +51,12 @@ def sigmoid(input: Tensor) -> Tensor:
     return out
 
 def tanh(input: Tensor) -> Tensor:
-    '''
-    Compute Tanh (Hyperbolic Tangent) element-wise:
-        tanh(x) = \frac{sinhx}{coshx} = \frac{\exp(x) - \exp(-x)}{\exp(x) + \exp(-x)}
-    '''
+    """
+    Compute Tanh (Hyperbolic Tangent) element-wise.
 
+    .. math::
+        \\text{tanh}(x) = \\frac{\sinh(x)}{\cosh(x)} = \\frac{\exp(x) - \exp(-x)}{\exp(x) + \exp(-x)}
+    """
     ret = np.tanh(input.data)
 
     out = Tensor(
@@ -81,19 +82,19 @@ def nll_loss(
     target: Tensor,
     reduction: str = 'mean'
 ) -> Tensor:
-    '''
+    """
     Negative Log Likelihood Loss
 
-    NOTE: Here I apply log() on the prediction data, which is DIFFERENT FROM
-          F.nll_loss() IN PYTORCH!
+    NOTE:
+        Here I apply ``log()`` on the prediction data, which is DIFFERENT
+        FROM ``nn.functional.nll_loss()`` IN PYTORCH!
 
-    args:
-        input (Tensor): a 2-dim (batch_size, n_classes) tensor
-        target (Tensor): a 1-dim (batch_size) tensor where each value:
+    Args:
+        input (Tensor): A 2-dim (batch_size, n_classes) tensor
+        target (Tensor): A 1-dim (batch_size) tensor where each value:
             0 <= target[i] <= n_classes-1
         reduction (str, optional): 'none' / 'mean' / 'sum'
-    '''
-
+    """
     dim = input.ndim
 
     if dim != 2:
@@ -139,19 +140,19 @@ def cross_entropy(
     target: Tensor,
     reduction: str = 'mean'
 ) -> Tensor:
-    '''
+    """
     Cross Entropy Loss
 
-    NOTE: Combines softmax() and nll_loss(), which is DIFFERENT FROM
-          F.cross_entropy() IN PYTORCH!
+    NOTE:
+        Combine ``softmax()`` and ``nll_loss()``, which is DIFFERENT FROM
+        ``nn.functional.cross_entropy()`` IN PYTORCH!
 
-    args:
-        input (Tensor): a 2-dim (batch_size, n_classes) tensor
-        target (Tensor): a 1-dim (batch_size) tensor where each value:
+    Args:
+        input (Tensor): A 2-dim (batch_size, n_classes) tensor
+        target (Tensor): A 1-dim (batch_size) tensor where each value:
             0 <= target[i] <= n_classes-1
         reduction (str, optional): 'none' / 'mean' / 'sum'
-    '''
-
+    """
     after_softmax = input.softmax(axis=-1)
     out = nll_loss(after_softmax, target, reduction)
 
@@ -162,15 +163,14 @@ def mse_loss(
     target: Tensor,
     reduction: str = 'mean'
 ) -> Tensor:
-    '''
-    Mean Squared Error Loss: (x - y)^2
+    """
+    Mean Squared Error Loss: :math:`(x - y)^2`
 
-    args:
+    Args:
         input (Tensor): Tensor of shape (batch_size, *)
         target (Tensor): Tensor of the same shape as input
         reduction (str, optional): 'none' / 'mean' / 'sum'
-    '''
-
+    """
     if target.shape != input.shape:
         raise ValueError(
             "The target size ({}) is different to the input size ({}). "
@@ -192,16 +192,17 @@ def binary_cross_entropy(
     target: Tensor,
     reduction: str = 'mean'
 ) -> Tensor:
-    '''
-    Binary Cross Entropy Loss:
-        loss = - (y * log(x) + (1 - y) * log(1 - x))
+    """
+    Binary Cross Entropy Loss
 
-    args:
+    .. math::
+        \\text{loss} = - (y \log(x) + (1 - y) \log(1 - x))
+
+    Args:
         input (Tensor): Tensor of shape (batch_size, *)
         target (Tensor): Tensor of the same shape as input
         reduction (str, optional): 'none' / 'mean' / 'sum'
-    '''
-
+    """
     if target.shape != input.shape:
         raise ValueError(
             "The target size ({}) is different to the input size ({}). "
@@ -221,20 +222,18 @@ def binary_cross_entropy(
 # ---------------------- pad ----------------------
 
 def pad(input: Tensor, pad: Tuple, value: int = 0) -> Tensor:
-    '''
+    """
     Pad tensor.
 
-    args:
+    Args:
         input (Tensor): N-dimensional tensor
         pad (tuple):
-            Padding sizes, a m-elements tuple, where m/2 <= input dimensions and
-            m is even. The padding sizes are described starting from the m/2 to
-            last dimension to the last dimension. That is, m/2 dimensions of
-            input will be padded.
-        value (int):
-            Fill value for 'constant' padding (default: 0)
-    '''
-
+            Padding sizes, a m-elements tuple, where ``m/2`` <= input
+            dimensions and ``m`` is even. The padding sizes are described
+            starting from the ``m/2`` to last dimension to the last
+            dimension. That is, ``m/2`` dimensions of input will be padded.
+        value (int, default=0): Fill value for 'constant' padding
+    """
     n_pad_dims = int(len(pad) / 2)
     ndims = input.ndim
 
@@ -270,6 +269,12 @@ def pad(input: Tensor, pad: Tuple, value: int = 0) -> Tensor:
 # ---------------------- linear ----------------------
 
 def linear(input: Tensor, weight: Tensor, bias: Tensor = None):
+    """
+    Apply a linear transformation to the incoming data.
+
+    .. math::
+        y = x A^T + b
+    """
     out = input @ weight
 
     if bias is not None:
@@ -287,37 +292,40 @@ def conv2d(
     padding: tuple = (0, 0),
     dilation: tuple = (1, 1)
 ):
-    '''
+    """
     Apply a 2D convolution over an input signal composed of several input
-    planes:
+    planes.
 
-    NOTE: Use `im2col` function to perform the convolution as a single
-    matrix multiplication. For more details, see ref[1].
+    NOTE:
+        Use ``flint.im2col`` function to perform the convolution as a
+        single matrix multiplication. For more details, see [1].
 
-    args:
-        input (Tensor): input tensor
-        weight (Tensor): weight of the conv1d layer
-        bias (Tensor, optional): bias of the conv2d layer (default: None)
-        stride (tuple, optional):
-            stride of the convolution (default: (1, 1))
-        padding (tuple, optional):
-            zero-padding added to both sides of the input (default: (0, 0))
-        dilation (tuple, ptional):
-            spacing between kernel elements (default: (1, 1))
+    Args:
+        input (Tensor): Input tensor
+        weight (Tensor): Weight of the conv1d layer
+        bias (Tensor, optional): Bias of the conv2d layer
+        stride (tuple, optional, default=(1, 1)): Stride of the convolution
+        padding (tuple, optional, default=(0, 0)): Zero-padding added to
+            both sides of the input
+        dilation (tuple, optional, default=(1, 1)): Spacing between kernel
+            elements
 
-    shape:
-        input: (batch_size, in_channels, h_in, w_in)
-        output: (batch_size, out_channels, h_out, w_out)
+    Shape:
+        - input: (batch_size, in_channels, h_in, w_in)
+        - output: (batch_size, out_channels, h_out, w_out)
 
         where:
-            h_out = (h_in + 2 * padding[0] - dilation[0] * (kernel_size[0] - 1) - 1) / stride[0] + 1
-            w_out = (w_in + 2 * padding[1] - dilation[1] * (kernel_size[1] - 1) - 1) / stride[1] + 1
 
-    refs:
-        [1] Why GEMM is at the heart of deep learning? Pete Warden. 2015.
-            Blog: https://petewarden.com/2015/04/20/why-gemm-is-at-the-heart-of-deep-learning/
-    '''
+        .. math::
+            \\text{h\_out} = \\frac{\\text{h\_in + 2 * padding[0] - dilation[0] * (kernel\_size[0] - 1) - 1}}{\\text{stride}[0]} + 1
 
+        .. math::
+            \\text{w\_out} = \\frac{\\text{w\_in + 2 * padding[1] - dilation[1] * (kernel\_size[1] - 1) - 1}}{\\text{stride}[1]} + 1
+
+    References
+    ----------
+    1. `Why GEMM is at the heart of deep learning? Pete Warden. <https://petewarden.com/2015/04/20/why-gemm-is-at-the-heart-of-deep-learning/>`_ 2015.
+    """
     batch_size, in_channels, h_in, w_in = input.shape
     out_channels, in_channels, kernel_h, kernel_w = weight.shape
 
@@ -348,11 +356,11 @@ def conv1d(
     padding: tuple = (0, ),
     dilation: tuple = (1, )
 ):
-    '''
+    """
     Apply a 1D convolution over an input signal composed of several input
-    planes:
+    planes.
 
-    args:
+    Args:
         input (Tensor): input tensor
         weight (Tensor): weight of the conv1d layer
         bias (Tensor, optional): bias of the conv1d layer
@@ -363,15 +371,17 @@ def conv1d(
         dilation (tuple[int], optional):
             spacing between kernel elements (default: (1))
 
-    shape:
-        input: (batch_size, in_channels, L_in)
-        weight: (out_channels, in_channels, kernel_size)
-        bias: (1, out_channels, 1)
-        output: (batch_size, out_channels, L_out)
+    Shape:
+        - input: (batch_size, in_channels, L_in)
+        - weight: (out_channels, in_channels, kernel_size)
+        - bias: (1, out_channels, 1)
+        - output: (batch_size, out_channels, L_out)
 
         where:
-            L_out = (L_in + 2 * padding - dilation * (kernel_size - 1) - 1) / stride + 1
-    '''
+
+        .. math::
+            \\text{L\_out} = \\frac{\\text{L\_in + 2 * padding - dilation * (kernel\_size - 1) - 1}}{\\text{stride}} + 1
+    """
 
     # add a dimension to tensors so we can use conv2d
     input_2d = input.unsqueeze(dim=2)
