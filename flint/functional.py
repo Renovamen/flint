@@ -27,8 +27,8 @@ def im2col(
         stride (tuple, optional, default=(1, 1)): Stride of the convolution
         dilation (tuple, optional, default=(1, 1)): Spacing between kernel elements
 
-    Reference
-    ---------
+    References
+    ----------
     1. `CS231n Assignments 2 <https://github.com/cs231n/cs231n.github.io/tree/master/assignments/2020>`_
     """
     batch_size, in_channels, h_in, w_in = input.shape

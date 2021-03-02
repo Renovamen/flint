@@ -1,0 +1,19 @@
+body {
+    font-family: "Lato", "Helvetica Neue", Arial, sans-serif;
+}
+
+h1, h2, h3, h4, h5, h6, .rst-content .toctree-wrapper p.caption, legend, p.caption {
+    font-family: "Lato", "Helvetica Neue", Arial, sans-serif;
+}
+
+html.writer-html5 .rst-content dl.field-list {
+    display: block;
+}
+
+html.writer-html5 .rst-content dl.field-list > dt {
+    background: #f3f4f7;
+    padding: 0.5rem;
+    border-left: 3px solid #55a5d9;
+    padding-right: 100px;
+    margin-bottom: 8px;
+}

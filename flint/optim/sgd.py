@@ -16,11 +16,11 @@ class SGD(Optimizer):
     parameters, gradient, velocity, and momentum respectively.
 
     Args:
-        params (iterable): an iterable of Tensor
-        lr (float, optional): learning rate (default: 0.01)
-        momentum (float, optional): momentum factor (default: 0)
-        nesterov (bool, optional): enable Nesterov momentum or not (default: False)
-        weight_decay (float, optional): weight decay (L2 penalty) (default: 0)
+        params (iterable): An iterable of Tensor
+        lr (float, optional, default=0.01): Learning rate
+        momentum (float, optional, default=0.):  Momentum factor
+        nesterov (bool, optional, default=False): Enable Nesterov momentum or not
+        weight_decay (float, optional, default=0): Weight decay (L2 penalty)
     """
 
     def __init__(
