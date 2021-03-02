@@ -24,7 +24,7 @@ pip install git+https://github.com/Renovamen/flint.git --upgrade
 
 ## Documentation
 
-Coming soon 咕咕咕...
+Documentation is available [here](https://flint.vercel.app).
 
 
 &nbsp;
