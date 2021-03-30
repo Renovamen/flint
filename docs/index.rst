@@ -1,8 +1,12 @@
+.. image:: _static/img/meme.png
+    :alt: homemade pytorch
+
+
 ######
 Flint
 ######
 
-A toy deep learning framework built with Numpy from scratch with a `PyTorch <https://github.com/pytorch/pytorch>`_-like API. I'm trying to make it as clean as possible.
+A toy deep learning framework implemented in Numpy from scratch with a `PyTorch <https://github.com/pytorch/pytorch>`_-like API. I'm trying to make it as clean as possible.
 
 Flint is not as powerful as torch, but it is still able to start a fire.
 
