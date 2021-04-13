@@ -146,41 +146,36 @@ Check the [`examples`](examples) folder for more detailed examples.
 
 ## Features / To-Do List
 
-### Core
+### Autograd
 
 Support autograding on the following operations:
 
-- Math
-    - [x] Add
-    - [x] Substract
-    - [x] Negative
-    - [x] Muliply
-    - [x] Divide
-    - [x] Matmul
-    - [x] Power
-    - [x] Natural Logarithm
-    - [x] Exponential
-    - [x] Sum
-    - [x] Max
-    - [x] Softmax
-    - [x] Log Softmax
-
-- Movement
-    - [x] View
-    - [x] Transpose
-    - [x] Permute
-    - [x] Squeeze
-    - [x] Unsqueeze
-
-- Others
-    - [x] Padding
+- [x] Add
+- [x] Substract
+- [x] Negative
+- [x] Muliply
+- [x] Divide
+- [x] Matmul
+- [x] Power
+- [x] Natural Logarithm
+- [x] Exponential
+- [x] Sum
+- [x] Max
+- [x] Softmax
+- [x] Log Softmax
+- [x] View
+- [x] Transpose
+- [x] Permute
+- [x] Squeeze
+- [x] Unsqueeze
+- [x] Padding
 
 ### Layers
 
 - [x] Linear
 - [x] 1D / 2D Convolution
 - [ ] Flatten
-- [ ] MaxPooling
+- [x] 2D MaxPooling
 - [ ] Dropout
 - [ ] BatchNormalization
 - [ ] RNN
@@ -221,7 +216,6 @@ Support autograding on the following operations:
 
 - [x] Dataloaders
 - [ ] Support GPU
-- [ ] Maybe incorporate the [Keras](https://github.com/keras-team/keras)-like API to make the training code simpler?
 
 
 &nbsp;
@@ -229,6 +223,7 @@ Support autograding on the following operations:
 ## License
 
 [MIT](LICENSE)
+
 
 &nbsp;
 

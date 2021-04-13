@@ -1,7 +1,9 @@
 # inspired by https://github.com/karpathy/micrograd/blob/master/micrograd/engine.py
 
 import numpy as np
+from numbers import Number
 from typing import Union
+
 from .utils import *
 
 Arrayable = Union[float, list, np.ndarray]
@@ -398,16 +400,30 @@ class Tensor(object):
 
     # -------------- movement operations --------------
 
-    def __getitem__(self, item):
+    def __getitem__(self, index):
         out = Tensor(
-            data = self.data[item],
+            data = self.data[index],
             depends_on = [self],
             requires_grad=self.requires_grad
         )
 
+        _used_distinct_indices = (
+            out.data.base is not None
+            and (out.data.base is self.data or out.data.base is self.data.base)
+            or out.ndim == 0
+            or isinstance(out.data, Number)
+            # if `index` solely contains a boolean-valued array
+            or (len(index) == 1 and np.issubdtype(np.asarray(index[0]).dtype, np.bool_))
+        )
+
         def grad_slice():
             if self.requires_grad:
-                self.grad[item] += out.grad
+                if _used_distinct_indices:
+                    self.grad[index] += out.grad
+                else:
+                    # although `add.at` works for all cases, it is very slow,
+                    # see: https://github.com/numpy/numpy/issues/5922
+                    np.add.at(self.grad, index, out.grad)
 
         if out.requires_grad:
             out.grad_fn = grad_slice

@@ -4,25 +4,25 @@ from flint import Tensor
 from .. import Parameter
 
 class Module(object):
-    '''
+    """
     Base class for all modules.
 
-    args:
+    Args:
         name (str): name of the module
-    '''
+    """
 
     def __init__(self):
         self._parameters = OrderedDict()
         self._modules = OrderedDict()
 
     def register_parameter(self, name: str, param: Optional[Parameter]) -> None:
-        '''
+        """
         Add a parameter to the module.
 
-        args:
+        Args:
             name (str): name of the parameter
             param (Parameter): parameter to be added to the module
-        '''
+        """
 
         if param is None:
             self._parameters[name] = None
@@ -30,13 +30,13 @@ class Module(object):
             self._parameters[name] = param
 
     def add_module(self, name: str, module: Optional['Module']) -> None:
-        '''
+        """
         Add a child module to the current module.
 
-        args:
+        Args:
             name (str): name of the child module
             module (Module): child module to be added to the module
-        '''
+        """
 
         if module is None:
             self._modules[name] = None
@@ -44,28 +44,29 @@ class Module(object):
             self._modules[name] = module
 
     def parameters(self, recurse: bool = True) -> Iterator[Parameter]:
-        '''
+        """
         Returns an iterator over module parameters, only yielding the parameter itself.
 
-        args:
-            recurse (bool):
-                True: yield parameters of this module and all submodules
-                False: yield only parameters that are direct members of this module
+        Args:
+            recurse (bool): If ``True``, yields parameters of this module and all
+                submodules. If ``False``, yields only parameters that are direct
+                members of this module.
 
         yields:
             Parameter: module parameter
-        '''
+        """
 
         for name, param in self.named_parameters(recurse = recurse):
             yield param
 
     def named_parameters(self, prefix: str = '', recurse: bool = True) -> Iterator[Tuple[str, Parameter]]:
-        '''
-        Returns an iterator over module parameters, yielding both the
-        name of the parameter as well as the parameter itself.
+        """
+        Returns an iterator over module parameters, yielding both the name of the
+        parameter as well as the parameter itself.
+
         Adapted from: https://github.com/pytorch/pytorch/blob/master/torch/nn/modules/module.py
 
-        args:
+        Args:
             prefix (str): prefix to prepend to all parameter names.
             recurse (bool):
                 True: yield parameters of this module and all submodules
@@ -73,7 +74,7 @@ class Module(object):
 
         yields:
             (string, Parameter): Tuple containing the name and parameter
-        '''
+        """
 
         memo = set()
         modules = self.named_modules(prefix = prefix) if recurse else [(prefix, self)]
@@ -87,7 +88,7 @@ class Module(object):
                 yield name, v
 
     def modules(self) -> Iterator['Module']:
-        '''
+        """
         Returns an iterator over all modules in the network, only yielding the module itself.
 
         yields:
@@ -95,18 +96,18 @@ class Module(object):
 
         NOTE:
             Duplicate modules are returned only once.
-        '''
+        """
 
         for name, module in self.named_modules():
             yield module
 
     def named_modules(self, memo: Optional[Set['Module']] = None, prefix: str = '') -> Iterator[Tuple[str, 'Module']]:
-        '''
+        """
         Returns an iterator over all modules in the network, yielding
         both the name of the module as well as the module itself.
         Borrowed from: https://github.com/pytorch/pytorch/blob/master/torch/nn/modules/module.py
 
-        args:
+        Args:
             memo (Set): a set for recording visited modules
             prefix (str): prefix to prepend to all parameter names
 
@@ -115,7 +116,7 @@ class Module(object):
 
         NOTE:
             Duplicate modules are returned only once.
-        '''
+        """
 
         if memo is None:
             memo = set()

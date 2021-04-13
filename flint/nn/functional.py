@@ -4,6 +4,7 @@ from typing import Union, Tuple
 import flint
 from ..tensor import Tensor
 from ..utils import *
+from .types import _tuple_2_t
 
 # ---------------------- activators ----------------------
 
@@ -164,7 +165,7 @@ def mse_loss(
     reduction: str = 'mean'
 ) -> Tensor:
     """
-    Mean Squared Error Loss: :math:`(x - y)^2`
+    Mean Squared Error Loss :math:`(x - y)^2`
 
     Args:
         input (Tensor): Tensor of shape (batch_size, *)
@@ -227,11 +228,10 @@ def pad(input: Tensor, pad: Tuple, value: int = 0) -> Tensor:
 
     Args:
         input (Tensor): N-dimensional tensor
-        pad (tuple):
-            Padding sizes, a m-elements tuple, where ``m/2`` <= input
-            dimensions and ``m`` is even. The padding sizes are described
-            starting from the ``m/2`` to last dimension to the last
-            dimension. That is, ``m/2`` dimensions of input will be padded.
+        pad (tuple): Padding sizes, a m-elements tuple, where ``m/2`` <= input
+            dimensions and ``m`` is even. The padding sizes are described starting
+            from the ``m/2`` to last dimension to the last dimension. That is,
+            ``m/2`` dimensions of input will be padded.
         value (int, default=0): Fill value for 'constant' padding
     """
     n_pad_dims = int(len(pad) / 2)
@@ -288,9 +288,9 @@ def conv2d(
     input: Tensor,
     weight: Tensor,
     bias: Tensor = None,
-    stride: tuple = (1, 1),
-    padding: tuple = (0, 0),
-    dilation: tuple = (1, 1)
+    stride: _tuple_2_t[int] = (1, 1),
+    padding: _tuple_2_t[int] = (0, 0),
+    dilation: _tuple_2_t[int] = (1, 1)
 ):
     """
     Apply a 2D convolution over an input signal composed of several input
@@ -304,10 +304,10 @@ def conv2d(
         input (Tensor): Input tensor
         weight (Tensor): Weight of the conv1d layer
         bias (Tensor, optional): Bias of the conv2d layer
-        stride (tuple, optional, default=(1, 1)): Stride of the convolution
-        padding (tuple, optional, default=(0, 0)): Zero-padding added to
+        stride (Tuple[int, int], optional, default=(1, 1)): Stride of the convolution
+        padding (Tuple[int, int], optional, default=(0, 0)): Zero-padding added to
             both sides of the input
-        dilation (tuple, optional, default=(1, 1)): Spacing between kernel
+        dilation (Tuple[int, int], optional, default=(1, 1)): Spacing between kernel
             elements
 
     Shape:
@@ -337,7 +337,7 @@ def conv2d(
     padded_data = pad(input, (0, 0, 0, 0, padding[0], padding[0], padding[1], padding[1]))
 
     # convert input tensor and weights/kernels into a 2D matrices
-    input_col = flint.im2col(padded_data, weight.shape, (h_out, w_out), stride, dilation)
+    input_col = flint.im2col(padded_data, (kernel_h, kernel_w), (h_out, w_out), stride, dilation)
     weight_col = weight.view(out_channels, -1)
 
     out = (weight_col @ input_col).view(out_channels, h_out, w_out, batch_size).permute(3, 0, 1, 2)
@@ -397,3 +397,72 @@ def conv1d(
     # drop the added dimension
     out = out_2d.squeeze(dim=2)
     return out
+
+
+# ---------------------- max pooling ----------------------
+
+def max_pool2d(
+    input: Tensor,
+    kernel_size: _tuple_2_t[int],
+    stride: _tuple_2_t[int],
+    padding: _tuple_2_t[int] = (0, 0),
+    dilation: _tuple_2_t[int] = (1, 1),
+    return_indices: bool = False
+):
+    """
+    Apply a 2D max pooling over an input signal composed of several input planes.
+
+    NOTE:
+        Use ``flint.im2col`` function to perform the max pooling as a single
+        matrix multiplication. For more details, see [1].
+
+    NOTE:
+        It should be noted that, PyTorch argues the input will be implicitly
+        zero-padded when ``padding`` is non-zero in its `documentation <https://pytorch.org/docs/stable/generated/torch.nn.MaxPool2d.html>`_.
+        However, in fact, it uses implicit **negative infinity** padding rather
+        than zero-padding, see `this issue <https://github.com/pytorch/pytorch/issues/33384>`_.
+
+        In this project, zero-padding is used.
+
+    Args:
+        kernel_size (Tuple[int, int]): Size of the sliding window, must be > 0.
+        stride (Tuple[int, int]): Stride/hop of the window. Default to ``kernel_size``.
+        padding (Tuple[int, int], optional, default=(0, 0)): Zero-padding added
+            to both sides of the input, must be >= 0 and <= ``kernel_size / 2``.
+        dilation (Tuple[int, int], optional, default=(1, 1)): Spacing between the
+            elements in the window, must be > 0
+        return_indices (bool, optional, default=False): If ``True``, will return
+            the max indices along with the outputs
+
+    Shape:
+        - input: (batch_size, in_channels, h_in, w_in)
+        - output: (batch_size, out_channels, h_out, w_out)
+
+        where:
+
+        .. math::
+            \\text{h\_out} = \\frac{\\text{h\_in + 2 * padding[0] - dilation[0] * (kernel\_size[0] - 1) - 1}}{\\text{stride}[0]} + 1
+
+        .. math::
+            \\text{w\_out} = \\frac{\\text{w\_in + 2 * padding[1] - dilation[1] * (kernel\_size[1] - 1) - 1}}{\\text{stride}[1]} + 1
+
+    References
+    ----------
+    1. `Why GEMM is at the heart of deep learning? Pete Warden. <https://petewarden.com/2015/04/20/why-gemm-is-at-the-heart-of-deep-learning/>`_ 2015.
+    """
+    batch_size, in_channels, h_in, w_in = input.shape
+    kernel_h, kernel_w = kernel_size
+
+    # compute the dimensions of the pooling output
+    h_out = int((h_in + 2 * padding[0] - dilation[0] * (kernel_h - 1) - 1) / stride[0] + 1)
+    w_out = int((w_in + 2 * padding[1] - dilation[1] * (kernel_w - 1) - 1) / stride[1] + 1)
+
+    # padding input tensor
+    padded_data = pad(input, (0, 0, 0, 0, padding[0], padding[0], padding[1], padding[1]))
+
+    # convert input tensor and weights/kernels into a 2D matrices
+    input_col = flint.im2col(padded_data, kernel_size, (h_out, w_out), stride, dilation)
+
+    out_max = input_col.max(axis=0).view(in_channels, h_out, w_out, batch_size).permute(3, 0, 1, 2)
+
+    return out_max

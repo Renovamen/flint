@@ -32,7 +32,7 @@ def im2col(
     1. `CS231n Assignments 2 <https://github.com/cs231n/cs231n.github.io/tree/master/assignments/2020>`_
     """
     batch_size, in_channels, h_in, w_in = input.shape
-    out_channels, in_channels, kernel_h, kernel_w = kernel_shape
+    kernel_h, kernel_w = kernel_shape
     h_out, w_out = out_shape
 
     # get the indices for im2col

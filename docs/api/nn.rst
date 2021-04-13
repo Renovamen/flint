@@ -81,3 +81,12 @@ Loss Functions
    :members:
    :undoc-members:
    :show-inheritance:
+
+
+Pooling Layers
+----------------------------
+
+.. autoclass:: MaxPool2d
+   :members:
+   :undoc-members:
+   :show-inheritance:

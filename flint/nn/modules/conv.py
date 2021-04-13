@@ -4,11 +4,9 @@ from typing import Union, Tuple
 from flint import Tensor
 from .. import Parameter, init
 from .. import functional as F
+from ..types import _size_1_t, _size_2_t, _tuple_any_t
+from ._utils import _single, _pair
 from .module import Module
-from ._utils import _single, _pair, _triple
-
-_TSingle = Union[int, Tuple[int]]
-_TPair = Union[int, Tuple[int, int]]
 
 
 class _ConvNd(Module):
@@ -16,23 +14,24 @@ class _ConvNd(Module):
     A base class for all types of convolution layers.
 
     Args:
-        in_channels (int): number of channels in the input image
-        out_channels (int): number of channels produced by the convolution
-        kernel_size (tuple): size of the convolving kernel
-        stride (tuple): stride of the convolution
-        padding (tuple): zero-padding added to both sides of the input
-        dilation (tuple): spacing between kernel elements
-        bias (bool): enable bias or not
+        in_channels (int): Number of channels in the input image
+        out_channels (int): Number of channels produced by the convolution
+        kernel_size (tuple): Size of the convolving kernel
+        stride (tuple): Stride/hop of the convolution kernels as they move over
+            the input volume
+        padding (tuple): Zero-padding added to both sides of the input
+        dilation (tuple): Spacing between kernel elements
+        bias (bool): Enable bias or not
     """
 
     def __init__(
         self,
         in_channels: int,
         out_channels: int,
-        kernel_size: Tuple,
-        stride: Tuple,
-        padding: Tuple,
-        dilation: Tuple,
+        kernel_size: _tuple_any_t[int],
+        stride: _tuple_any_t[int],
+        padding: _tuple_any_t[int],
+        dilation: _tuple_any_t[int],
         bias: bool
     ) -> None:
         super(_ConvNd, self).__init__()
@@ -70,7 +69,8 @@ class Conv1d(_ConvNd):
         in_channels (int): Number of channels in the input image
         out_channels (int): Number of channels produced by the convolution
         kernel_size (int or tuple): Size of the convolving kernel
-        stride (int or tuple, optional, default=1): Stride of the convolution
+        stride (int or tuple, optional, default=1): The stride/hop of the
+            convolution kernels as they move over the input volume
         padding (int or tuple, optional, default=0): Zero-padding added
             to both sides of the input
         dilation (int or tuple, optional, default=1): Spacing between
@@ -91,10 +91,10 @@ class Conv1d(_ConvNd):
         self,
         in_channels: int,
         out_channels: int,
-        kernel_size: _TSingle,
-        stride: _TSingle = 1,
-        padding: _TSingle = 0,
-        dilation: _TSingle = 1,
+        kernel_size: _size_1_t,
+        stride: _size_1_t = 1,
+        padding: _size_1_t = 0,
+        dilation: _size_1_t = 1,
         bias: bool = True
     ):
         # Union[int, Tuple[int]] -> Tuple[int]
@@ -134,8 +134,8 @@ class Conv2d(_ConvNd):
         in_channels (int): Number of channels in the input image
         out_channels (int): Number of channels produced by the convolution
         kernel_size (int or tuple): Size of the convolving kernel
-        stride (int or tuple[int, int], optional, default=1): Stride of
-            the convolution
+        stride (int or tuple[int, int], optional, default=1): The stride/hop of
+            the convolution kernels as they move over the input volume
         padding (int or tuple[int, int], optional, default=0): Zero-padding
             added to both sides of the input
         dilation (int or tuple[int, int], optional, default=1): Spacing
@@ -159,10 +159,10 @@ class Conv2d(_ConvNd):
         self,
         in_channels: int,
         out_channels: int,
-        kernel_size: _TPair,
-        stride: _TPair = 1,
-        padding: _TPair = 0,
-        dilation: _TPair = 1,
+        kernel_size: _size_2_t,
+        stride: _size_2_t = 1,
+        padding: _size_2_t = 0,
+        dilation: _size_2_t = 1,
         bias: bool = True
     ):
         # Union[int, Tuple[int, int]] -> Tuple[int]

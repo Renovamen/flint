@@ -41,7 +41,7 @@ class CrossEntropyLoss(Loss):
 
 class MSELoss(Loss):
     """
-    Mean Squared Error Loss: :math`(x - y)^2`. See :func:`flint.nn.functional.mse_loss`
+    Mean Squared Error Loss: :math:`(x - y)^2`. See :func:`flint.nn.functional.mse_loss`
     for more details.
 
     Args:
