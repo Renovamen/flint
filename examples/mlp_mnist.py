@@ -92,7 +92,7 @@ def train(n_epochs, train_loader, net, optimer, loss_function, print_freq):
             optimer.step()
 
             # compute accuracy
-            preds = scores.argmax(axis = 1)
+            preds = scores.argmax(dim=1)
             correct_preds = flint.eq(preds, labels).sum().data
             accuracy = correct_preds / labels.shape[0]
 
@@ -114,7 +114,7 @@ def test(test_loader, net):
         scores = net(images)
 
         # compute accuracy
-        preds = scores.argmax(axis = 1)
+        preds = scores.argmax(dim=1)
         correct_preds = flint.eq(preds, labels).sum().data
         accuracy = correct_preds / labels.shape[0]
 

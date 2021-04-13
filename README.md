@@ -123,7 +123,7 @@ for i in range(n_epoch):
     optimer.step()
 
     # compute accuracy
-    preds = scores.argmax(axis = 1)
+    preds = scores.argmax(dim=1)
     correct_preds = flint.eq(preds, y).sum().data
     accuracy = correct_preds / y.shape[0]
 

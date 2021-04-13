@@ -330,9 +330,9 @@ class Tensor(object):
 
         return out
 
-    def sum(self, axis: int = None, keepdims: bool = False) -> 'Tensor':
+    def sum(self, dim: int = None, keepdims: bool = False) -> 'Tensor':
         out = Tensor(
-            data = np.sum(self.data, axis=axis, keepdims=keepdims),
+            data = np.sum(self.data, axis=dim, keepdims=keepdims),
             depends_on = [self],
             requires_grad = self.requires_grad
         )
@@ -341,8 +341,8 @@ class Tensor(object):
             if self.requires_grad:
                 out_grad = out.grad
                 if out.ndim < self.ndim:
-                    sum_axis = [axis] if type(axis) is int else axis
-                    expanded_shape = [1 if sum_axis is None or i in sum_axis else self.shape[i] for i in range(len(self.shape))]
+                    sum_dim = [dim] if type(dim) is int else dim
+                    expanded_shape = [1 if sum_dim is None or i in sum_dim else self.shape[i] for i in range(len(self.shape))]
                     out_grad = out_grad.reshape(expanded_shape)
                 self.grad += out_grad + np.zeros_like(self.data)
 
@@ -351,25 +351,27 @@ class Tensor(object):
 
         return out
 
-    def max(self, axis: int = None, keepdims: bool = False) -> 'Tensor':
+    def max(self, dim: int = None, keepdims: bool = False) -> 'Tensor':
         """
         Return the maximum value of all elements in the tensor.
         """
         out = Tensor(
-            data = np.max(self.data, axis=axis, keepdims=keepdims),
+            data = np.max(self.data, axis=dim, keepdims=keepdims),
             depends_on = [self],
             requires_grad = self.requires_grad
         )
 
         def grad_max():
+            # TODO: It seems that PyTorch modified its tensor.max(), so here
+            # should also be edited.
             if self.requires_grad:
                 out_grad = out.grad
                 out_data = out.data
                 if out.ndim < self.ndim:
-                    max_axis = [axis] if type(axis) is int else axis
+                    max_dim = [dim] if type(dim) is int else dim
                     # here I don't use np.expand_dims(), because I have to deal
-                    # with the situation when axis = None
-                    expanded_shape = [1 if max_axis is None or i in max_axis else self.shape[i] for i in range(len(self.shape))]
+                    # with the situation when ``dim = None```
+                    expanded_shape = [1 if max_dim is None or i in max_dim else self.shape[i] for i in range(len(self.shape))]
                     out_grad = out_grad.reshape(expanded_shape)
                     out_data = out_data.reshape(expanded_shape)
                 mask = (self.data == out_data)
@@ -380,21 +382,21 @@ class Tensor(object):
 
         return out
 
-    def argmax(self, axis: int = None) -> 'Tensor':
+    def argmax(self, dim: int = None) -> 'Tensor':
         """
         Return the indice of the maximum value of all elements in the tensor.
         """
-        out = Tensor(np.argmax(self.data, axis=axis))
+        out = Tensor(np.argmax(self.data, axis=dim))
         return out
 
-    def softmax(self, axis: int = -1) -> 'Tensor':
-        out = self - self.max(axis=axis, keepdims=True)
+    def softmax(self, dim: int = -1) -> 'Tensor':
+        out = self - self.max(dim=dim, keepdims=True)
         out = out.exp()
-        out = out / out.sum(axis=axis, keepdims=True)
+        out = out / out.sum(dim=dim, keepdims=True)
         return out
 
-    def log_softmax(self, axis: int = -1) -> 'Tensor':
-        after_softmax = self.softmax(axis)
+    def log_softmax(self, dim: int = -1) -> 'Tensor':
+        after_softmax = self.softmax(dim)
         out = after_softmax.log()
         return out
 

@@ -154,7 +154,7 @@ def cross_entropy(
             0 <= target[i] <= n_classes-1
         reduction (str, optional): 'none' / 'mean' / 'sum'
     """
-    after_softmax = input.softmax(axis=-1)
+    after_softmax = input.softmax(dim=-1)
     out = nll_loss(after_softmax, target, reduction)
 
     return out
@@ -472,7 +472,7 @@ def max_pool2d(
     batch_size, in_channels, h_in, w_in = input.shape
 
     input_col, h_out, w_out = input2col(input, kernel_size, stride, padding, dilation, mode='pooling')
-    out_max = input_col.max(axis=1).view(in_channels, h_out, w_out, batch_size).permute(3, 0, 1, 2)
+    out_max = input_col.max(dim=1).view(in_channels, h_out, w_out, batch_size).permute(3, 0, 1, 2)
 
     return out_max
 
