@@ -14,7 +14,8 @@ def im2col(
     kernel_shape: Tuple,
     out_shape: Tuple,
     stride: tuple = (1, 1),
-    dilation: tuple = (1, 1)
+    dilation: tuple = (1, 1),
+    mode: str = 'conv'
 ) -> Tensor:
     """
     Rearrange the input tensor into column vectors. This implementation is
@@ -26,6 +27,8 @@ def im2col(
         out_shape (tuple): Shape of the output tensor
         stride (tuple, optional, default=(1, 1)): Stride of the convolution
         dilation (tuple, optional, default=(1, 1)): Spacing between kernel elements
+        mode (str, optional, default='conv'): 'conv' for convolution, 'pooling'
+            for pooling
 
     References
     ----------
@@ -49,6 +52,10 @@ def im2col(
 
     # transform the input tensor
     input_col = input[:, k, i, j]
-    input_col = input_col.permute(1, 2, 0).view(kernel_h * kernel_w * in_channels, -1)
+
+    if mode == 'conv':
+        input_col = input_col.permute(1, 2, 0).view(kernel_h * kernel_w * in_channels, -1)
+    elif mode == 'pooling':
+        input_col = input_col.permute(1, 2, 0).view(in_channels, kernel_h * kernel_w, -1)
 
     return input_col

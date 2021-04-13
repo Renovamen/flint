@@ -49,8 +49,8 @@ class TestNN(unittest.TestCase):
         batch_size = 2
         h_in = 8
         w_in = 7
-        in_channels = 1
-        out_channels = 2
+        in_channels = 2
+        out_channels = 3
         kernel_size = (3, 2)
         stride = (3, 2)
         pad = (2, 2)
@@ -87,10 +87,10 @@ class TestNN(unittest.TestCase):
             np.testing.assert_allclose(x, y, atol=1e-5)
 
     def test_conv1d(self):
-        batch_size = 2
+        batch_size = 3
         l_in = 9
-        in_channels = 1
-        out_channels = 2
+        in_channels = 2
+        out_channels = 3
         kernel_size = 3
         stride = (2, )
         pad = (1, )

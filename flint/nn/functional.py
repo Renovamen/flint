@@ -4,7 +4,7 @@ from typing import Union, Tuple
 import flint
 from ..tensor import Tensor
 from ..utils import *
-from .types import _tuple_2_t
+from .types import _tuple_1_t, _tuple_2_t
 
 # ---------------------- activators ----------------------
 
@@ -282,6 +282,31 @@ def linear(input: Tensor, weight: Tensor, bias: Tensor = None):
 
     return out
 
+# ----- utility function for conv and pooling ------
+
+def input2col(
+    input: Tensor,
+    kernel_size: _tuple_2_t[int],
+    stride: _tuple_2_t[int],
+    padding: _tuple_2_t[int],
+    dilation: _tuple_2_t[int],
+    mode: str = 'conv'
+):
+    batch_size, in_channels, h_in, w_in = input.shape
+    kernel_h, kernel_w = kernel_size
+
+    # compute the dimensions of the pooling output
+    h_out = int((h_in + 2 * padding[0] - dilation[0] * (kernel_h - 1) - 1) / stride[0] + 1)
+    w_out = int((w_in + 2 * padding[1] - dilation[1] * (kernel_w - 1) - 1) / stride[1] + 1)
+
+    # padding input tensor
+    padded_data = pad(input, (0, 0, 0, 0, padding[0], padding[0], padding[1], padding[1]))
+
+    # convert input tensor and weights/kernels into a 2D matrices
+    input_col = flint.im2col(padded_data, kernel_size, (h_out, w_out), stride, dilation, mode)
+
+    return input_col, h_out, w_out
+
 # ---------------------- conv ----------------------
 
 def conv2d(
@@ -326,18 +351,11 @@ def conv2d(
     ----------
     1. `Why GEMM is at the heart of deep learning? Pete Warden. <https://petewarden.com/2015/04/20/why-gemm-is-at-the-heart-of-deep-learning/>`_ 2015.
     """
+
     batch_size, in_channels, h_in, w_in = input.shape
     out_channels, in_channels, kernel_h, kernel_w = weight.shape
 
-    # compute the dimensions of the convolution output
-    h_out = int((h_in + 2 * padding[0] - dilation[0] * (kernel_h - 1) - 1) / stride[0] + 1)
-    w_out = int((w_in + 2 * padding[1] - dilation[1] * (kernel_w - 1) - 1) / stride[1] + 1)
-
-    # padding input tensor
-    padded_data = pad(input, (0, 0, 0, 0, padding[0], padding[0], padding[1], padding[1]))
-
-    # convert input tensor and weights/kernels into a 2D matrices
-    input_col = flint.im2col(padded_data, (kernel_h, kernel_w), (h_out, w_out), stride, dilation)
+    input_col, h_out, w_out = input2col(input, (kernel_h, kernel_w), stride, padding, dilation)
     weight_col = weight.view(out_channels, -1)
 
     out = (weight_col @ input_col).view(out_channels, h_out, w_out, batch_size).permute(3, 0, 1, 2)
@@ -422,7 +440,7 @@ def max_pool2d(
         However, in fact, it uses implicit **negative infinity** padding rather
         than zero-padding, see `this issue <https://github.com/pytorch/pytorch/issues/33384>`_.
 
-        In this project, zero-padding is used.
+        In this class, zero-padding is used.
 
     Args:
         kernel_size (Tuple[int, int]): Size of the sliding window, must be > 0.
@@ -450,19 +468,63 @@ def max_pool2d(
     ----------
     1. `Why GEMM is at the heart of deep learning? Pete Warden. <https://petewarden.com/2015/04/20/why-gemm-is-at-the-heart-of-deep-learning/>`_ 2015.
     """
+
     batch_size, in_channels, h_in, w_in = input.shape
-    kernel_h, kernel_w = kernel_size
 
-    # compute the dimensions of the pooling output
-    h_out = int((h_in + 2 * padding[0] - dilation[0] * (kernel_h - 1) - 1) / stride[0] + 1)
-    w_out = int((w_in + 2 * padding[1] - dilation[1] * (kernel_w - 1) - 1) / stride[1] + 1)
-
-    # padding input tensor
-    padded_data = pad(input, (0, 0, 0, 0, padding[0], padding[0], padding[1], padding[1]))
-
-    # convert input tensor and weights/kernels into a 2D matrices
-    input_col = flint.im2col(padded_data, kernel_size, (h_out, w_out), stride, dilation)
-
-    out_max = input_col.max(axis=0).view(in_channels, h_out, w_out, batch_size).permute(3, 0, 1, 2)
+    input_col, h_out, w_out = input2col(input, kernel_size, stride, padding, dilation, mode='pooling')
+    out_max = input_col.max(axis=1).view(in_channels, h_out, w_out, batch_size).permute(3, 0, 1, 2)
 
     return out_max
+
+def max_pool1d(
+    input: Tensor,
+    kernel_size: _tuple_1_t[int],
+    stride: _tuple_1_t[int] = (1, ),
+    padding: _tuple_1_t[int] = (0, ),
+    dilation: _tuple_1_t[int] = (1, ),
+    return_indices: bool = False
+):
+    """
+    Apply a 1D max pooling over an input signal composed of several input planes.
+
+    NOTE:
+        It should be noted that, PyTorch argues the input will be implicitly
+        zero-padded when ``padding`` is non-zero in its `documentation <https://pytorch.org/docs/stable/generated/torch.nn.MaxPool2d.html>`_.
+        However, in fact, it uses implicit **negative infinity** padding rather
+        than zero-padding, see `this issue <https://github.com/pytorch/pytorch/issues/33384>`_.
+
+        In this class, zero-padding is used.
+
+    Args:
+        kernel_size (_size_1_t): Size of the sliding window, must be > 0.
+        stride (_size_1_t): Stride of the window, must be > 0. Default to ``kernel_size``.
+        padding (_size_1_t, optional, default=0): Zero-padding added to both
+            sides of the input, must be >= 0 and <= ``kernel_size / 2``.
+        dilation (_size_1_t, optional, default=1): Spacing between the elements
+            in the window, must be > 0
+        return_indices (bool, optional, default=False): If ``True``, will return
+            the max indices along with the outputs
+
+    Shapes:
+        - input: (batch_size, in_channels, L_in)
+        - output: (batch_size, out_channels, L_out)
+
+        where:
+
+        .. math::
+            \\text{L\_out} = \\frac{\\text{L\_in + 2 * padding - dilation * (kernel\_size - 1) - 1}}{\\text{stride}} + 1
+    """
+
+    # add a dimension to tensors so we can use max_pool2d
+    input_2d = input.unsqueeze(dim=2)
+
+    kernel_size_2d = (1, kernel_size)
+    stride_2d = (1, stride[0])
+    pad_2d = (0, padding[0])
+    dilation_2d = (1, dilation[0])
+
+    out_2d = max_pool2d(input_2d, kernel_size_2d, stride_2d, pad_2d, dilation_2d, return_indices)  # (batch_size, out_channels, 1, L_out)
+
+    # drop the added dimension
+    out = out_2d.squeeze(dim=2)
+    return out

@@ -175,7 +175,7 @@ Support autograding on the following operations:
 - [x] Linear
 - [x] 1D / 2D Convolution
 - [ ] Flatten
-- [x] 2D MaxPooling
+- [x] 1D / 2D MaxPooling
 - [ ] Dropout
 - [ ] BatchNormalization
 - [ ] RNN

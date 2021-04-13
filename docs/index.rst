@@ -57,36 +57,32 @@ Core
 
 Support autograding on the following operations:
 
-- Math
-    - Add
-    - Substract
-    - Negative
-    - Muliply
-    - Divide
-    - Matmul
-    - Power
-    - Natural Logarithm
-    - Exponential
-    - Sum
-    - Max
-    - Softmax
-    - Log Softmax
-
-- Movement
-    - View
-    - Transpose
-    - Permute
-    - Squeeze
-    - Unsqueeze
-
-- Others
-    - Padding
+- Add
+- Substract
+- Negative
+- Muliply
+- Divide
+- Matmul
+- Power
+- Natural Logarithm
+- Exponential
+- Sum
+- Max
+- Softmax
+- Log Softmax
+- View
+- Transpose
+- Permute
+- Squeeze
+- Unsqueeze
+- Padding
 
 Layers
 =====================
 
 - Linear
 - 1D / 2D Convolution
+- 1D / 2D MaxPooling
 - Sequential
 
 Optimizers

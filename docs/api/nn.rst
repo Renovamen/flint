@@ -86,6 +86,11 @@ Loss Functions
 Pooling Layers
 ----------------------------
 
+.. autoclass:: MaxPool1d
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
 .. autoclass:: MaxPool2d
    :members:
    :undoc-members:
