@@ -14,17 +14,21 @@ def ensure_ndarray(data: Arrayable) -> np.ndarray:
     else:
         return np.asarray(data)
 
-class Tensor(object):
+class Tensor:
     """
     Tensor is the basic structure in the computation graph. It holds value
     for forward computation and grad for backward propagation.
 
-    Args:
-        data (Union[float, list, np.ndarray]): Data for the Tensor
-        depends_on (list, optional, default=[]): List of dependent tensors
-            (used when building autograd graph)
-        requires_grad (bool, optional, default=False): Whether the Tensor
-            requires gradient
+    Parameters
+    ----------
+    data : Union[float, list, np.ndarray]
+        Data for the Tensor
+
+    depends_on : list, optional, default=[]
+        List of dependent tensors (used when building autograd graph)
+
+    requires_grad : bool, optional, default=False
+        Whether the Tensor requires gradient
     """
 
     def __init__(
@@ -59,8 +63,10 @@ class Tensor(object):
         """
         Add the dependent tensors for building autograd graph.
 
-        Args:
-            depends_on (list): list of dependent tensors
+        Parameters
+        ----------
+        depends_on : list
+            List of dependent tensors
         """
         for i in depends_on:
             if isinstance(i, Tensor):
@@ -479,9 +485,13 @@ class Tensor(object):
         """
         Swap the dimension dim0 and dim1 of the tensor.
 
-        Args:
-            dim0 (int): The first dimension to be transposed
-            dim1 (int): The second dimension to be transposed
+        Parameters
+        ----------
+        dim0 : int
+            The first dimension to be transposed
+
+        dim1 : int
+            The second dimension to be transposed
         """
         def get_dim(dim):
             if dim == dim0:
@@ -532,9 +542,11 @@ class Tensor(object):
         """
         Remove the dimensions of input of size 1.
 
-        Args:
-            dim (int, optional): If given, the input will be squeezed only in
-                this dimension. Or all the dimensions of size 1 will be removed.
+        Parameters
+        ----------
+        dim : int, optional
+            If given, the input will be squeezed only in this dimension. Or
+            all the dimensions of size 1 will be removed.
         """
         out = Tensor(
             data = np.squeeze(self.data, axis=dim),
@@ -577,9 +589,13 @@ class Tensor(object):
         """
         Fill the tensor with values drawn from the uniform distribution.
 
-        Args:
-            low (float, optional, default=0.): The lower bound of the uniform distribution
-            high (float, optional, default=1.): The upper bound of the uniform distribution
+        Parameters
+        ----------
+        low : float, optional, default=0.
+            The lower bound of the uniform distribution
+
+        high : float, optional, default=1.
+            The upper bound of the uniform distribution
         """
         self.data = np.random.uniform(low=low, high=high, size=self.shape)
 
@@ -587,9 +603,12 @@ class Tensor(object):
         """
         Fill the tensor with values drawn from the normal distribution.
 
-        Args:
-            mean (float, optional, default=0.): The mean of the normal distribution
-            std (float, optional, default=1.): The standard deviation of the
-                normal distribution
+        Parameters
+        ----------
+        mean : float, optional, default=0.
+            The mean of the normal distribution
+
+        std : float, optional, default=1.
+            The standard deviation of the normal distribution
         """
         self.data = np.random.normal(loc=mean, scale=std, size=self.shape)

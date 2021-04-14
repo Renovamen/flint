@@ -2,10 +2,16 @@ class Optimizer:
     """
     Base class for all optimizers.
 
-    Args:
-        params (iterable): An iterable of Tensor
-        lr (float, optional, default=0.01): Learning rate
-        weight_decay (float, optional, default=0.): Weight decay (L2 penalty)
+    Parameters
+    ----------
+    params : iterable
+        An iterable of Tensor
+
+    lr : float, optional, default=0.01
+        Learning rate
+
+    weight_decay : float, optional, default=0.
+        Weight decay (L2 penalty)
     """
 
     def __init__(self, params = None, lr: float = 0.01, weight_decay: float = 0.):

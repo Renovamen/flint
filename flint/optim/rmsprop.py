@@ -10,14 +10,22 @@ class RMSprop(Optimizer):
     .. math::
         \\theta_{t+1} = \\theta_t - \\frac{\\text{lr}}{\sqrt{h_t + \epsilon}} \cdot g_t
 
-    Args:
-        params (iterable): An iterable of Tensor
-        lr (float, optional, default=0.01): Learning rate
-        alpha (float, optional, default=0.99): Coefficient used for
-            computing a running average of squared gradients
-        eps (float, optional, default=1e-8): Term added to the denominator
-            to improve numerical stability
-        weight_decay (float, optional, default=0): Weight decay (L2 penalty)
+    Parameters
+    ----------
+    params : iterable)
+        An iterable of Tensor
+
+    lr : float, optional, default=0.01)
+        Learning rate
+
+    alpha : float, optional, default=0.99
+        Coefficient used for computing a running average of squared gradients
+
+    eps : float, optional, default=1e-8
+        Term added to the denominator to improve numerical stability
+
+    weight_decay : float, optional, default=0
+        Weight decay (L2 penalty)
 
     References
     ----------

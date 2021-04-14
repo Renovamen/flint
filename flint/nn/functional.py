@@ -4,7 +4,7 @@ from typing import Union, Tuple
 import flint
 from ..tensor import Tensor
 from ..utils import *
-from .types import _tuple_1_t, _tuple_2_t
+from .types import _tuple_1_t, _tuple_2_t, _tuple_any_t
 
 # ---------------------- activators ----------------------
 
@@ -90,11 +90,16 @@ def nll_loss(
         Here I apply ``log()`` on the prediction data, which is DIFFERENT
         FROM ``nn.functional.nll_loss()`` IN PYTORCH!
 
-    Args:
-        input (Tensor): A 2-dim (batch_size, n_classes) tensor
-        target (Tensor): A 1-dim (batch_size) tensor where each value:
-            0 <= target[i] <= n_classes-1
-        reduction (str, optional): 'none' / 'mean' / 'sum'
+    Parameters
+    ----------
+    input : Tensor
+        A 2-dim (batch_size, n_classes) tensor
+
+    target : Tensor
+        A 1-dim (batch_size) tensor where each value: 0 <= target[i] <= n_classes-1
+
+    reduction : str, optional, default='mean'
+        'none' / 'mean' / 'sum'
     """
     dim = input.ndim
 
@@ -148,11 +153,16 @@ def cross_entropy(
         Combine ``softmax()`` and ``nll_loss()``, which is DIFFERENT FROM
         ``nn.functional.cross_entropy()`` IN PYTORCH!
 
-    Args:
-        input (Tensor): A 2-dim (batch_size, n_classes) tensor
-        target (Tensor): A 1-dim (batch_size) tensor where each value:
-            0 <= target[i] <= n_classes-1
-        reduction (str, optional): 'none' / 'mean' / 'sum'
+    Parameters
+    ----------
+    input : Tensor
+        A 2-dim (batch_size, n_classes) tensor
+
+    target : Tensor
+        A 1-dim (batch_size) tensor where each value: 0 <= target[i] <= n_classes-1
+
+    reduction : str, optional, default='mean'
+        'none' / 'mean' / 'sum'
     """
     after_softmax = input.softmax(dim=-1)
     out = nll_loss(after_softmax, target, reduction)
@@ -167,10 +177,16 @@ def mse_loss(
     """
     Mean Squared Error Loss :math:`(x - y)^2`
 
-    Args:
-        input (Tensor): Tensor of shape (batch_size, *)
-        target (Tensor): Tensor of the same shape as input
-        reduction (str, optional): 'none' / 'mean' / 'sum'
+    Parameters
+    ----------
+    input : Tensor
+        Tensor of shape (batch_size, *)
+
+    target : Tensor
+        Tensor of the same shape as input
+
+    reduction : str, optional, default='mean'
+        'none' / 'mean' / 'sum'
     """
     if target.shape != input.shape:
         raise ValueError(
@@ -199,10 +215,16 @@ def binary_cross_entropy(
     .. math::
         \\text{loss} = - (y \log(x) + (1 - y) \log(1 - x))
 
-    Args:
-        input (Tensor): Tensor of shape (batch_size, *)
-        target (Tensor): Tensor of the same shape as input
-        reduction (str, optional): 'none' / 'mean' / 'sum'
+    Parameters
+    ----------
+    input : Tensor
+        Tensor of shape (batch_size, *)
+
+    target : Tensor
+        Tensor of the same shape as input
+
+    reduction : str, optional, default='mean'
+        'none' / 'mean' / 'sum'
     """
     if target.shape != input.shape:
         raise ValueError(
@@ -222,17 +244,23 @@ def binary_cross_entropy(
 
 # ---------------------- pad ----------------------
 
-def pad(input: Tensor, pad: Tuple, value: int = 0) -> Tensor:
+def pad(input: Tensor, pad: _tuple_any_t[int], value: int = 0) -> Tensor:
     """
     Pad tensor.
 
-    Args:
-        input (Tensor): N-dimensional tensor
-        pad (tuple): Padding sizes, a m-elements tuple, where ``m/2`` <= input
-            dimensions and ``m`` is even. The padding sizes are described starting
-            from the ``m/2`` to last dimension to the last dimension. That is,
-            ``m/2`` dimensions of input will be padded.
-        value (int, default=0): Fill value for 'constant' padding
+    Parameters
+    ----------
+    input : Tensor
+        N-dimensional tensor
+
+    pad : _tuple_any_t[int]
+        Padding sizes, a m-elements tuple, where ``m/2`` <= input dimensions
+        and ``m`` is even. The padding sizes are described starting from the
+        ``m/2`` to last dimension to the last dimension. That is, ``m/2``
+        dimensions of input will be padded.
+
+    value : int, optional, default=0
+        Fill value for 'constant' padding
     """
     n_pad_dims = int(len(pad) / 2)
     ndims = input.ndim
@@ -321,31 +349,40 @@ def conv2d(
     Apply a 2D convolution over an input signal composed of several input
     planes.
 
+    - input shape: ``(batch_size, in_channels, h_in, w_in)``
+    - output shape: ``(batch_size, out_channels, h_out, w_out)``
+
+    where:
+
+    .. math::
+        \\text{h\_out} = \\frac{\\text{h\_in + 2 * padding[0] - dilation[0] * (kernel\_size[0] - 1) - 1}}{\\text{stride}[0]} + 1
+
+    .. math::
+        \\text{w\_out} = \\frac{\\text{w\_in + 2 * padding[1] - dilation[1] * (kernel\_size[1] - 1) - 1}}{\\text{stride}[1]} + 1
+
     NOTE:
         Use ``flint.im2col`` function to perform the convolution as a
         single matrix multiplication. For more details, see [1].
 
-    Args:
-        input (Tensor): Input tensor
-        weight (Tensor): Weight of the conv1d layer
-        bias (Tensor, optional): Bias of the conv2d layer
-        stride (Tuple[int, int], optional, default=(1, 1)): Stride of the convolution
-        padding (Tuple[int, int], optional, default=(0, 0)): Zero-padding added to
-            both sides of the input
-        dilation (Tuple[int, int], optional, default=(1, 1)): Spacing between kernel
-            elements
+    Parameters
+    ----------
+    input : Tensor
+        Input tensor
 
-    Shape:
-        - input: (batch_size, in_channels, h_in, w_in)
-        - output: (batch_size, out_channels, h_out, w_out)
+    weight : Tensor
+        Weight of the conv1d layer
 
-        where:
+    bias : Tensor, optional
+        Bias of the conv2d layer
 
-        .. math::
-            \\text{h\_out} = \\frac{\\text{h\_in + 2 * padding[0] - dilation[0] * (kernel\_size[0] - 1) - 1}}{\\text{stride}[0]} + 1
+    stride : Tuple[int, int], optional, default=(1, 1)
+        Stride of the convolution
 
-        .. math::
-            \\text{w\_out} = \\frac{\\text{w\_in + 2 * padding[1] - dilation[1] * (kernel\_size[1] - 1) - 1}}{\\text{stride}[1]} + 1
+    padding : Tuple[int, int], optional, default=(0, 0))
+        Zero-padding added to both sides of the input
+
+    dilation : Tuple[int, int], optional, default=(1, 1)
+        Spacing between kernel elements
 
     References
     ----------
@@ -370,35 +407,41 @@ def conv1d(
     input: Tensor,
     weight: Tensor,
     bias: Tensor = None,
-    stride: tuple = (1, ),
-    padding: tuple = (0, ),
-    dilation: tuple = (1, )
+    stride: _tuple_1_t[int] = (1, ),
+    padding: _tuple_1_t[int] = (0, ),
+    dilation: _tuple_1_t[int] = (1, )
 ):
     """
     Apply a 1D convolution over an input signal composed of several input
     planes.
 
-    Args:
-        input (Tensor): input tensor
-        weight (Tensor): weight of the conv1d layer
-        bias (Tensor, optional): bias of the conv1d layer
-        stride (tuple[int], optional):
-            stride of the convolution (default: (1))
-        padding (tuple[int], optional):
-            zero-padding added to both sides of the input (default: (0))
-        dilation (tuple[int], optional):
-            spacing between kernel elements (default: (1))
+    - input shape: ``(batch_size, in_channels, L_in)``
+    - output shape: ``(batch_size, out_channels, L_out)``
 
-    Shape:
-        - input: (batch_size, in_channels, L_in)
-        - weight: (out_channels, in_channels, kernel_size)
-        - bias: (1, out_channels, 1)
-        - output: (batch_size, out_channels, L_out)
+    where:
 
-        where:
+    .. math::
+        \\text{L\_out} = \\frac{\\text{L\_in + 2 * padding - dilation * (kernel\_size - 1) - 1}}{\\text{stride}} + 1
 
-        .. math::
-            \\text{L\_out} = \\frac{\\text{L\_in + 2 * padding - dilation * (kernel\_size - 1) - 1}}{\\text{stride}} + 1
+    Parameters
+    ----------
+    input : Tensor
+        Input tensor
+
+    weight : Tensor
+        Weight of the conv1d layer
+
+    bias : Tensor, optional
+        Bias of the conv1d layer
+
+    stride : Tuple[int], optional, default: (1, )
+        Stride of the convolution
+
+    padding : Tuple[int], optional, default: (0, )
+        Zero-padding added to both sides of the input
+
+    dilation : Tuple[int], optional, default: (1, )
+        Spacing between kernel elements
     """
 
     # add a dimension to tensors so we can use conv2d
@@ -430,6 +473,17 @@ def max_pool2d(
     """
     Apply a 2D max pooling over an input signal composed of several input planes.
 
+    - input shape: ``(batch_size, in_channels, h_in, w_in)``
+    - output shape: ``(batch_size, out_channels, h_out, w_out)``
+
+    where:
+
+    .. math::
+        \\text{h\_out} = \\frac{\\text{h\_in + 2 * padding[0] - dilation[0] * (kernel\_size[0] - 1) - 1}}{\\text{stride}[0]} + 1
+
+    .. math::
+        \\text{w\_out} = \\frac{\\text{w\_in + 2 * padding[1] - dilation[1] * (kernel\_size[1] - 1) - 1}}{\\text{stride}[1]} + 1
+
     NOTE:
         Use ``flint.im2col`` function to perform the max pooling as a single
         matrix multiplication. For more details, see [1].
@@ -442,27 +496,22 @@ def max_pool2d(
 
         In this class, zero-padding is used.
 
-    Args:
-        kernel_size (Tuple[int, int]): Size of the sliding window, must be > 0.
-        stride (Tuple[int, int]): Stride/hop of the window. Default to ``kernel_size``.
-        padding (Tuple[int, int], optional, default=(0, 0)): Zero-padding added
-            to both sides of the input, must be >= 0 and <= ``kernel_size / 2``.
-        dilation (Tuple[int, int], optional, default=(1, 1)): Spacing between the
-            elements in the window, must be > 0
-        return_indices (bool, optional, default=False): If ``True``, will return
-            the max indices along with the outputs
+    Parameters
+    ----------
+    kernel_size : Tuple[int, int]
+        Size of the sliding window, must be > 0.
 
-    Shape:
-        - input: (batch_size, in_channels, h_in, w_in)
-        - output: (batch_size, out_channels, h_out, w_out)
+    stride : Tuple[int, int]
+        Stride/hop of the window. Default to ``kernel_size``.
 
-        where:
+    padding : Tuple[int, int], optional, default=(0, 0)
+        Zero-padding added to both sides of the input, must be >= 0 and <= ``kernel_size / 2``.
 
-        .. math::
-            \\text{h\_out} = \\frac{\\text{h\_in + 2 * padding[0] - dilation[0] * (kernel\_size[0] - 1) - 1}}{\\text{stride}[0]} + 1
+    dilation : Tuple[int, int], optional, default=(1, 1)
+        Spacing between the elements in the window, must be > 0
 
-        .. math::
-            \\text{w\_out} = \\frac{\\text{w\_in + 2 * padding[1] - dilation[1] * (kernel\_size[1] - 1) - 1}}{\\text{stride}[1]} + 1
+    return_indices : bool, optional, default=False
+        If ``True``, will return the max indices along with the outputs
 
     References
     ----------
@@ -487,6 +536,14 @@ def max_pool1d(
     """
     Apply a 1D max pooling over an input signal composed of several input planes.
 
+    - input shape: ``(batch_size, in_channels, L_in)``
+    - output shape: ``(batch_size, out_channels, L_out)``
+
+    where:
+
+    .. math::
+        \\text{L\_out} = \\frac{\\text{L\_in + 2 * padding - dilation * (kernel\_size - 1) - 1}}{\\text{stride}} + 1
+
     NOTE:
         It should be noted that, PyTorch argues the input will be implicitly
         zero-padded when ``padding`` is non-zero in its `documentation <https://pytorch.org/docs/stable/generated/torch.nn.MaxPool2d.html>`_.
@@ -495,24 +552,22 @@ def max_pool1d(
 
         In this class, zero-padding is used.
 
-    Args:
-        kernel_size (_size_1_t): Size of the sliding window, must be > 0.
-        stride (_size_1_t): Stride of the window, must be > 0. Default to ``kernel_size``.
-        padding (_size_1_t, optional, default=0): Zero-padding added to both
-            sides of the input, must be >= 0 and <= ``kernel_size / 2``.
-        dilation (_size_1_t, optional, default=1): Spacing between the elements
-            in the window, must be > 0
-        return_indices (bool, optional, default=False): If ``True``, will return
-            the max indices along with the outputs
+    Parameters
+    ----------
+    kernel_size : Tuple[int]
+        Size of the sliding window, must be > 0.
 
-    Shapes:
-        - input: (batch_size, in_channels, L_in)
-        - output: (batch_size, out_channels, L_out)
+    stride : Tuple[int]
+        Stride of the window, must be > 0. Default to ``kernel_size``.
 
-        where:
+    padding : Tuple[int], optional, default=0
+        Zero-padding added to both sides of the input, must be >= 0 and <= ``kernel_size / 2``.
 
-        .. math::
-            \\text{L\_out} = \\frac{\\text{L\_in + 2 * padding - dilation * (kernel\_size - 1) - 1}}{\\text{stride}} + 1
+    dilation : Tuple[int], optional, default=1
+        Spacing between the elements in the window, must be > 0
+
+    return_indices : bool, optional, default=False)
+        If ``True``, will return the max indices along with the outputs
     """
 
     # add a dimension to tensors so we can use max_pool2d

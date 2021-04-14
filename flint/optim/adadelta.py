@@ -17,15 +17,22 @@ class Adadelta(Optimizer):
     where :math:`h` is the moving average of the squared gradients,
     :math:`\epsilon` is for improving numerical stability.
 
-    Args:
-        params (iterable): An iterable of Tensor
-        rho (float, optional, default=0.9): Coefficient used for computing a
-            running average of squared gradients
-        eps (float, optional, default=1e-6): Term added to the denominator to
-            improve numerical stability
-        lr (float, optional, default=1.0): Coefficient that scale delta before
-            it is applied to the parameters
-        weight_decay (float, optional, default=0): Weight decay (L2 penalty)
+    Parameters
+    ----------
+    params : iterable
+        An iterable of Tensor
+
+    rho : float, optional, default=0.9
+        Coefficient used for computing a running average of squared gradients
+
+    eps : float, optional, default=1e-6
+        Term added to the denominator to improve numerical stability
+
+    lr : float, optional, default=1.0
+        Coefficient that scale delta before it is applied to the parameters
+
+    weight_decay : float, optional, default=0
+        Weight decay (L2 penalty)
 
     References
     ----------

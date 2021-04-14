@@ -13,15 +13,28 @@ class _ConvNd(Module):
     """
     A base class for all types of convolution layers.
 
-    Args:
-        in_channels (int): Number of channels in the input image
-        out_channels (int): Number of channels produced by the convolution
-        kernel_size (tuple): Size of the convolving kernel
-        stride (tuple): Stride/hop of the convolution kernels as they move over
-            the input volume
-        padding (tuple): Zero-padding added to both sides of the input
-        dilation (tuple): Spacing between kernel elements
-        bias (bool): Enable bias or not
+    Parameters
+    ----------
+    in_channels : int
+        Number of channels in the input image
+
+    out_channels : int
+        Number of channels produced by the convolution
+
+    kernel_size : tuple
+        Size of the convolving kernel
+
+    stride : tuple
+        Stride of the convolution kernels as they move over the input volume
+
+    padding : tuple
+        Zero-padding added to both sides of the input
+
+    dilation : tuple
+        Spacing between kernel elements
+
+    bias : bool
+        Enable bias or not
     """
 
     def __init__(
@@ -65,26 +78,36 @@ class Conv1d(_ConvNd):
     Apply a 1D convolution over an input signal composed of several input
     planes.
 
-    Args:
-        in_channels (int): Number of channels in the input image
-        out_channels (int): Number of channels produced by the convolution
-        kernel_size (int or tuple): Size of the convolving kernel
-        stride (int or tuple, optional, default=1): The stride/hop of the
-            convolution kernels as they move over the input volume
-        padding (int or tuple, optional, default=0): Zero-padding added
-            to both sides of the input
-        dilation (int or tuple, optional, default=1): Spacing between
-            kernel elements
-        bias (bool, optional, default=True): Enable bias or not
+    - input shape: ``(batch_size, in_channels, L_in)``
+    - output shape: ``(batch_size, out_channels, L_out)``
 
-    Shapes:
-        - input: (batch_size, in_channels, L_in)
-        - output: (batch_size, out_channels, L_out)
+    where:
 
-        where:
+    .. math::
+        \\text{L\_out} = \\frac{\\text{L\_in + 2 * padding - dilation * (kernel\_size - 1) - 1}}{\\text{stride}} + 1
 
-        .. math::
-            \\text{L\_out} = \\frac{\\text{L\_in + 2 * padding - dilation * (kernel\_size - 1) - 1}}{\\text{stride}} + 1
+    Parameters
+    ----------
+    in_channels : int
+        Number of channels in the input image
+
+    out_channels : int
+        Number of channels produced by the convolution
+
+    kernel_size : int or tuple
+        Size of the convolving kernel
+
+    stride int or tuple, optional, default=1
+        Stride of the convolution kernels as they move over the input volume
+
+    padding : int or tuple, optional, default=0
+        Zero-padding added to both sides of the input
+
+    dilation : int or tuple, optional, default=1
+        Spacing between kernel elements
+
+    bias : bool, optional, default=True
+        Enable bias or not
     """
 
     def __init__(
@@ -130,29 +153,39 @@ class Conv2d(_ConvNd):
     Apply a 2D convolution over an input signal composed of several input
     planes. See :func:`flint.nn.functional.conv2d` for more details.
 
-    Args:
-        in_channels (int): Number of channels in the input image
-        out_channels (int): Number of channels produced by the convolution
-        kernel_size (int or tuple): Size of the convolving kernel
-        stride (int or tuple[int, int], optional, default=1): The stride/hop of
-            the convolution kernels as they move over the input volume
-        padding (int or tuple[int, int], optional, default=0): Zero-padding
-            added to both sides of the input
-        dilation (int or tuple[int, int], optional, default=1): Spacing
-            between kernel elements
-        bias (bool, optional, default=True): Enable bias or not
+    - input shape: ``(batch_size, in_channels, h_in, w_in)``
+    - output shape: ``(batch_size, out_channels, h_out, w_out)``
 
-    Shapes:
-        - input: (batch_size, in_channels, h_in, w_in)
-        - output: (batch_size, out_channels, h_out, w_out)
+    where:
 
-        where:
+    .. math::
+        \\text{h\_out} = \\frac{\\text{h\_in + 2 * padding[0] - dilation[0] * (kernel\_size[0] - 1) - 1}}{\\text{stride}[0]} + 1
 
-        .. math::
-            \\text{h\_out} = \\frac{\\text{h\_in + 2 * padding[0] - dilation[0] * (kernel\_size[0] - 1) - 1}}{\\text{stride}[0]} + 1
+    .. math::
+        \\text{w\_out} = \\frac{\\text{w\_in + 2 * padding[1] - dilation[1] * (kernel\_size[1] - 1) - 1}}{\\text{stride}[1]} + 1
 
-        .. math::
-            \\text{w\_out} = \\frac{\\text{w\_in + 2 * padding[1] - dilation[1] * (kernel\_size[1] - 1) - 1}}{\\text{stride}[1]} + 1
+    Parameters
+    ----------
+    in_channels : int
+        Number of channels in the input image
+
+    out_channels : int
+        Number of channels produced by the convolution
+
+    kernel_size : int or tuple
+        Size of the convolving kernel
+
+    stride : int or tuple[int, int], optional, default=1
+        Stride of the convolution kernels as they move over the input volume
+
+    padding : int or tuple[int, int], optional, default=0
+        Zero-padding added to both sides of the input
+
+    dilation : int or tuple[int, int], optional, default=1
+        Spacing between kernel elements
+
+    bias : bool, optional, default=True
+        Enable bias or not
     """
 
     def __init__(

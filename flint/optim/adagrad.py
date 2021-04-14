@@ -10,12 +10,19 @@ class Adagrad(Optimizer):
     .. math::
       \\theta_{t+1} = \\theta_t - \\frac{\\text{lr}}{\sqrt{h_t + \epsilon}} \cdot g_t
 
-    Args:
-        params (iterable): An iterable of Tensor
-        lr (float, optional, default=0.01): Learning rate
-        eps (float, optional, default=1e-10): Term added to the
-            denominator to improve numerical stability
-        weight_decay (float, optional, default=0): weight decay (L2 penalty)
+    Parameters
+    ----------
+    params : iterable
+        An iterable of Tensor
+
+    lr : float, optional, default=0.01
+        Learning rate
+
+    eps : float, optional, default=1e-10
+        Term added to the denominator to improve numerical stability
+
+    weight_decay : float, optional, default=0)
+        Weight decay (L2 penalty)
 
     References
     ----------

@@ -3,9 +3,11 @@ Some of the code is borrowed from: https://github.com/pytorch/pytorch/blob/maste
 '''
 import math
 import numpy as np
+from typing import Optional, Union
+
 from flint import Tensor
 
-def calculate_gain(nonlinearity: str, param = None):
+def calculate_gain(nonlinearity: str, param: Optional[Union[int, float]] = None):
     """
     Return the recommended gain value for the given nonlinearity function.
 
@@ -23,9 +25,13 @@ def calculate_gain(nonlinearity: str, param = None):
     SELU              :math:`\\frac{3}{4}`
     ================= ====================================================
 
-    Args:
-        nonlinearity (str): Name of the non-linear function
-        param: Optional parameter for the non-linear function
+    Parameters
+    ----------
+    nonlinearity : str
+        Name of the non-linear function
+
+    param : Union[int, float], optional
+        Optional parameter for the non-linear function
     """
 
     linear_fns = ['linear', 'conv1d', 'conv2d', 'conv3d']
@@ -105,12 +111,18 @@ def _calculate_fan_in_and_fan_out(tensor: Tensor):
     """
     Compute number of input and output nodes for a tensor.
 
-    Args:
-        tensor (Tensor): A Tensor
+    Parameters
+    ----------
+    tensor : Tensor
+        A Tensor
 
-    Returns:
-        fan_in (int): Number of input nodes
-        fan_out (int): Number of output nodes
+    Returns
+    -------
+    fan_in : int
+        Number of input nodes
+
+    fan_out : int
+        Number of output nodes
     """
     dimensions = tensor.ndim
     if dimensions < 2:
@@ -134,9 +146,13 @@ def xavier_uniform_(tensor: Tensor, gain: float = 1.) -> None:
     The resulting tensor will have values sampled from :math:`U(-a, a)`,
     where ``a = gain * sqrt(6 / (fan_in + fan_out))``.
 
-    Args:
-        tensor (Tensor): A Tensor
-        gain (float, optional, default=1.): An optional scaling factor
+    Parameters
+    ----------
+    tensor : Tensor
+        A Tensor
+
+    gain : float, optional, default=1.
+        An optional scaling factor
 
     References
     ----------
@@ -156,9 +172,13 @@ def xavier_normal_(tensor: Tensor, gain: float = 1.) -> None:
     The resulting tensor will have values sampled from :math:`N(0, \\text{std}^2)`,
     where ``std = gain * sqrt(2 / (fan_in + fan_out))``
 
-    Args:
-        tensor (Tensor): A Tensor
-        gain (float, optional, default=1.): An optional scaling factor
+    Parameters
+    ----------
+    tensor : Tensor
+        A Tensor
+
+    gain : float, optional, default=1.
+        An optional scaling factor
 
     References
     ----------
@@ -192,17 +212,23 @@ def kaiming_uniform_(
     The resulting tensor will have values sampled from :math:`U(-\\text{bound}, \\text{bound})`,
     where ``bound = gain * sqrt*(3 / fan_mode)``.
 
-    Args:
-        tensor (Tensor): A Tensor
-        a (float, optional, default=0.): The negative slope of the
-            rectifier used after this layer (only used with 'leaky_relu')
-        mode (str, optional, default='fan_in'): either ``'fan_in'``
-            or ``'fan_out'``. ``'fan_in'`` for preserving the magnitude
-            of the variance of the weights in the forward pass. ``'fan_out'``
-            for preserving the magnitudes in the backwards pass.
-        nonlinearity (str, optional, default='leaky_relu'): Name of the
-            non-linear function, recommended to use only with 'relu' or
-            'leaky_relu'
+    Parameters
+    ----------
+    tensor : Tensor
+        A Tensor
+
+    a : float, optional, default=0.
+        The negative slope of the rectifier used after this layer (only used
+        with 'leaky_relu')
+
+    mode : str, optional, default='fan_in'
+        Either ``'fan_in'`` or ``'fan_out'``. ``'fan_in'`` for preserving the
+        magnitude of the variance of the weights in the forward pass. ``'fan_out'``
+        for preserving the magnitudes in the backwards pass.
+
+    nonlinearity : str, optional, default='leaky_relu'
+        Name of the non-linear function, recommended to use only with 'relu'
+        or 'leaky_relu'
 
     References
     ----------
@@ -228,17 +254,23 @@ def kaiming_normal_(
     The resulting tensor will have values sampled from :math:`N(0, \\text{std}^2)`,
     where ``std = gain / sqrt(fan_mode)``.
 
-    Args:
-        tensor (Tensor): A Tensor
-        a (float, optional, default=0.): The negative slope of the
-            rectifier used after this layer (only used with 'leaky_relu')
-        mode (str, optional, default='fan_in'): either ``'fan_in'``
-            or ``'fan_out'``. ``'fan_in'`` for preserving the magnitude
-            of the variance of the weights in the forward pass. ``'fan_out'``
-            for preserving the magnitudes in the backwards pass.
-        nonlinearity (str, optional, default='leaky_relu'): Name of the
-            non-linear function, recommended to use only with 'relu' or
-            'leaky_relu'
+    Parameters
+    ----------
+    tensor : Tensor
+        A Tensor
+
+    a : float, optional, default=0.
+        The negative slope of the rectifier used after this layer (only used
+        with 'leaky_relu')
+
+    mode : str, optional, default='fan_in'
+        Either ``'fan_in'`` or ``'fan_out'``. ``'fan_in'`` for preserving the
+        magnitude of the variance of the weights in the forward pass. ``'fan_out'``
+        for preserving the magnitudes in the backwards pass.
+
+    nonlinearity : str, optional, default='leaky_relu'
+        Name of the non-linear function, recommended to use only with 'relu'
+        or 'leaky_relu'
 
     References
     ----------

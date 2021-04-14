@@ -13,14 +13,19 @@ class Linear(Module):
     .. math::
         y = x A^T + b
 
-    Args:
-        in_features (int): Size of each input sample
-        out_features (int): Size of each output sample
-        bias (bool, optional, default=True): Enable bias or not
+    - input shape: ``(batch_size, in_features)``
+    - output shape: ``(batch_size, out_features)``
 
-    Shapes:
-        - input: (batch_size, in_features)
-        - output: (batch_size, out_features)
+    Parameters
+    ----------
+    in_features : int
+        Size of each input sample
+
+    out_features : int
+        Size of each output sample
+
+    bias : bool, optional, default=True
+        Enable bias or not
     """
     def __init__(self, in_features: int, out_features: int, bias: bool = True) -> None:
         super(Linear, self).__init__()

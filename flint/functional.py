@@ -1,6 +1,7 @@
 import numpy as np
-from typing import Tuple
+
 from .tensor import Tensor
+from .nn.types import _tuple_2_t
 
 def eq(input: Tensor, target: Tensor) -> Tensor:
     if input.shape != target.shape:
@@ -11,24 +12,35 @@ def eq(input: Tensor, target: Tensor) -> Tensor:
 
 def im2col(
     input: Tensor,
-    kernel_shape: Tuple,
-    out_shape: Tuple,
-    stride: tuple = (1, 1),
-    dilation: tuple = (1, 1),
+    kernel_shape: _tuple_2_t[int],
+    out_shape: _tuple_2_t[int],
+    stride: _tuple_2_t[int] = (1, 1),
+    dilation: _tuple_2_t[int] = (1, 1),
     mode: str = 'conv'
 ) -> Tensor:
     """
     Rearrange the input tensor into column vectors. This implementation is
     adopted from Stanford's CS231n assignments 2 [1].
 
-    Args:
-        input (Tensor): A padded input tensor
-        kernel_shape (tuple): Shape of the kernel/weights
-        out_shape (tuple): Shape of the output tensor
-        stride (tuple, optional, default=(1, 1)): Stride of the convolution
-        dilation (tuple, optional, default=(1, 1)): Spacing between kernel elements
-        mode (str, optional, default='conv'): 'conv' for convolution, 'pooling'
-            for pooling
+    Parameters
+    ----------
+    input : Tensor
+        A padded input tensor
+
+    kernel_shape : Tuple[int, int]
+        Shape of the kernel/weights
+
+    out_shape : Tuple[int, int]
+        Shape of the output tensor
+
+    stride : Tuple[int, int], optional, default=(1, 1)
+        Stride of the convolution
+
+    dilation : Tuple[int, int], optional, default=(1, 1)
+        Spacing between kernel elements
+
+    mode : str, optional, default='conv'
+        Converting mode, 'conv' for convolution, 'pooling' for pooling
 
     References
     ----------
