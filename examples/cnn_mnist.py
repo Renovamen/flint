@@ -1,5 +1,5 @@
 """
-This is an example for showing how to train a MLP using Flint on the MNIST dataset.
+This is an example for showing how to train a CNN using Flint on the MNIST dataset.
 """
 
 import os
@@ -17,21 +17,29 @@ from utils import get_data
 from runners import train, test
 
 
-class MLP(nn.Module):
-    def __init__(self, in_features: int, n_classes: int):
-        super(MLP, self).__init__()
-        self.in_features = in_features
-        self.model = nn.Sequential(
-            nn.Linear(in_features, in_features // 2),
+class CNN(nn.Module):
+    def __init__(self, n_channels: int, n_classes: int):
+        super(CNN, self).__init__()
+        self.conv = nn.Sequential(
+            nn.Conv2d(n_channels, 32, kernel_size=3, padding=1),
             nn.ReLU(),
-            nn.Linear(in_features // 2, in_features // 4),
+            nn.MaxPool2d(2),  # (batch_size, 32, 14, 14)
+            nn.Conv2d(32, 64, kernel_size=3, padding=1),
             nn.ReLU(),
-            nn.Linear(in_features // 4, n_classes)
+            nn.MaxPool2d(2),  # (batch_size, 64, 7, 7)
+        )
+        self.fc = nn.Sequential(
+            nn.Linear(64 * 7 * 7, 1024),
+            nn.ReLU(),
+            nn.Linear(1024, 128),
+            nn.ReLU(),
+            nn.Linear(128, n_classes)
         )
 
     def forward(self, x):
-        x = x.view(-1, self.in_features)
-        out = self.model(x)
+        out = self.conv(x)
+        out = out.view(out.shape[0], -1)
+        out = self.fc(out)
         return out
 
 
@@ -40,13 +48,14 @@ if __name__ == '__main__':
     n_epochs = 10
     batch_size = 128
     lr = 0.001
-    in_features = 28 * 28
+    n_channels = 1
     n_classes = 10
-    print_freq = 100
+    print_freq = 10
     # --------------------------
 
     # initialize your network
-    net = MLP(in_features, n_classes)
+    net = CNN(n_channels, n_classes)
+
     # optimizer
     optimer = optim.Adam(params=net.parameters(), lr=lr)
     # loss function
