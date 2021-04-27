@@ -583,3 +583,52 @@ def max_pool1d(
     # drop the added dimension
     out = out_2d.squeeze(dim=2)
     return out
+
+# ---------------------- dropout ----------------------
+
+def dropout(input: Tensor, p: float = 0.5, training: bool = True) -> Tensor:
+    """
+    Dropout is used to randomly zeroes some of the elements of the input tensor
+    with probability ``p`` using samples from a Bernoulli distribution during
+    training. Furthermore, the outputs are scaled by a factor of :math:`\\frac{1}{1 - p}`
+    during training. Each channel will be zeroed out independently on every forward call.
+
+    During evaluation, the module simply computes an identity function.
+
+    This has proven to be an effective technique for regularization and preventing
+    the co-adaptation of neurons as described in the paper [1].
+
+    Parameters
+    ----------
+    p : float, optional, default=0.5
+        Probability of an element to be zeroed
+
+    training : bool
+        Apply dropout if is ``True``
+
+    References
+    ----------
+    1. "`Improving Neural Networks by Preventing Co-adaptation of Feature Detectors. \
+        <https://arxiv.org/abs/1207.0580>`_" Geoffrey E. Hinton, et al. arXiv 2012.
+    """
+    ret = input.data
+    scaler = 1.0 / (1.0 - p)
+    mask = np.random.binomial(1, 1 - p, size=input.shape)
+
+    if training:
+        ret = scaler * mask * ret
+
+    out = Tensor(
+        data = ret,
+        depends_on = [input],
+        requires_grad = input.requires_grad
+    )
+
+    def grad_dropout():
+        if input.requires_grad:
+            input.grad += scaler * mask * out.grad
+
+    if out.requires_grad:
+        out.grad_fn = grad_dropout
+
+    return out

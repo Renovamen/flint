@@ -83,6 +83,7 @@ Layers
 - Linear
 - 1D / 2D Convolution
 - 1D / 2D MaxPooling
+- Dropout
 - Sequential
 
 Optimizers

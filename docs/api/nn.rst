@@ -1,10 +1,27 @@
 flint.nn
 ========
 
+.. automodule:: flint.nn.modules
+
+
+Module
+---------------------------------
+
+.. autoclass:: Module
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
+
+Containers
+---------------------------------
+
+.. autoclass:: Sequential
+    :show-inheritance:
+
+
 Activations
 -----------------------------------
-
-.. automodule:: flint.nn.modules
 
 .. autoclass:: ReLU
    :show-inheritance:
@@ -13,13 +30,6 @@ Activations
    :show-inheritance:
 
 .. autoclass:: Tanh
-   :show-inheritance:
-
-
-Containers
----------------------------------
-
-.. autoclass:: Sequential
    :show-inheritance:
 
 
@@ -67,3 +77,10 @@ Pooling Layers
 
 .. autoclass:: MaxPool2d
    :show-inheritance:
+
+
+Dropout Layer
+----------------------------
+
+.. autoclass:: Dropout
+    :show-inheritance:

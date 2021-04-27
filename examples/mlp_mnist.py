@@ -131,6 +131,7 @@ if __name__ == '__main__':
 
     # initialize your network
     net = MLP(in_features, n_classes)
+    net.train()
     # optimizer
     optimer = optim.Adam(params=net.parameters(), lr=lr)
     # loss function
@@ -140,5 +141,7 @@ if __name__ == '__main__':
 
     # start training!
     train(n_epochs, train_loader, net, optimer, loss_function, print_freq)
+
     # test the model
+    net.eval()
     test(test_loader, net)

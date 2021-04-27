@@ -11,7 +11,10 @@ class Module(object):
         name (str): name of the module
     """
 
-    def __init__(self):
+    training: bool
+
+    def __init__(self) -> None:
+        self.training = True
         self._parameters = OrderedDict()
         self._modules = OrderedDict()
 
@@ -23,7 +26,6 @@ class Module(object):
             name (str): name of the parameter
             param (Parameter): parameter to be added to the module
         """
-
         if param is None:
             self._parameters[name] = None
         else:
@@ -37,7 +39,6 @@ class Module(object):
             name (str): name of the child module
             module (Module): child module to be added to the module
         """
-
         if module is None:
             self._modules[name] = None
         else:
@@ -52,10 +53,9 @@ class Module(object):
                 submodules. If ``False``, yields only parameters that are direct
                 members of this module.
 
-        yields:
+        Yields:
             Parameter: module parameter
         """
-
         for name, param in self.named_parameters(recurse = recurse):
             yield param
 
@@ -72,7 +72,7 @@ class Module(object):
                 True: yield parameters of this module and all submodules
                 False: yield only parameters that are direct members of this module
 
-        yields:
+        Yields:
             (string, Parameter): Tuple containing the name and parameter
         """
 
@@ -87,6 +87,30 @@ class Module(object):
                 name = module_prefix + ('.' if module_prefix else '') + k
                 yield name, v
 
+    def children(self) -> Iterator['Module']:
+        """
+        Returns an iterator over immediate children modules.
+
+        Yields:
+            module (Module): A child module
+        """
+        for name, module in self.named_children():
+            yield module
+
+    def named_children(self) -> Iterator[Tuple[str, 'Module']]:
+        """
+        Returns an iterator over immediate children modules, yielding both the
+        name of the module as well as the module itself.
+
+        Yields:
+            (string, Module): Tuple containing a name and child module
+        """
+        memo = set()
+        for name, module in self._modules.items():
+            if module is not None and module not in memo:
+                memo.add(module)
+                yield name, module
+
     def modules(self) -> Iterator['Module']:
         """
         Returns an iterator over all modules in the network, only yielding the module itself.
@@ -97,7 +121,6 @@ class Module(object):
         NOTE:
             Duplicate modules are returned only once.
         """
-
         for name, module in self.named_modules():
             yield module
 
@@ -117,7 +140,6 @@ class Module(object):
         NOTE:
             Duplicate modules are returned only once.
         """
-
         if memo is None:
             memo = set()
         if self not in memo:
@@ -130,8 +152,50 @@ class Module(object):
                 for m in module.named_modules(memo, submodule_prefix):
                     yield m
 
-    def __call__(self, x: Tensor) -> Tensor:
-        out = self.forward(x)
+    def train(self, mode: bool = True) -> 'Module':
+        """
+        Sets the module in training mode.
+
+        This has effect only on the following modules:
+
+        - :class:`flint.nn.Dropout`
+
+        See their documentations for details of their behaviors in training /
+        evaluation mode.
+
+        Parameters
+        ----------
+        mode : bool, optional, default=True
+            Whether to set training mode (``True``) or evaluation mode (``False``)
+
+        Returns
+        -------
+        module : Module
+        """
+        self.training = mode
+        for module in self.children():
+            module.train(mode)
+        return self
+
+    def eval(self) -> 'Module':
+        """
+        Sets the module in evaluation mode.
+
+        This has effect only on the following modules:
+
+        - :class:`flint.nn.Dropout`
+
+        See their documentations for details of their behaviors in training /
+        evaluation mode.
+
+        Returns
+        -------
+        module : Module
+        """
+        return self.train(False)
+
+    def __call__(self, *input, **kwargs) -> Tensor:
+        out = self.forward(*input, **kwargs)
         return out
 
     def __setattr__(self, name: str, value):
