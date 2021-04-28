@@ -132,6 +132,12 @@ class Tensor:
         return self.data.ndim
 
     @property
+    def numel(self) -> int:
+        """Return the total number of elements in the ``self`` tensor, i.e.,
+        the product of the tensor's dimensions."""
+        return self.data.size
+
+    @property
     def dtype(self):
         return self.data.dtype
 

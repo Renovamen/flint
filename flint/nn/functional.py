@@ -194,7 +194,7 @@ def mse_loss(
             "Please ensure they have the same size.".format(target.shape, input.shape)
         )
 
-    n = input.size
+    n = input.numel
 
     out = (input - target) ** 2
     if reduction in ['sum', 'mean']:
@@ -232,7 +232,7 @@ def binary_cross_entropy(
             "Please ensure they have the same size.".format(target.shape, input.shape)
         )
 
-    n = input.size
+    n = input.numel
 
     out = - (target * input.log() + (-target + 1.) * (-input + 1.).log())
     if reduction in ['sum', 'mean']:

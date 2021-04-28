@@ -28,6 +28,7 @@ class CNN(nn.Module):
             nn.ReLU(),
             nn.MaxPool2d(2),  # (batch_size, 64, 7, 7)
             nn.Flatten(),
+            nn.Dropout(0.5),
             nn.Linear(64 * 7 * 7, 1024),
             nn.ReLU(),
             nn.Linear(1024, 128),
