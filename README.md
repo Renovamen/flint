@@ -174,12 +174,12 @@ Support autograding on the following operations:
 ### Layers
 
 - [x] Linear
-- [x] 1D / 2D Convolution
-- [ ] Flatten
-- [x] 1D / 2D MaxPooling
+- [x] Convolution (1D / 2D)
+- [x] MaxPooling (1D / 2D)
+- [ ] RNN
+- [x] Flatten
 - [x] Dropout
 - [ ] BatchNormalization
-- [ ] RNN
 - [x] Sequential
 
 ### Optimizers

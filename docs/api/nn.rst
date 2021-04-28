@@ -33,23 +33,6 @@ Activations
    :show-inheritance:
 
 
-Convolution Layers
-----------------------------
-
-.. autoclass:: Conv1d
-   :show-inheritance:
-
-.. autoclass:: Conv2d
-   :show-inheritance:
-
-
-Linear Layers
-------------------------------
-
-.. autoclass:: Linear
-   :show-inheritance:
-
-
 Loss Functions
 ----------------------------
 
@@ -69,7 +52,24 @@ Loss Functions
    :show-inheritance:
 
 
-Pooling Layers
+Convolution
+----------------------------
+
+.. autoclass:: Conv1d
+   :show-inheritance:
+
+.. autoclass:: Conv2d
+   :show-inheritance:
+
+
+Linear
+------------------------------
+
+.. autoclass:: Linear
+   :show-inheritance:
+
+
+Pooling
 ----------------------------
 
 .. autoclass:: MaxPool1d
@@ -79,8 +79,15 @@ Pooling Layers
    :show-inheritance:
 
 
-Dropout Layer
+Dropout
 ----------------------------
 
 .. autoclass:: Dropout
+    :show-inheritance:
+
+
+Flatten
+----------------------------
+
+.. autoclass:: Flatten
     :show-inheritance:

@@ -20,8 +20,8 @@ from runners import train, test
 class MLP(nn.Module):
     def __init__(self, in_features: int, n_classes: int):
         super(MLP, self).__init__()
-        self.in_features = in_features
         self.model = nn.Sequential(
+            nn.Flatten(),
             nn.Linear(in_features, in_features // 2),
             nn.ReLU(),
             nn.Linear(in_features // 2, in_features // 4),
@@ -30,7 +30,6 @@ class MLP(nn.Module):
         )
 
     def forward(self, x):
-        x = x.view(-1, self.in_features)
         out = self.model(x)
         return out
 

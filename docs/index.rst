@@ -81,8 +81,9 @@ Layers
 =====================
 
 - Linear
-- 1D / 2D Convolution
-- 1D / 2D MaxPooling
+- Convolution (1D / 2D)
+- MaxPooling (1D / 2D)
+- Flatten
 - Dropout
 - Sequential
 
@@ -111,7 +112,6 @@ Activation Functions
 - Sigmoid
 - Tanh
 
-
 Initializers
 =====================
 
@@ -120,7 +120,6 @@ Initializers
 - Xavier (Glorot) uniform / normal (`Understanding the Difficulty of Training Deep Feedforward Neural Networks. <http://proceedings.mlr.press/v9/glorot10a/glorot10a.pdf>`_ *Xavier Glorot and Yoshua Bengio.* AISTATS 2010.)
 - Kaiming (He) uniform / normal (`Delving Deep into Rectifiers: Surpassing Human-level Performance on ImageNet Classification. <https://arxiv.org/pdf/1502.01852.pdf>`_ *Kaiming He, et al.* ICCV 2015.)
 - LeCun uniform / normal (`Efficient Backprop. <http://yann.lecun.com/exdb/publis/pdf/lecun-98b.pdf>`_ *Yann LeCun, et al.* 1998.)
-
 
 Others
 =====================

@@ -632,3 +632,15 @@ def dropout(input: Tensor, p: float = 0.5, training: bool = True) -> Tensor:
         out.grad_fn = grad_dropout
 
     return out
+
+# ---------------------- flatten ----------------------
+
+def flatten(input: Tensor) -> Tensor:
+    """
+    Flatten the input. Does not affect the batch size.
+
+    NOTE:
+        If inputs are shaped ``(batch,)`` without a feature axis, then flattening
+        adds an extra channel dimension and output shape is ``(batch, 1)``.
+    """
+    return input.view(input.size(0), -1)

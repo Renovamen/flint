@@ -20,15 +20,14 @@ from runners import train, test
 class CNN(nn.Module):
     def __init__(self, n_channels: int, n_classes: int):
         super(CNN, self).__init__()
-        self.conv = nn.Sequential(
+        self.model = nn.Sequential(
             nn.Conv2d(n_channels, 32, kernel_size=3, padding=1),
             nn.ReLU(),
             nn.MaxPool2d(2),  # (batch_size, 32, 14, 14)
             nn.Conv2d(32, 64, kernel_size=3, padding=1),
             nn.ReLU(),
             nn.MaxPool2d(2),  # (batch_size, 64, 7, 7)
-        )
-        self.fc = nn.Sequential(
+            nn.Flatten(),
             nn.Linear(64 * 7 * 7, 1024),
             nn.ReLU(),
             nn.Linear(1024, 128),
@@ -37,9 +36,7 @@ class CNN(nn.Module):
         )
 
     def forward(self, x):
-        out = self.conv(x)
-        out = out.view(out.size(0), -1)
-        out = self.fc(out)
+        out = self.model(x)
         return out
 
 
