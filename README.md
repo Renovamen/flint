@@ -101,6 +101,7 @@ Initialize your model, optimizer and loss function:
 
 ```python
 net = Net(in_features, n_classes)
+net.train()
 optimer = optim.Adam(params=net.parameters(), lr=lr)
 loss_function = nn.CrossEntropyLoss()
 ```

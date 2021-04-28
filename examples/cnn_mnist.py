@@ -38,7 +38,7 @@ class CNN(nn.Module):
 
     def forward(self, x):
         out = self.conv(x)
-        out = out.view(out.shape[0], -1)
+        out = out.view(out.size(0), -1)
         out = self.fc(out)
         return out
 

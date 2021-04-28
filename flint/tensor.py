@@ -2,7 +2,7 @@
 
 import numpy as np
 from numbers import Number
-from typing import Union
+from typing import Union, Optional, Tuple
 
 from .utils import unbroadcast_add
 
@@ -59,6 +59,8 @@ class Tensor:
         """
         self.grad = np.ones(self.shape, dtype=np.float32)
 
+    # -------------- for back propagation --------------
+
     def add_depends_on(self, depends_on: list = []) -> None:
         """
         Add the dependent tensors for building autograd graph.
@@ -100,44 +102,51 @@ class Tensor:
             if node.grad_fn is not None:
                 node.grad_fn()
 
+    # -------------- class methods --------------
+
     @classmethod
     def zeros(cls, *shape, **kwargs):
-        """
-        Create a tensor filled with the scalar value ``0``.
-        """
+        """Create a tensor filled with the scalar value ``0``."""
         return cls(np.zeros(shape, dtype=np.float32), **kwargs)
 
     @classmethod
     def ones(cls, *shape, **kwargs):
-        """
-        Create a tensor filled with the scalar value ``1``.
-        """
+        """Create a tensor filled with the scalar value ``1``."""
         return cls(np.ones(shape, dtype=np.float32), **kwargs)
 
     @classmethod
     def randn(cls, *shape, **kwargs):
-        """
-        Create a tensor filled with random scalar values.
-        """
+        """Create a tensor filled with random scalar values."""
         return cls(np.random.randn(*shape).astype(np.float32), **kwargs)
 
     # -------------- properties --------------
 
     @property
-    def shape(self):
+    def shape(self) -> Tuple[int]:
+        """Return the size of the ``self`` tensor, alias for ``size()``."""
         return self.data.shape
+
+    @property
+    def ndim(self) -> int:
+        """Return the number of dimensions of ``self`` tensor, alias for ``dim()``."""
+        return self.data.ndim
 
     @property
     def dtype(self):
         return self.data.dtype
 
-    @property
-    def ndim(self):
-        return self.data.ndim
+    # -------------- aliases --------------
 
-    @property
-    def size(self):
-        return self.data.size
+    def size(self, dim: Optional[int] = None) -> Union[int, Tuple[int]]:
+        """Return the size of the ``self`` tensor."""
+        if dim is None:
+            return self.shape
+        else:
+            return self.shape[dim]
+
+    def dim(self) -> int:
+        """Return the number of dimensions of ``self`` tensor."""
+        return self.ndim
 
     # -------------- operator overloading --------------
 
