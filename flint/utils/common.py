@@ -1,5 +1,7 @@
 import numpy as np
 
+__all__ = ['to_categorical']
+
 def to_categorical(target: np.ndarray, n_classes: int = None) -> np.ndarray:
 	"""
 	Convert a class vector (integers) to binary class matrix.
@@ -24,9 +26,3 @@ def to_categorical(target: np.ndarray, n_classes: int = None) -> np.ndarray:
 	one_hot = np.zeros((batch_size, n_classes))
 	one_hot[np.arange(batch_size), target] = 1
 	return one_hot
-
-def unbroadcast_add(input: np.ndarray, other: np.ndarray) -> np.ndarray:
-    unmatched_axis = [i for i, s in enumerate(other.shape) if s != input.shape[i]]
-    for axis in unmatched_axis:
-        other = other.sum(axis=axis, keepdims=True)
-    return input + other

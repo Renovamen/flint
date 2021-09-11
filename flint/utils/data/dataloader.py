@@ -10,11 +10,16 @@ class DataLoader:
     DataLoader provides an iterable over the given dataset. It supports
     automatic mini-batching now.
 
-    Args:
-        dataset (Dataset): Dataset from which to load the data
-        batch_size (int, optional, default=1): How many samples per batch to load
-        collate_fn (callable, optional): Merge a list of samples to form a
-            mini-batch of Tensor(s)
+    Parameters
+    ----------
+    dataset : Dataset
+        Dataset from which to load the data.
+
+    batch_size : int, optional, default=1
+        How many samples per batch to load.
+
+    collate_fn : callable, optional
+        Merge a list of samples to form a mini-batch of Tensor(s).
     """
 
     def __init__(

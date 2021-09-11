@@ -1,3 +1,4 @@
+from tqdm import tqdm
 from utils import get_accuracy
 
 def test(test_loader, net):

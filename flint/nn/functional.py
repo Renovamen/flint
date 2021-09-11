@@ -5,6 +5,7 @@ import flint
 from ..tensor import Tensor
 from ..utils import *
 from .types import _tuple_1_t, _tuple_2_t, _tuple_any_t
+from ._utils import im2col
 
 # ---------------------- activators ----------------------
 
@@ -331,7 +332,7 @@ def input2col(
     padded_data = pad(input, (0, 0, 0, 0, padding[0], padding[0], padding[1], padding[1]))
 
     # convert input tensor and weights/kernels into a 2D matrices
-    input_col = flint.im2col(padded_data, kernel_size, (h_out, w_out), stride, dilation, mode)
+    input_col = im2col(padded_data, kernel_size, (h_out, w_out), stride, dilation, mode)
 
     return input_col, h_out, w_out
 
@@ -346,8 +347,7 @@ def conv2d(
     dilation: _tuple_2_t[int] = (1, 1)
 ):
     """
-    Apply a 2D convolution over an input signal composed of several input
-    planes.
+    Apply a 2D convolution over an input signal composed of several input planes.
 
     - input shape: ``(batch_size, in_channels, h_in, w_in)``
     - output shape: ``(batch_size, out_channels, h_out, w_out)``
@@ -361,8 +361,8 @@ def conv2d(
         \\text{w\_out} = \\frac{\\text{w\_in + 2 * padding[1] - dilation[1] * (kernel\_size[1] - 1) - 1}}{\\text{stride}[1]} + 1
 
     NOTE:
-        Use ``flint.im2col`` function to perform the convolution as a
-        single matrix multiplication. For more details, see [1].
+        Use ``im2col`` function to perform the convolution as a single matrix multiplication. For more
+        details, see [1].
 
     Parameters
     ----------
@@ -485,8 +485,8 @@ def max_pool2d(
         \\text{w\_out} = \\frac{\\text{w\_in + 2 * padding[1] - dilation[1] * (kernel\_size[1] - 1) - 1}}{\\text{stride}[1]} + 1
 
     NOTE:
-        Use ``flint.im2col`` function to perform the max pooling as a single
-        matrix multiplication. For more details, see [1].
+        Use ``im2col`` function to perform the max pooling as a single matrix multiplication. For more
+        details, see [1].
 
     NOTE:
         It should be noted that, PyTorch argues the input will be implicitly
@@ -515,7 +515,8 @@ def max_pool2d(
 
     References
     ----------
-    1. `Why GEMM is at the heart of deep learning? Pete Warden. <https://petewarden.com/2015/04/20/why-gemm-is-at-the-heart-of-deep-learning/>`_ 2015.
+    1. `Why GEMM is at the heart of deep learning? Pete Warden. \
+        <https://petewarden.com/2015/04/20/why-gemm-is-at-the-heart-of-deep-learning/>`_ 2015.
     """
 
     batch_size, in_channels, h_in, w_in = input.shape

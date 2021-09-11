@@ -19,5 +19,15 @@ setup(
     license = 'MIT',
     author = 'Xiaohan Zou',
     author_email = 'renovamenzxh@gmail.com',
-    url = 'https://github.com/Renovamen/flint'
+    url = 'https://github.com/Renovamen/flint',
+    install_requires = [
+        'numpy>=1.14.0',
+        'tqdm'
+    ],
+    extras_require={
+        'dev': [
+            'torch>=1.4.0',
+            'torchvision'
+        ]
+    }
 )

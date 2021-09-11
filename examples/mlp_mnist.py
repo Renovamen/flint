@@ -4,13 +4,11 @@ This is an example for showing how to train a MLP using Flint on the MNIST datas
 
 import os
 import sys
-from tqdm import tqdm
 
 # A temporary solution for relative imports in case flint is not installed.
 # If flint is installed, the following line is not needed.
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), "..")))
 
-import flint
 from flint import nn, optim
 
 from utils import get_data
