@@ -68,6 +68,9 @@ Linear
 .. autoclass:: Linear
    :show-inheritance:
 
+.. autoclass:: Identity
+   :show-inheritance:
+
 
 Pooling
 ----------------------------

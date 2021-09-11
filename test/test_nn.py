@@ -2,6 +2,7 @@ import os
 import sys
 import unittest
 import numpy as np
+from numpy.core.numeric import identity
 import torch
 
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), "..")))
@@ -205,16 +206,49 @@ class TestNN(unittest.TestCase):
             unfold = flint.nn.Unfold(kernel_size, stride, pad, dilation)
 
             out = unfold(x)
-            return out.data
+            c = out.sum()
+            c.backward()
+
+            return out.data, x.grad
 
         def test_torch():
             x = torch.tensor(x_init.copy(), requires_grad=True)
             unfold = torch.nn.Unfold(kernel_size, dilation, pad, stride)
 
             out = unfold(x)
-            return out.detach().numpy()
+            c = out.sum()
+            c.backward()
 
-        np.testing.assert_allclose(test_flint(), test_torch(), atol=1e-5)
+            return out.detach().numpy(), x.grad.numpy()
+
+        for x, y in zip(test_flint(), test_torch()):
+            np.testing.assert_allclose(x, y, atol=1e-5)
+
+    def test_identity(self):
+        x_init = np.random.randn(16, 20, 14, 14).astype(np.float32)
+
+        def test_flint():
+            x = flint.Tensor(x_init.copy(), requires_grad=True)
+            identity = flint.nn.Identity()
+
+            out = identity(x)
+            c = out.sum()
+            c.backward()
+
+            return out.data, x.grad
+
+        def test_torch():
+            x = torch.tensor(x_init.copy(), requires_grad=True)
+            identity = torch.nn.Identity()
+
+            out = identity(x)
+            c = out.sum()
+            c.backward()
+
+            return out.detach().numpy(), x.grad.numpy()
+
+        for x, y in zip(test_flint(), test_torch()):
+            np.testing.assert_allclose(x, y, atol=1e-5)
 
     def test_flatten(self):
         x_init = np.random.randn(16, 20).astype(np.float32)

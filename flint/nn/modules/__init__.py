@@ -1,6 +1,6 @@
 from .module import Module
 from .container import Sequential
-from .linear import Linear
+from .linear import Linear, Identity
 from .conv import Conv1d, Conv2d
 from .loss import *
 from .activations import *

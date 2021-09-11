@@ -83,9 +83,11 @@ Layers
 - Linear
 - Convolution (1D / 2D)
 - MaxPooling (1D / 2D)
+- Unfold
 - Flatten
 - Dropout
 - Sequential
+- Identity
 
 Optimizers
 =====================

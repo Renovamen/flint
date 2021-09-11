@@ -1,10 +1,34 @@
 import numpy as np
 import math
+from typing import Any
 
 from flint import Tensor
 from .module import Module
 from .. import Parameter, init
 from .. import functional as F
+
+
+class Identity(Module):
+    """
+    A placeholder identity operator that is argument-insensitive.
+
+    - Input shape: :math:`(*)`, where :math:`*` means any number of dimensions.
+    - Output shape: :math:`(*)`, same shape as the input.
+
+    Parameters
+    ----------
+    args : Any
+        Any argument (unused).
+
+    kwargs: Any
+        Any keyword argument (unused).
+    """
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super(Identity, self).__init__()
+
+    def forward(self, input: Tensor) -> Tensor:
+        return input
+
 
 class Linear(Module):
     """
@@ -13,19 +37,19 @@ class Linear(Module):
     .. math::
         y = x A^T + b
 
-    - input shape: ``(batch_size, in_features)``
-    - output shape: ``(batch_size, out_features)``
+    - Input shape: ``(batch_size, in_features)``
+    - Output shape: ``(batch_size, out_features)``
 
     Parameters
     ----------
     in_features : int
-        Size of each input sample
+        Size of each input sample.
 
     out_features : int
-        Size of each output sample
+        Size of each output sample.
 
     bias : bool, optional, default=True
-        Enable bias or not
+        Enable bias or not.
     """
     def __init__(self, in_features: int, out_features: int, bias: bool = True) -> None:
         super(Linear, self).__init__()

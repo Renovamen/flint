@@ -176,11 +176,13 @@ Support autograding on the following operations:
 - [x] Linear
 - [x] Convolution (1D / 2D)
 - [x] MaxPooling (1D / 2D)
+- [x] Unfold
 - [ ] RNN
 - [x] Flatten
 - [x] Dropout
 - [ ] BatchNormalization
 - [x] Sequential
+- [x] Identity
 
 ### Optimizers
 

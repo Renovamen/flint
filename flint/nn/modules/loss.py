@@ -3,6 +3,7 @@ from .module import Module
 from .. import functional as F
 
 __all__ = [
+    'Loss',
     'NllLoss',
     'CrossEntropyLoss',
     'MSELoss',
