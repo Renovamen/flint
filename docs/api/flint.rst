@@ -7,5 +7,3 @@ flint
    :show-inheritance:
 
 .. autofunction:: eq
-
-.. autofunction:: im2col
