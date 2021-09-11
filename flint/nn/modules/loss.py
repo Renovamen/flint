@@ -2,6 +2,14 @@ from flint import Tensor
 from .module import Module
 from .. import functional as F
 
+__all__ = [
+    'NllLoss',
+    'CrossEntropyLoss',
+    'MSELoss',
+    'BCELoss'
+]
+
+
 class Loss(Module):
     def __init__(self, reduction: str = 'mean') -> None:
         super(Loss, self).__init__()

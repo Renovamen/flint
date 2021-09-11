@@ -1,12 +1,5 @@
 from itertools import repeat
 
-__all__ = [
-    '_single',
-    '_pair',
-    '_triple',
-    '_quadruple'
-]
-
 def _ntuple(n):
     def parse(x):
         if isinstance(x, int):

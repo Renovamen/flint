@@ -188,6 +188,34 @@ class TestNN(unittest.TestCase):
         for x, y in zip(test_flint(), test_torch()):
             np.testing.assert_allclose(x, y, atol=1e-5)
 
+    def test_unfold(self):
+        batch_size = 2
+        h_in = 8
+        w_in = 7
+        in_channels = 2
+        kernel_size = (3, 2)
+        stride = (3, 2)
+        pad = (2, 2)
+        dilation = (2, 2)
+
+        x_init = np.random.randn(batch_size, in_channels, h_in, w_in).astype(np.float32)
+
+        def test_flint():
+            x = flint.Tensor(x_init.copy(), requires_grad=True)
+            unfold = flint.nn.Unfold(kernel_size, stride, pad, dilation)
+
+            out = unfold(x)
+            return out.data
+
+        def test_torch():
+            x = torch.tensor(x_init.copy(), requires_grad=True)
+            unfold = torch.nn.Unfold(kernel_size, dilation, pad, stride)
+
+            out = unfold(x)
+            return out.detach().numpy()
+
+        np.testing.assert_allclose(test_flint(), test_torch(), atol=1e-5)
+
     def test_flatten(self):
         x_init = np.random.randn(16, 20).astype(np.float32)
 

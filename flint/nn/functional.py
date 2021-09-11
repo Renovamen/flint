@@ -4,8 +4,9 @@ from typing import Union, Tuple
 import flint
 from ..tensor import Tensor
 from ..utils import *
-from .types import _tuple_1_t, _tuple_2_t, _tuple_any_t
-from ._utils import im2col
+from .types import _tuple_1_t, _tuple_2_t, _tuple_any_t, _size_2_t
+from .utils import im2col
+from .modules.utils import _pair
 
 # ---------------------- activators ----------------------
 
@@ -311,16 +312,54 @@ def linear(input: Tensor, weight: Tensor, bias: Tensor = None):
 
     return out
 
-# ----- utility function for conv and pooling ------
+# ---------------------- unfold ----------------------
 
-def input2col(
+def unfold(
     input: Tensor,
-    kernel_size: _tuple_2_t[int],
-    stride: _tuple_2_t[int],
-    padding: _tuple_2_t[int],
-    dilation: _tuple_2_t[int],
-    mode: str = 'conv'
+    kernel_size: _size_2_t,
+    stride: _size_2_t = 1,
+    padding: _size_2_t = 0,
+    dilation: _size_2_t = 1
 ):
+    """
+    Extracts sliding local blocks from a batched input tensor.
+
+    - input shape: :math:`(N, C, H, W)`
+    - output shape: :math:`(N, C \\times \prod(\\text{kernel\_size}), L)`
+
+    where:
+
+    .. math::
+        L = \prod_d \\frac{\\text{spatial\_size[d] + 2 * padding[d] - dilation[d] * (kernel\_size[d] - 1) - 1}}{\\text{stride}[d]} + 1
+
+    where :math:`\\text{spatial\_size}` is formed by the spatial dimensions of ``input`` (H and W above),
+    and :math:`d` is over all spatial dimensions.
+
+
+    Parameters
+    ----------
+    input : Tensor
+        Input tensor
+
+    kernel_size : int or tuple
+        Size of the sliding blocks.
+
+    stride : int or tuple, optional, default=1
+        Stride of the sliding blocks in the input spatial dimensions.
+
+    padding : int or tuple, optional, default=0
+        Implicit zero padding to be added on both sides of input.
+
+    dilation : int or tuple, optional, default=1
+        A parameter that controls the stride of elements within the neighborhood.
+    """
+
+    # Union[int, Tuple[int, int]] -> Tuple[int]
+    kernel_size = _pair(kernel_size)
+    stride = _pair(stride)
+    padding = _pair(padding)
+    dilation = _pair(dilation)
+
     batch_size, in_channels, h_in, w_in = input.shape
     kernel_h, kernel_w = kernel_size
 
@@ -332,9 +371,9 @@ def input2col(
     padded_data = pad(input, (0, 0, 0, 0, padding[0], padding[0], padding[1], padding[1]))
 
     # convert input tensor and weights/kernels into a 2D matrices
-    input_col = im2col(padded_data, kernel_size, (h_out, w_out), stride, dilation, mode)
+    unfolded = im2col(padded_data, kernel_size, (h_out, w_out), stride, dilation)  # (batch_size, kernel_h * kernel_w * in_channels, L = h_out * w_out)
 
-    return input_col, h_out, w_out
+    return unfolded, h_out, w_out
 
 # ---------------------- conv ----------------------
 
@@ -361,7 +400,7 @@ def conv2d(
         \\text{w\_out} = \\frac{\\text{w\_in + 2 * padding[1] - dilation[1] * (kernel\_size[1] - 1) - 1}}{\\text{stride}[1]} + 1
 
     NOTE:
-        Use ``im2col`` function to perform the convolution as a single matrix multiplication. For more
+        Use ``unfold`` function to perform the convolution as a single matrix multiplication. For more
         details, see [1].
 
     Parameters
@@ -392,7 +431,9 @@ def conv2d(
     batch_size, in_channels, h_in, w_in = input.shape
     out_channels, in_channels, kernel_h, kernel_w = weight.shape
 
-    input_col, h_out, w_out = input2col(input, (kernel_h, kernel_w), stride, padding, dilation)
+    input_col, h_out, w_out = unfold(input, (kernel_h, kernel_w), stride, padding, dilation)
+    input_col = input_col.permute(1, 2, 0).view(kernel_h * kernel_w * in_channels, -1)  # (kernel_h * kernel_w * in_channels, batch_size * h_out * w_out)
+
     weight_col = weight.view(out_channels, -1)
 
     out = (weight_col @ input_col).view(out_channels, h_out, w_out, batch_size).permute(3, 0, 1, 2)
@@ -485,7 +526,7 @@ def max_pool2d(
         \\text{w\_out} = \\frac{\\text{w\_in + 2 * padding[1] - dilation[1] * (kernel\_size[1] - 1) - 1}}{\\text{stride}[1]} + 1
 
     NOTE:
-        Use ``im2col`` function to perform the max pooling as a single matrix multiplication. For more
+        Use ``unfold`` function to perform the max pooling as a single matrix multiplication. For more
         details, see [1].
 
     NOTE:
@@ -520,10 +561,12 @@ def max_pool2d(
     """
 
     batch_size, in_channels, h_in, w_in = input.shape
+    kernel_h, kernel_w = kernel_size
 
-    input_col, h_out, w_out = input2col(input, kernel_size, stride, padding, dilation, mode='pooling')
+    input_col, h_out, w_out = unfold(input, kernel_size, stride, padding, dilation)
+    input_col = input_col.permute(1, 2, 0).view(in_channels, kernel_h * kernel_w, -1)
+
     out_max = input_col.max(dim=1).view(in_channels, h_out, w_out, batch_size).permute(3, 0, 1, 2)
-
     return out_max
 
 def max_pool1d(

@@ -79,6 +79,12 @@ Pooling
    :show-inheritance:
 
 
+Unfold
+----------------------------
+.. autoclass:: Unfold
+   :show-inheritance:
+
+
 Dropout
 ----------------------------
 

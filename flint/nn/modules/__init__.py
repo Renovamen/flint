@@ -7,3 +7,4 @@ from .activations import *
 from .pooling import MaxPool1d, MaxPool2d
 from .dropout import Dropout
 from .flatten import Flatten
+from .fold import Unfold

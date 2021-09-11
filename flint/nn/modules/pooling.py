@@ -3,7 +3,7 @@ from typing import Optional
 from flint import Tensor
 from .. import functional as F
 from ..types import _size_1_t, _size_2_t, _tuple_any_t
-from ._utils import _single, _pair
+from .utils import _single, _pair
 from .module import Module
 
 class _MaxPoolNd(Module):

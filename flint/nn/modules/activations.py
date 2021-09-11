@@ -2,6 +2,13 @@ from flint import Tensor
 from .. import functional as F
 from .module import Module
 
+__all__ = [
+    'ReLU',
+    'Sigmoid',
+    'Tanh'
+]
+
+
 class ReLU(Module):
     """
     ReLU (Rectified Linear Unit) activation function. See

@@ -5,7 +5,7 @@ from flint import Tensor
 from .. import Parameter, init
 from .. import functional as F
 from ..types import _size_1_t, _size_2_t, _tuple_any_t
-from ._utils import _single, _pair
+from .utils import _single, _pair
 from .module import Module
 
 
@@ -75,8 +75,7 @@ class _ConvNd(Module):
 
 class Conv1d(_ConvNd):
     """
-    Apply a 1D convolution over an input signal composed of several input
-    planes.
+    Apply a 1D convolution over an input signal composed of several input planes.
 
     - input shape: ``(batch_size, in_channels, L_in)``
     - output shape: ``(batch_size, out_channels, L_out)``
@@ -150,8 +149,8 @@ class Conv1d(_ConvNd):
 
 class Conv2d(_ConvNd):
     """
-    Apply a 2D convolution over an input signal composed of several input
-    planes. See :func:`flint.nn.functional.conv2d` for more details.
+    Apply a 2D convolution over an input signal composed of several input planes. See
+    :func:`flint.nn.functional.conv2d` for more details.
 
     - input shape: ``(batch_size, in_channels, h_in, w_in)``
     - output shape: ``(batch_size, out_channels, h_out, w_out)``
