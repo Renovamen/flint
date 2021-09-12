@@ -1,6 +1,6 @@
-'''
+"""
 Some of the code is borrowed from: https://github.com/pytorch/pytorch/blob/master/torch/nn/init.py
-'''
+"""
 import math
 import numpy as np
 from typing import Optional, Union
@@ -232,7 +232,8 @@ def kaiming_uniform_(
 
     References
     ----------
-    1. "`Delving Deep into Rectifiers: Surpassing Human-level Performance on ImageNet Classification. <https://arxiv.org/pdf/1502.01852.pdf>`_" Kaiming He, et al. ICCV 2015.
+    1. "`Delving Deep into Rectifiers: Surpassing Human-level Performance on ImageNet Classification. \
+        <https://arxiv.org/pdf/1502.01852.pdf>`_" Kaiming He, et al. ICCV 2015.
     """
     fan = _calculate_correct_fan(tensor, mode)
     gain = calculate_gain(nonlinearity, a)
@@ -274,7 +275,8 @@ def kaiming_normal_(
 
     References
     ----------
-    1. "`Delving Deep into Rectifiers: Surpassing Human-level Performance on ImageNet Classification. <https://arxiv.org/pdf/1502.01852.pdf>`_" Kaiming He, et al. ICCV 2015.
+    1. "`Delving Deep into Rectifiers: Surpassing Human-level Performance on ImageNet Classification. \
+        <https://arxiv.org/pdf/1502.01852.pdf>`_" Kaiming He, et al. ICCV 2015.
     """
     fan = _calculate_correct_fan(tensor, mode)
     gain = calculate_gain(nonlinearity, a)

@@ -203,8 +203,10 @@ Support autograding on the following operations:
 ### Activation Functions
 
 - [x] ReLU
+- [x] Leaky ReLU
 - [x] Sigmoid
 - [x] Tanh
+- [x] GELU
 
 ### Initializers
 

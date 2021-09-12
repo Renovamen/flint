@@ -1,3 +1,4 @@
+import math
 import numpy as np
 from typing import Union, Tuple
 
@@ -26,6 +27,35 @@ def relu(input: Tensor) -> Tensor:
 
     if out.requires_grad:
         out.grad_fn = grad_relu
+
+    return out
+
+def leaky_relu(input: Tensor, negative_slope: float = 0.01) -> Tensor:
+    """
+    Compute Leaky ReLU element-wise.
+
+    .. math::
+        \\text{LeakyReLU}(x) = \max(0, x) + \\text{negative\_slope} * \min(0, x)
+
+    Parameters
+    ----------
+    negative_slope : float, optional, default=1e-2
+        Controls the angle of the negative slope.
+    """
+    out = Tensor(
+        data = np.maximum(negative_slope * input.data, input.data),
+        depends_on = [input],
+        requires_grad = input.requires_grad
+    )
+
+    def grad_leaky_relu():
+        if input.requires_grad:
+            grad = np.ones_like(input.data)
+            grad[input.data < 0] = negative_slope
+            input.grad += out.grad * grad
+
+    if out.requires_grad:
+        out.grad_fn = grad_leaky_relu
 
     return out
 
@@ -75,6 +105,33 @@ def tanh(input: Tensor) -> Tensor:
     if out.requires_grad:
         out.grad_fn = grad_tanh
 
+    return out
+
+def gelu(input: Tensor) -> Tensor:
+    """
+    Compute GELU (Gaussian Error Linear Units) [1] element-wise.
+
+    .. math::
+        \\text{GELU}(x) = x \cdot \Phi(x) = x \cdot \\frac{1}{2} [1 + \\text{erf} (x / \sqrt{2})]
+
+    where :math:`\Phi(x)` is the Cumulative Distribution Function for Gaussian Distribution.
+
+    We can approximate it with:
+
+    .. math::
+        \\text{GELU}(x) = 0.5 x (1 + \\text{tanh}[ \sqrt{2 / \pi} (x + 0.044715 x^3) ])
+
+    or
+
+    .. math::
+        \\text{GELU}(x) = x \sigma(1.702 x)
+
+    References
+    ----------
+    1. "`Gaussian Error Linear Units (GELUs). <https://arxiv.org/pdf/1606.08415.pdf>`_" \
+        Dan Hendrycks and Kevin Gimpel. arXiv 2016.
+    """
+    out = 0.5 * input * (1.0 + tanh(math.sqrt(2.0 / math.pi) * (input + 0.044715 * (input ** 3.0))))
     return out
 
 

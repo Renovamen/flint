@@ -26,10 +26,16 @@ Activations
 .. autoclass:: ReLU
    :show-inheritance:
 
+.. autoclass:: LeakyReLU
+   :show-inheritance:
+
 .. autoclass:: Sigmoid
    :show-inheritance:
 
 .. autoclass:: Tanh
+   :show-inheritance:
+
+.. autoclass:: GELU
    :show-inheritance:
 
 

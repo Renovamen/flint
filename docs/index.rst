@@ -113,6 +113,8 @@ Activation Functions
 - ReLU
 - Sigmoid
 - Tanh
+- Leaky ReLU
+- GELU
 
 Initializers
 =====================
